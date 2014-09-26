@@ -1,4 +1,4 @@
-from plot import plot_bipartite_graph
+from plot import plot_bipartite_graph, plot_graph
 from bipartite import Bipartite
 
 graph = Bipartite.generate_random(10, 10)
