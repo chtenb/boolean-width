@@ -52,5 +52,3 @@ class Graph:
     def save(self, filename):
         pass
 
-    def export_png(self, filename):
-        pass
