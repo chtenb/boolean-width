@@ -11,7 +11,7 @@ def plot_graph(graph):
 
     radius = min(size) / 2 - margin
     vertexcoords = []
-    nr_vertices = len(graph.vertices)
+    nr_vertices = graph.count_vertices()
     for i in range(nr_vertices):
         r = i * 2 * math.pi / (nr_vertices)
         vertexcoords.append((radius * (1 + math.cos(r)) + margin,

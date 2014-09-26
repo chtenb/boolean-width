@@ -1,3 +1,4 @@
+from random import choice
 
 class Vertex:
 
@@ -41,8 +42,19 @@ class Edge:
 class Graph:
 
     def __init__(self):
-        self.vertices = []
-        self.edges = []
+        self._vertices = []
+        self._edges = []
+
+    @property
+    def vertices(self):
+        return self._vertices
+
+    @property
+    def edges(self):
+        return self._edges
+
+    def count_vertices(self):
+        return len(self.vertices)
 
     def __str__(self):
         return 'vertices: {}, edges: {}'.format(self.vertices, self.edges)
@@ -50,7 +62,7 @@ class Graph:
     def add_vertex(self, vertex):
         """Add a new vertex to the graph."""
         assert isinstance(vertex, Vertex)
-        assert vertex not in self.vertices
+        assert not vertex in self.vertices
 
         self.vertices.append(vertex)
 
@@ -58,11 +70,30 @@ class Graph:
         """Connect two vertices."""
         assert v in self.vertices
         assert w in self.vertices
+        assert not w in v.neighbours
+        assert not v in w.neighbours
 
         edge = Edge(v, w)
         v.add_neighbour(w)
         w.add_neighbour(v)
         self.edges.append(edge)
 
-    def save(self, filename):
-        pass
+    @staticmethod
+    def generate_random(nr_vertices, nr_edges):
+        assert nr_edges <= nr_vertices ** 2
+
+        graph = Graph()
+        for i in range(nr_vertices):
+            vertex = Vertex(i)
+            graph.add_vertex(vertex)
+
+        for i in range(nr_edges):
+            while 1:
+                v = choice(graph.vertices)
+                w = choice(graph.vertices)
+                if not w in v.neighbours:
+                    break
+            graph.connect(v, w)
+
+        return graph
+

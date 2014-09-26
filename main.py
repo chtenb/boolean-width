@@ -1,9 +1,7 @@
-from generator import generate_random
 from plot import plot_graph
+from bipartite import Bipartite
 
-graph = generate_random(10, 10)
+graph = Bipartite.generate_random(10, 10)
 print(graph)
-assert len(graph.vertices) == 10
-assert len(graph.edges) == 10
 
 plot_graph(graph)
