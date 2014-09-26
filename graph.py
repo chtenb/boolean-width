@@ -9,6 +9,7 @@ class Vertex:
         return '{}: {}'.format(self.identifier, self.edges)
 
     def add_edge(self, edge):
+        """Add an incident edge."""
         self.edges.append(edge)
 
 
@@ -17,6 +18,13 @@ class Edge:
     def __init__(self, v, w):
         self.v = v
         self.w = w
+
+    def __getitem__(self, index):
+        if index == 0:
+            return self.v
+        if index == 1:
+            return self.w
+        raise IndexError
 
 
 class Graph:
@@ -37,4 +45,12 @@ class Graph:
         assert w in self.vertices
 
         edge = Edge(v, w)
+        v.add_edge(edge)
+        w.add_edge(edge)
         self.edges.append(edge)
+
+    def save(self, filename):
+        pass
+
+    def export_png(self, filename):
+        pass
