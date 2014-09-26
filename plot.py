@@ -2,6 +2,15 @@ from PIL import Image, ImageDraw
 import math
 
 
+def draw_vertex(draw, vertex, coords):
+    """Draw a single vertex."""
+    uppercoords = (coords[0] - 5, coords[1] - 5)
+    lowercoords = (coords[0] + 5, coords[1] + 5)
+    box = [uppercoords, lowercoords]
+    draw.ellipse(box, fill=128)
+    draw.text(lowercoords, str(vertex.identifier), fill=128)
+
+
 def plot_graph(graph):
     """Draw given graph on image and export as png."""
     size = (512, 512)
@@ -19,10 +28,7 @@ def plot_graph(graph):
 
     for v in graph.vertices:
         coords = vertexcoords[v.identifier]
-        uppercoords = (coords[0] - 5, coords[1] - 5)
-        lowercoords = (coords[0] + 5, coords[1] + 5)
-        box = [uppercoords, lowercoords]
-        draw.ellipse(box, fill=128)
+        draw_vertex(draw, v, coords)
 
         for w in v.neighbours:
             draw.line([vertexcoords[v.identifier], vertexcoords[w.identifier]], fill=128)
@@ -54,17 +60,11 @@ def plot_bipartite_graph(graph):
 
     for v in graph.group1:
         coords = vertexcoords1[v.identifier]
-        uppercoords = (coords[0] - 5, coords[1] - 5)
-        lowercoords = (coords[0] + 5, coords[1] + 5)
-        box = [uppercoords, lowercoords]
-        draw.ellipse(box, fill=128)
+        draw_vertex(draw, v, coords)
 
     for v in graph.group2:
         coords = vertexcoords2[v.identifier]
-        uppercoords = (coords[0] - 5, coords[1] - 5)
-        lowercoords = (coords[0] + 5, coords[1] + 5)
-        box = [uppercoords, lowercoords]
-        draw.ellipse(box, fill=128)
+        draw_vertex(draw, v, coords)
 
     for e in graph.edges:
         i = e.v.identifier
