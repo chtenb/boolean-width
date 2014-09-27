@@ -38,6 +38,27 @@ class Bipartite(Graph):
 
         Graph.connect(self, v, w)
 
+    def bipartite_complement(self):
+        """Construct a graph representing the bipartite complement of self."""
+        graph = Bipartite()
+        bijection = {}
+
+        for v in self.group1:
+            v_new = Vertex(v.identifier)
+            bijection[v_new] = v
+            graph.add_vertex(v_new, group=1)
+        for v in self.group2:
+            v_new = Vertex(v.identifier)
+            bijection[v_new] = v
+            graph.add_vertex(v_new, group=2)
+
+        for v in graph.group1:
+            for w in graph.group2:
+                if not bijection[w] in bijection[v].neighbours:
+                    graph.connect(v, w)
+
+        return graph
+
     @staticmethod
     def generate_random(nr_vertices, nr_edges):
         assert nr_edges <= (nr_vertices / 2) ** 2

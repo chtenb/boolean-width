@@ -1,21 +1,20 @@
-from PIL import Image, ImageDraw
+from PIL import ImageDraw
 import math
 
 
-def draw_vertex(draw, vertex, coords):
+def draw_vertex(draw, vertex, coords, color=128):
     """Draw a single vertex."""
     uppercoords = (coords[0] - 5, coords[1] - 5)
     lowercoords = (coords[0] + 5, coords[1] + 5)
     box = [uppercoords, lowercoords]
     draw.ellipse(box, fill=128)
-    draw.text(lowercoords, str(vertex.identifier), fill=128)
+    draw.text(lowercoords, str(vertex.identifier), fill=color)
 
 
-def plot_graph(graph):
-    """Draw given graph on image and export as png."""
-    size = (512, 512)
+def plot_graph(im, graph, color=128):
+    """Draw given graph on given draw object."""
+    size = im.size
     margin = 10
-    im = Image.new('RGB', size, 'white')
     draw = ImageDraw.Draw(im)
 
     radius = min(size) / 2 - margin
@@ -31,16 +30,14 @@ def plot_graph(graph):
         draw_vertex(draw, v, coords)
 
         for w in v.neighbours:
-            draw.line([vertexcoords[v.identifier], vertexcoords[w.identifier]], fill=128)
+            draw.line([vertexcoords[v.identifier], vertexcoords[w.identifier]],
+                      fill=color)
 
-    im.save('output/test.png', 'png')
 
-
-def plot_bipartite_graph(graph):
-    """Draw given graph on image and export as png."""
-    size = (512, 512)
+def plot_bipartite_graph(im, graph, color=128):
+    """Draw given graph on given draw object."""
+    size = im.size
     margin = 30
-    im = Image.new('RGB', size, 'white')
     draw = ImageDraw.Draw(im)
 
     xcoord_group1 = margin
@@ -60,15 +57,13 @@ def plot_bipartite_graph(graph):
 
     for v in graph.group1:
         coords = vertexcoords1[v.identifier]
-        draw_vertex(draw, v, coords)
+        draw_vertex(draw, v, coords, color)
 
     for v in graph.group2:
         coords = vertexcoords2[v.identifier]
-        draw_vertex(draw, v, coords)
+        draw_vertex(draw, v, coords, color)
 
     for e in graph.edges:
         i = e.v.identifier
         j = e.w.identifier
-        draw.line([vertexcoords1[i], vertexcoords2[j]], fill=128)
-
-    im.save('output/test.png', 'png')
+        draw.line([vertexcoords1[i], vertexcoords2[j]], fill=color)
