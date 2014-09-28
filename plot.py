@@ -1,20 +1,23 @@
-from PIL import ImageDraw
+from PIL import ImageDraw, ImageFont
 import math
 
 
 def draw_vertex(draw, vertex, coords, color=128):
     """Draw a single vertex."""
-    uppercoords = (coords[0] - 5, coords[1] - 5)
-    lowercoords = (coords[0] + 5, coords[1] + 5)
+    radius = 5
+    uppercoords = (coords[0] - radius, coords[1] - radius)
+    lowercoords = (coords[0] + radius, coords[1] + radius)
     box = [uppercoords, lowercoords]
     draw.ellipse(box, fill=color)
-    draw.text(lowercoords, str(vertex.identifier), fill=color)
+
+    font = ImageFont.truetype("resources/FreeMono.ttf", 30)
+    draw.text(lowercoords, str(vertex.identifier), fill=color, font=font)
 
 
 def plot_graph(im, graph, color=128):
     """Draw given graph on given draw object."""
     size = im.size
-    margin = 10
+    margin = 30
     draw = ImageDraw.Draw(im)
 
     radius = min(size) / 2 - margin
@@ -31,7 +34,7 @@ def plot_graph(im, graph, color=128):
 
         for w in v.neighbours:
             draw.line([vertexcoords[v.identifier], vertexcoords[w.identifier]],
-                      fill=color)
+                      fill=color, width=1)
 
 
 def plot_bipartite_graph(im, graph, color=128):

@@ -10,8 +10,8 @@ complement = graph.complement()
 size = (512, 512)
 im = Image.new('RGB', size, 'white')
 
-plot_graph(im, graph)
-plot_graph(im, complement, color=(0, 0, 128))
+plot_graph(im, graph, color=(178, 0, 0))
+plot_graph(im, complement, color=(0, 0, 178))
 
 
 #graph = Bipartite.generate_random(10, 10)
