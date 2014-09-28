@@ -1,5 +1,6 @@
 from random import choice
 
+
 class Vertex:
 
     def __init__(self, identifier):
@@ -78,6 +79,24 @@ class Graph:
         w.add_neighbour(v)
         self.edges.append(edge)
 
+    def complement(self):
+        """Construct a graph representing the complement of self."""
+        graph = Graph()
+        bijection = {}
+
+        for v in self.vertices:
+            v_new = Vertex(v.identifier)
+            bijection[v_new] = v
+            graph.add_vertex(v_new)
+
+        for v in graph.vertices:
+            for w in graph.vertices:
+                if (not bijection[w] in bijection[v].neighbours
+                        and not w in v.neighbours):
+                    graph.connect(v, w)
+
+        return graph
+
     @staticmethod
     def generate_random(nr_vertices, nr_edges):
         assert nr_edges <= nr_vertices ** 2
@@ -96,4 +115,3 @@ class Graph:
             graph.connect(v, w)
 
         return graph
-

@@ -7,7 +7,7 @@ def draw_vertex(draw, vertex, coords, color=128):
     uppercoords = (coords[0] - 5, coords[1] - 5)
     lowercoords = (coords[0] + 5, coords[1] + 5)
     box = [uppercoords, lowercoords]
-    draw.ellipse(box, fill=128)
+    draw.ellipse(box, fill=color)
     draw.text(lowercoords, str(vertex.identifier), fill=color)
 
 
@@ -27,7 +27,7 @@ def plot_graph(im, graph, color=128):
 
     for v in graph.vertices:
         coords = vertexcoords[v.identifier]
-        draw_vertex(draw, v, coords)
+        draw_vertex(draw, v, coords, color)
 
         for w in v.neighbours:
             draw.line([vertexcoords[v.identifier], vertexcoords[w.identifier]],
