@@ -27,7 +27,7 @@ class Edge:
         self.w = w
 
     def __repr__(self):
-        return str((repr(self.v), repr(self.w)))
+        return str((self.v, self.w))
 
     def __str__(self):
         return repr(self)
@@ -105,7 +105,7 @@ class Graph:
 
     @staticmethod
     def generate_random(nr_vertices, nr_edges):
-        if not nr_edges <= nr_vertices ** 2:
+        if not nr_edges <= nr_vertices * (nr_vertices - 1) / 2:
             raise ValueError
 
         graph = Graph()
@@ -117,7 +117,9 @@ class Graph:
             while 1:
                 v = choice(graph.vertices)
                 w = choice(graph.vertices)
-                if not w in v.neighbours:
+                # Graphs must be simple
+                # And we don't want to connect vertices twice
+                if v != w and not w in v.neighbours:
                     break
             graph.connect(v, w)
 
