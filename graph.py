@@ -62,17 +62,23 @@ class Graph:
 
     def add_vertex(self, vertex):
         """Add a new vertex to the graph."""
-        assert isinstance(vertex, Vertex)
-        assert not vertex in self.vertices
+        if not isinstance(vertex, Vertex):
+            raise ValueError
+        if vertex in self.vertices:
+            raise ValueError
 
         self.vertices.append(vertex)
 
     def connect(self, v, w):
         """Connect two vertices."""
-        assert v in self.vertices
-        assert w in self.vertices
-        assert not w in v.neighbours
-        assert not v in w.neighbours
+        if not v in self.vertices:
+            raise ValueError
+        if not w in self.vertices:
+            raise ValueError
+        if w in v.neighbours:
+            raise ValueError
+        if v in w.neighbours:
+            raise ValueError
 
         edge = Edge(v, w)
         v.add_neighbour(w)
@@ -99,7 +105,8 @@ class Graph:
 
     @staticmethod
     def generate_random(nr_vertices, nr_edges):
-        assert nr_edges <= nr_vertices ** 2
+        if not nr_edges <= nr_vertices ** 2:
+            raise ValueError
 
         graph = Graph()
         for i in range(nr_vertices):

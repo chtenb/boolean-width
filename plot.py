@@ -46,16 +46,20 @@ def plot_bipartite_graph(im, graph, color=128):
     xcoord_group1 = margin
     xcoord_group2 = size[0] - margin
 
+    # For each vertex we assign a vertical interval
+    # The vertex is drawn in the center of that interval
     vertexcoords1 = {}
     size_group1 = len(graph.group1)
+    interval_length = size[1] / size_group1
     for i, v in enumerate(graph.group1):
-        ycoord = i * (size[1] - 2 * margin) / (size_group1 - 1) + margin
+        ycoord = i * interval_length  + interval_length / 2
         vertexcoords1[v.identifier] = (xcoord_group1, ycoord)
 
     vertexcoords2 = {}
     size_group2 = len(graph.group2)
+    interval_length = size[1] / size_group2
     for i, v in enumerate(graph.group2):
-        ycoord = i * (size[1] - 2 * margin) / (size_group2 - 1) + margin
+        ycoord = i * interval_length  + interval_length / 2
         vertexcoords2[v.identifier] = (xcoord_group2, ycoord)
 
     for v in graph.group1:

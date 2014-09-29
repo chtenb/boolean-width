@@ -20,8 +20,11 @@ class Bipartite(Graph):
 
     def add_vertex(self, vertex, group):
         """Add a new vertex to the graph."""
-        assert isinstance(vertex, Vertex)
-        assert vertex not in self.vertices
+        if not isinstance(vertex, Vertex):
+            raise ValueError
+        if not vertex not in self.vertices:
+            raise ValueError
+
 
         if group == 1:
             self.group1.append(vertex)
@@ -32,9 +35,10 @@ class Bipartite(Graph):
 
     def connect(self, v, w):
         """Connect two vertices."""
-        assert ((v in self.group1 and w in self.group2)
+        if not ((v in self.group1 and w in self.group2)
                 or
-                (v in self.group2 and w in self.group1))
+                (v in self.group2 and w in self.group1)):
+            raise ValueError
 
         Graph.connect(self, v, w)
 
@@ -61,7 +65,8 @@ class Bipartite(Graph):
 
     @staticmethod
     def generate_random(nr_vertices, nr_edges):
-        assert nr_edges <= (nr_vertices / 2) ** 2
+        if not nr_edges <= (nr_vertices / 2) ** 2:
+            raise ValueError
 
         # Split the number of vertices on both sides
         # such that enough edges can be placed
