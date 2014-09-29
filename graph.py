@@ -58,7 +58,7 @@ class Graph:
         return len(self.vertices)
 
     def __str__(self):
-        return 'vertices: {}, edges: {}'.format(self.vertices, self.edges)
+        return 'vertices: {}, edges: {}'.format(list(self.vertices), list(self.edges))
 
     def add_vertex(self, vertex):
         """Add a new vertex to the graph."""
@@ -98,7 +98,7 @@ class Graph:
         for v in graph.vertices:
             for w in graph.vertices:
                 if (not bijection[w] in bijection[v].neighbours
-                        and not w in v.neighbours):
+                        and not w in v.neighbours and not w == v):
                     graph.connect(v, w)
 
         return graph
