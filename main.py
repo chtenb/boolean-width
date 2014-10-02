@@ -38,29 +38,39 @@ def mis_bipartite_complement():
         nr_vertices = 15
         max_nr_edges = int((nr_vertices / 2) ** 2)
         nr_edges = randint(1, max_nr_edges - 1)
+        nr_edges_compl = max_nr_edges - nr_edges
         graph = ConvexBipartite.generate_random(nr_vertices, nr_edges)
-        bipartite_complement = graph.bipartite_complement()
+        bipartite_compl = graph.bipartite_complement()
 
         mis = list(bron_kerbosch_mis(graph))
         nr_mis = len(mis)
-        mis_complement = list(bron_kerbosch_mis(bipartite_complement))
-        nr_mis_complement = len(mis_complement)
+        mis_compl = list(bron_kerbosch_mis(bipartite_compl))
+        nr_mis_compl = len(mis_compl)
 
-        print('{} - {} = {}'.format(nr_mis, nr_mis_complement, int(nr_mis - nr_mis_complement)))
+        #print('Edges: {}, #MIS: {} | Edges_c: {}, #MIS_c : {}'.format(
+            #nr_edges, nr_mis,
+            #nr_edges_compl, nr_mis_compl
+        #))
+
+        print('{}, {}, {}, {}'.format(
+            nr_mis - nr_mis_compl,
+            round(nr_mis / nr_mis_compl, 1),
+            round((nr_mis / nr_edges) / (nr_mis_compl / nr_edges_compl), 1),
+            round((nr_mis * nr_edges) / (nr_mis_compl * nr_edges_compl), 1)
+        ))
 
         #print('{} / {} = {}'.format(nr_mis, nr_edges, int(nr_mis/ nr_edges)))
 
-        #print('{} vs {}'.format(
-            #int(mul_abs(nr_mis / nr_edges)),
-            #int(mul_abs(nr_mis_complement / (max_nr_edges - nr_edges)))
+        # print('{} vs {}'.format(
+        #int(mul_abs(nr_mis / nr_edges)),
+        #int(mul_abs(nr_mis_compl / (max_nr_edges - nr_edges)))
         #))
 
-graph = ConvexBipartite.generate_random(10, 10)
-assert graph.verify_convexity()
+mis_bipartite_complement()
 
-size = (512, 512)
-im = Image.new('RGB', size, 'white')
-#plot_graph(im, graph, color=(178, 0, 0))
-plot_bipartite_graph(im, graph, color=(178, 0, 0))
-#plot_graph(im, complement, color=(0, 0, 178))
-im.save('output/test.png', 'png')
+#graph = ConvexBipartite.generate_random(10, 10)
+#assert graph.verify_convexity()
+#size = (512, 512)
+#im = Image.new('RGB', size, 'white')
+#plot_bipartite_graph(im, graph, color=(178, 0, 0))
+#im.save('output/test.png', 'png')
