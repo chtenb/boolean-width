@@ -1,2 +1,4 @@
-implement computation of dual graph
+use datamining and evolutionary algorithms to get a formula for relation between
+    number of mis and number of mbc in a bipartite graph.
 implement generation of Biconvex bipartite graphs
+implement planar and dual graphs?

@@ -2,8 +2,9 @@ graph-tools
 ===========
 
 Tools for generating and analyzing undirected simple graphs.
+Developed with `Python 3.4`.
 
 Dependencies
 ------------
-The Python Imaging Library (`PIL`) is needed.
-Developed with `Python 3.4`.
+- Python Imaging Library (`PIL`).
+- NumPy (`numpy`).

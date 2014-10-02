@@ -1,10 +1,23 @@
-from random import randint, choice
+from random import randint
+from numpy import diff
 
 from bipartite import Bipartite
 from graph import Vertex
 
 
-class BiconvexBipartite(Bipartite):
+class ConvexBipartite(Bipartite):
+
+    def verify_convexity(self):
+        """Check that we are indeed convex."""
+        for v in self.group2:
+            ids = [w.identifier for w in v.neighbours]
+            ids.sort()
+            differences = diff(ids)
+            if differences.size > 0 and max(differences) > 1:
+                return False
+        return True
+
+
 
     @staticmethod
     def generate_random(nr_vertices, nr_edges):
@@ -19,7 +32,7 @@ class BiconvexBipartite(Bipartite):
             if size1 * size2 >= nr_edges:
                 break
 
-        graph = BiconvexBipartite()
+        graph = ConvexBipartite()
 
         # For both groups create vertices
         for i in range(size1):
@@ -30,14 +43,12 @@ class BiconvexBipartite(Bipartite):
             vertex = Vertex(size1 + i)
             graph.add_vertex(vertex, group=2)
 
-        # Add random edges between groups
-        # TODO
-        for i in range(nr_edges):
-            while 1:
-                v = choice(graph.group1)
-                w = choice(graph.group2)
-                if not w in v.neighbours:
-                    break
-            graph.connect(v, w)
-
+        # For each vertex in group2 we can determine the neighbourhood by
+        # a starting vertex and the length of the neighbourhood.
+        len_group1 = len(graph.group1)
+        for v in graph.group2:
+            start = randint(0, len_group1)
+            length = randint(0, len_group1 - start)
+            for i in range(start, start + length):
+                graph.connect(graph.group1[i], v)
         return graph

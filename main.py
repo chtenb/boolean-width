@@ -4,6 +4,7 @@ from random import randint
 from plot import plot_bipartite_graph, plot_graph
 from bipartite import Bipartite, Graph
 from mis import bron_kerbosch_mis, bron_kerbosch_mc
+from convexbipartite import ConvexBipartite
 
 
 def mul_abs(x):
@@ -11,7 +12,10 @@ def mul_abs(x):
 
 
 def mc_vs_mis():
-    """Compare the number of maximal cliques to the number of maximal independent sets."""
+    """
+    Compare the number of maximal cliques to the number of
+    maximal independent sets.
+    """
     for _ in range(20):
         nr_vertices = 20
         nr_edges = randint(0, int(nr_vertices * (nr_vertices - 1) / 2))
@@ -31,22 +35,29 @@ def mis_bipartite_complement():
     independent sets in the bipartite complement.
     """
     for _ in range(20):
-        nr_vertices = 20
-        nr_edges = randint(0, int((nr_vertices / 2) ** 2))
-        graph = Bipartite.generate_random(nr_vertices, nr_edges)
+        nr_vertices = 15
+        max_nr_edges = int((nr_vertices / 2) ** 2)
+        nr_edges = randint(1, max_nr_edges - 1)
+        graph = ConvexBipartite.generate_random(nr_vertices, nr_edges)
         bipartite_complement = graph.bipartite_complement()
 
         mis = list(bron_kerbosch_mis(graph))
         nr_mis = len(mis)
         mis_complement = list(bron_kerbosch_mis(bipartite_complement))
         nr_mis_complement = len(mis_complement)
-        #print('{} - {} = {}'.format(nr_mis, nr_mis_complement, abs(nr_mis - nr_mis_complement)))
-        print('{} / {} = {}'.format(nr_mis, nr_mis_complement, mul_abs(nr_mis / nr_mis_complement)))
 
+        print('{} - {} = {}'.format(nr_mis, nr_mis_complement, int(nr_mis - nr_mis_complement)))
 
-nr_vertices = 5
-nr_edges = randint(0, int((nr_vertices / 2) ** 2))
-graph = Bipartite.generate_random(nr_vertices, nr_edges)
+        #print('{} / {} = {}'.format(nr_mis, nr_edges, int(nr_mis/ nr_edges)))
+
+        #print('{} vs {}'.format(
+            #int(mul_abs(nr_mis / nr_edges)),
+            #int(mul_abs(nr_mis_complement / (max_nr_edges - nr_edges)))
+        #))
+
+graph = ConvexBipartite.generate_random(10, 10)
+assert graph.verify_convexity()
+
 size = (512, 512)
 im = Image.new('RGB', size, 'white')
 #plot_graph(im, graph, color=(178, 0, 0))
