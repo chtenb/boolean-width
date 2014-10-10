@@ -42,6 +42,9 @@ class Bipartite(Graph):
 
         Graph.connect(self, v, w)
 
+    def subgraph(self, vertices):
+        return NotImplemented
+
     def bipartite_complement(self):
         """Construct a graph representing the bipartite complement of self."""
         graph = Bipartite()

@@ -23,3 +23,7 @@ class BiconvexBipartite(Bipartite):
     @staticmethod
     def generate_random(nr_vertices, nr_edges):
         return NotImplemented
+
+    def subgraph(self, vertices):
+        return NotImplemented
+

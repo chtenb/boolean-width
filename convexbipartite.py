@@ -35,6 +35,9 @@ class ConvexBipartite(Bipartite):
                 return False
         return True
 
+    def subgraph(self, vertices):
+        return NotImplemented
+
     @staticmethod
     def generate_random(nr_vertices, nr_edges):
         """There is probably a bias in this generation algorithm."""
