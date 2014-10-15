@@ -8,13 +8,16 @@ class Vertex:
         self.neighbours = VertexSet()
 
     def __repr__(self):
-        return str(self.identifier)
+        return 'vertex ' + str(self.identifier)
 
     def __eq__(self, other):
         return self.identifier == other.identifier
 
+    def __hash__(self):
+        return self.identifier
+
     def __str__(self):
-        return '{}: {}'.format(self.identifier, self.neighbours)
+        return 'vertex {}: {}'.format(self.identifier, self.neighbours)
 
     def add_neighbour(self, neighbour):
         """Add a neighbour."""
@@ -166,7 +169,7 @@ class Graph:
             vertex = Vertex(i)
             graph.add_vertex(vertex)
 
-        vertices = list(graph.vertices.values())
+        vertices = list(graph.vertices)
 
         for i in range(nr_edges):
             while 1:

@@ -57,15 +57,16 @@ def mis_bipartite_complement():
         #print('MIS: {}\nMIS_compl: {}\nMBC: {}'.format(mis, compl_mis, mis_compl))
         #print('---------------------------------------')
 
+        print('Edges: {}, #MIS: {} | Edges_c: {}, #MIS_c : {}'.format(
+            nr_edges, nr_mis,
+            nr_edges_compl, nr_mis_compl
+        ))
+
         size = (512, 512)
         im = Image.new('RGB', size, 'white')
         plot_bipartite_graph(im, graph, color=(178, 0, 0))
         im.save('output/test.png', 'png')
 
-        print('Edges: {}, #MIS: {} | Edges_c: {}, #MIS_c : {}'.format(
-            nr_edges, nr_mis,
-            nr_edges_compl, nr_mis_compl
-        ))
         #print('{}, {}, {}, {}'.format(
             #nr_mis - nr_mis_compl,
             #round(nr_mis / nr_mis_compl, 1),
@@ -73,17 +74,21 @@ def mis_bipartite_complement():
             #round((nr_mis * nr_edges) / (nr_mis_compl * nr_edges_compl), 1)
         #))
 
+mis_bipartite_complement()
 
-graph = Graph.generate_random(10, 10)
+#graph = Graph.generate_random(10, 10)
+#vs = set(v for v in graph.vertices)
+#vs = set(graph.vertices)
+#print(vs)
 #complement = graph.complement()
-complement = graph.subgraph(sample(list(graph.vertices.values()), 6))
+#complement = graph.subgraph(sample(list(graph.vertices.values()), 7))
 #graph = Bipartite.generate_random(10, 10)
 #graph = ConvexBipartite.generate_random(10, 10)
 #complement = graph.bipartite_complement()
 
 #assert graph.verify_convexity()
-size = (512, 512)
-im = Image.new('RGB', size, 'white')
-plot_graph(im, graph, color=(178, 0, 0))
-plot_graph(im, complement, color=(0, 178, 0))
-im.save('output/test.png', 'png')
+#size = (512, 512)
+#im = Image.new('RGB', size, 'white')
+#plot_graph(im, graph, color=(178, 0, 0))
+#plot_graph(im, complement, color=(0, 178, 0))
+#im.save('output/test.png', 'png')

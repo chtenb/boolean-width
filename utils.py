@@ -43,6 +43,12 @@ class DictChain:
                 return True
         return False
 
+    def __iter__(self):
+        """Return an iterator over all dicts."""
+        for d in self.dicts:
+            for x in d:
+                yield x
+
     def keys(self):
         return itertools.chain.from_iterable(d.keys() for d in self.dicts)
 
