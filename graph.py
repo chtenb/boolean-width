@@ -20,7 +20,7 @@ class Vertex:
         """Add a neighbour."""
         assert isinstance(neighbour, Vertex)
 
-        self.neighbours.append(neighbour)
+        self.neighbours[neighbour.identifier] = neighbour
 
 
 class Edge:
@@ -53,7 +53,7 @@ class Graph:
     def __init__(self):
         # Dictionary from identifiers to vertices
         self._vertices = {}
-        # Dictionary from vertex pairs to edges
+        # Dictionary from vertex identifier pairs to edges
         self._edges = {}
 
     @property
@@ -72,43 +72,42 @@ class Graph:
 
     def add_vertex(self, v):
         """Add a new vertex to the graph."""
-        if not isinstance(v, v):
+        if not isinstance(v, Vertex):
             raise ValueError
-        if v in self.vertices:
+        if v.identifier in self.vertices:
             raise ValueError
 
         self.vertices[v.identifier] = v
 
     def connect(self, v, w):
         """Connect two vertices."""
-        if not v in self.vertices:
+        if not v.identifier in self.vertices:
             raise ValueError
-        if not w in self.vertices:
+        if not w.identifier in self.vertices:
             raise ValueError
-        if w in v.neighbours:
+        if w.identifier in v.neighbours:
             raise ValueError
-        if v in w.neighbours:
+        if v.identifier in w.neighbours:
             raise ValueError
 
         edge = Edge(v, w)
         v.add_neighbour(w)
         w.add_neighbour(v)
-        self.edges[(v, w)] = edge
+        self.edges[(v.identifier, w.identifier)] = edge
 
     def complement(self):
         """Construct a graph representing the complement of self."""
-        # TODO: rewrite
         graph = Graph()
-        bijection = {}
 
-        for v in self.vertices:
-            v_new = Vertex(v.identifier)
-            bijection[v_new] = v
+        for identifier in self.vertices:
+            v_new = Vertex(identifier)
             graph.add_vertex(v_new)
 
-        for v in graph.vertices:
-            for w in graph.vertices:
-                if (not bijection[w] in bijection[v].neighbours
+        for v in graph.vertices.values():
+            for w in graph.vertices.values():
+                old_v = self.vertices[v.identifier]
+                old_w = self.vertices[w.identifier]
+                if (not old_w in old_v.neighbours
                         and not w in v.neighbours and not w == v):
                     graph.connect(v, w)
 
@@ -117,11 +116,11 @@ class Graph:
     def subgraph(self, vertices):
         """Return a graph which is the subgraph of self induced by given vertex subset."""
         graph = Graph()
-        for v in vertices.items():
+        for v in vertices.values():
             assert v.identifier in self.vertices
             new_v = Vertex(v.identifier)
             graph.add_vertex(new_v)
-            for w in v.neighbours.items():
+            for w in v.neighbours.values():
                 # Only connect if w is already in the graph
                 # Otherwise it comes later
                 try:
@@ -143,13 +142,15 @@ class Graph:
             vertex = Vertex(i)
             graph.add_vertex(vertex)
 
+        vertices = list(graph.vertices.values())
+
         for i in range(nr_edges):
             while 1:
-                v = choice(graph.vertices)
-                w = choice(graph.vertices)
+                v = choice(vertices)
+                w = choice(vertices)
                 # Graphs must be simple
                 # And we don't want to connect vertices twice
-                if v != w and not w in v.neighbours:
+                if v != w and not w.identifier in v.neighbours:
                     break
             graph.connect(v, w)
 

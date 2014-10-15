@@ -73,11 +73,12 @@ def mis_bipartite_complement():
             #round((nr_mis * nr_edges) / (nr_mis_compl * nr_edges_compl), 1)
         #))
 
-mis_bipartite_complement()
+
+graph = Graph.generate_random(10, 10)
 
 #graph = ConvexBipartite.generate_random(10, 10)
 #assert graph.verify_convexity()
-#size = (512, 512)
-#im = Image.new('RGB', size, 'white')
-#plot_bipartite_graph(im, graph, color=(178, 0, 0))
-#im.save('output/test.png', 'png')
+size = (512, 512)
+im = Image.new('RGB', size, 'white')
+plot_graph(im, graph, color=(178, 0, 0))
+im.save('output/test.png', 'png')

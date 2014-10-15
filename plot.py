@@ -23,16 +23,16 @@ def plot_graph(im, graph, color=128):
     radius = min(size) / 2 - margin
     vertexcoords = {}
     nr_vertices = graph.count_vertices()
-    for i, v in enumerate(graph.vertices):
+    for i, v in enumerate(graph.vertices.values()):
         r = i * 2 * math.pi / nr_vertices
         vertexcoords[v.identifier] = (radius * (1 + math.cos(r)) + margin,
                                       radius * (1 + math.sin(r)) + margin)
 
-    for v in graph.vertices:
+    for v in graph.vertices.values():
         coords = vertexcoords[v.identifier]
         draw_vertex(draw, v, coords, color)
 
-        for w in v.neighbours:
+        for w in v.neighbours.values():
             draw.line([vertexcoords[v.identifier], vertexcoords[w.identifier]],
                       fill=color, width=1)
 
