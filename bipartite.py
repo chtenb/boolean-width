@@ -1,6 +1,7 @@
 from graph import Graph, Vertex
 from itertools import chain
 from random import randint, choice
+from utils import DictChain
 
 
 class Bipartite(Graph):
@@ -8,12 +9,12 @@ class Bipartite(Graph):
     def __init__(self):
         Graph.__init__(self)
 
-        self.group1 = []
-        self.group2 = []
+        self.group1 = {}
+        self.group2 = {}
 
     @property
     def vertices(self):
-        return chain(self.group1, self.group2)
+        return DictChain(self.group1, self.group2)
 
     def count_vertices(self):
         return len(self.group1) + len(self.group2)
@@ -22,22 +23,22 @@ class Bipartite(Graph):
         """Add a new vertex to the graph."""
         if not isinstance(vertex, Vertex):
             raise ValueError
-        if not vertex not in self.vertices:
+        if not vertex.identifier not in self.vertices:
             raise ValueError
 
 
         if group == 1:
-            self.group1.append(vertex)
+            self.group1[vertex.identifier] = vertex
         elif group == 2:
-            self.group2.append(vertex)
+            self.group2[vertex.identifier] = vertex
         else:
             raise ValueError
 
     def connect(self, v, w):
         """Connect two vertices."""
-        if not ((v in self.group1 and w in self.group2)
+        if not ((v.identifier in self.group1 and w.identifier in self.group2)
                 or
-                (v in self.group2 and w in self.group1)):
+                (v.identifier in self.group2 and w.identifier in self.group1)):
             raise ValueError
 
         Graph.connect(self, v, w)
@@ -48,20 +49,17 @@ class Bipartite(Graph):
     def bipartite_complement(self):
         """Construct a graph representing the bipartite complement of self."""
         graph = Bipartite()
-        bijection = {}
 
-        for v in self.group1:
+        for v in self.group1.values():
             v_new = Vertex(v.identifier)
-            bijection[v_new] = v
             graph.add_vertex(v_new, group=1)
-        for v in self.group2:
+        for v in self.group2.values():
             v_new = Vertex(v.identifier)
-            bijection[v_new] = v
             graph.add_vertex(v_new, group=2)
 
-        for v in graph.group1:
-            for w in graph.group2:
-                if not bijection[w] in bijection[v].neighbours:
+        for v in graph.group1.values():
+            for w in graph.group2.values():
+                if not self.vertices[v.identifier] in self.vertices[w.identifier].neighbours:
                     graph.connect(v, w)
 
         return graph

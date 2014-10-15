@@ -107,8 +107,8 @@ class Graph:
             for w in graph.vertices.values():
                 old_v = self.vertices[v.identifier]
                 old_w = self.vertices[w.identifier]
-                if (not old_w in old_v.neighbours
-                        and not w in v.neighbours and not w == v):
+                if (not old_w.identifier in old_v.neighbours
+                        and not w.identifier in v.neighbours and not w == v):
                     graph.connect(v, w)
 
         return graph
