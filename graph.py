@@ -5,7 +5,7 @@ class Vertex:
 
     def __init__(self, identifier):
         self.identifier = identifier
-        self.neighbours = {}
+        self.neighbours = VertexSet()
 
     def __repr__(self):
         return str(self.identifier)
@@ -37,6 +37,9 @@ class Edge:
                 or
                 self.v == other.w and self.w is other.v)
 
+    def __hash__(self):
+        return (2 ** self.v.identifier) * (3 ** self.w.identifier)
+
     def __str__(self):
         return repr(self)
 
@@ -48,13 +51,34 @@ class Edge:
         raise IndexError
 
 
+class VertexSet(dict):
+
+    """
+    A vertexset is just a dict with some modifications to make it work easier with
+    vertices.
+    """
+
+    def __init__(self, *args):
+        dict.__init__(self, args)
+
+    def __contains__(self, vertex):
+        return dict.__contains__(self, vertex.identifier)
+
+    def __iter__(self):
+        for v in self.values():
+            yield v
+
+    def add(self, vertex):
+        self[vertex.identifier] = vertex
+
+
 class Graph:
 
     def __init__(self):
         # Dictionary from identifiers to vertices
-        self._vertices = {}
-        # Dictionary from vertex identifier pairs to edges
-        self._edges = {}
+        self._vertices = VertexSet()
+        # Set of edges
+        self._edges = set()
 
     @property
     def vertices(self):
@@ -74,41 +98,41 @@ class Graph:
         """Add a new vertex to the graph."""
         if not isinstance(v, Vertex):
             raise ValueError
-        if v.identifier in self.vertices:
+        if v in self.vertices:
             raise ValueError
 
-        self.vertices[v.identifier] = v
+        self.vertices.add(v)
 
     def connect(self, v, w):
         """Connect two vertices."""
-        if not v.identifier in self.vertices:
+        if not v in self.vertices:
             raise ValueError
-        if not w.identifier in self.vertices:
+        if not w in self.vertices:
             raise ValueError
-        if w.identifier in v.neighbours:
+        if w in v.neighbours:
             raise ValueError
-        if v.identifier in w.neighbours:
+        if v in w.neighbours:
             raise ValueError
 
         edge = Edge(v, w)
         v.add_neighbour(w)
         w.add_neighbour(v)
-        self.edges[(v.identifier, w.identifier)] = edge
+        self.edges.add(edge)
 
     def complement(self):
         """Construct a graph representing the complement of self."""
         graph = Graph()
 
-        for identifier in self.vertices:
+        for identifier in self.vertices.keys():
             v_new = Vertex(identifier)
             graph.add_vertex(v_new)
 
-        for v in graph.vertices.values():
-            for w in graph.vertices.values():
+        for v in graph.vertices:
+            for w in graph.vertices:
                 old_v = self.vertices[v.identifier]
                 old_w = self.vertices[w.identifier]
-                if (not old_w.identifier in old_v.neighbours
-                        and not w.identifier in v.neighbours and not w == v):
+                if (not old_w in old_v.neighbours
+                        and not w in v.neighbours and not w == v):
                     graph.connect(v, w)
 
         return graph
@@ -116,11 +140,11 @@ class Graph:
     def subgraph(self, vertices):
         """Return a graph which is the subgraph of self induced by given vertex subset."""
         graph = Graph()
-        for v in vertices.values():
-            assert v.identifier in self.vertices
+        for v in vertices:
+            assert v in self.vertices
             new_v = Vertex(v.identifier)
             graph.add_vertex(new_v)
-            for w in v.neighbours.values():
+            for w in v.neighbours:
                 # Only connect if w is already in the graph
                 # Otherwise it comes later
                 try:
@@ -150,7 +174,7 @@ class Graph:
                 w = choice(vertices)
                 # Graphs must be simple
                 # And we don't want to connect vertices twice
-                if v != w and not w.identifier in v.neighbours:
+                if v != w and not w in v.neighbours:
                     break
             graph.connect(v, w)
 

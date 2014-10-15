@@ -74,13 +74,14 @@ def mis_bipartite_complement():
         #))
 
 
-graph = Bipartite.generate_random(10, 10)
+graph = Graph.generate_random(10, 10)
+#complement = graph.bipartite_complement()
 complement = graph.complement()
 
 #graph = ConvexBipartite.generate_random(10, 10)
 #assert graph.verify_convexity()
 size = (512, 512)
 im = Image.new('RGB', size, 'white')
-plot_bipartite_graph(im, graph, color=(178, 0, 0))
-plot_bipartite_graph(im, complement, color=(0, 178, 0))
+plot_graph(im, graph, color=(178, 0, 0))
+plot_graph(im, complement, color=(0, 178, 0))
 im.save('output/test.png', 'png')

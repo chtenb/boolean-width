@@ -59,7 +59,7 @@ class Bipartite(Graph):
 
         for v in graph.group1.values():
             for w in graph.group2.values():
-                if not self.vertices[v.identifier] in self.vertices[w.identifier].neighbours:
+                if not self.vertices[v.identifier].identifier in self.vertices[w.identifier].neighbours:
                     graph.connect(v, w)
 
         return graph
@@ -89,11 +89,13 @@ class Bipartite(Graph):
             graph.add_vertex(vertex, group=2)
 
         # Add random edges between groups
+        group1 = list(graph.group1.values())
+        group2 = list(graph.group2.values())
         for i in range(nr_edges):
             while 1:
-                v = choice(graph.group1)
-                w = choice(graph.group2)
-                if not w in v.neighbours:
+                v = choice(group1)
+                w = choice(group2)
+                if not w.identifier in v.neighbours:
                     break
             graph.connect(v, w)
 

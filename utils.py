@@ -36,6 +36,13 @@ class DictChain:
         """Return sum of all lengths."""
         return sum(len(d) for d in self.dicts)
 
+    def __contains__(self, thing):
+        """Return True of any dict contains thing."""
+        for d in self.dicts:
+            if thing in d:
+                return True
+        return False
+
     def keys(self):
         return itertools.chain.from_iterable(d.keys() for d in self.dicts)
 
@@ -45,14 +52,4 @@ class DictChain:
     def items(self):
         return itertools.chain.from_iterable(d.items() for d in self.dicts)
 
-d1 = {'ab' : 2}
-d2 = {'cd' : 5}
-d3 = DictChain(d1, d2)
-
-for i in d3.keys():
-    print(i)
-for i in d3.values():
-    print(i)
-for i in d3.items():
-    print(i)
 
