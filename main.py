@@ -1,5 +1,5 @@
 from PIL import Image
-from random import randint
+from random import randint, sample
 
 from plot import plot_bipartite_graph, plot_graph
 from bipartite import Bipartite, Graph
@@ -74,14 +74,16 @@ def mis_bipartite_complement():
         #))
 
 
-graph = Bipartite.generate_random(10, 10)
-complement = graph.bipartite_complement()
+graph = Graph.generate_random(10, 10)
 #complement = graph.complement()
-
+complement = graph.subgraph(sample(list(graph.vertices.values()), 6))
+#graph = Bipartite.generate_random(10, 10)
 #graph = ConvexBipartite.generate_random(10, 10)
+#complement = graph.bipartite_complement()
+
 #assert graph.verify_convexity()
 size = (512, 512)
 im = Image.new('RGB', size, 'white')
-plot_bipartite_graph(im, graph, color=(178, 0, 0))
-plot_bipartite_graph(im, complement, color=(0, 178, 0))
+plot_graph(im, graph, color=(178, 0, 0))
+plot_graph(im, complement, color=(0, 178, 0))
 im.save('output/test.png', 'png')
