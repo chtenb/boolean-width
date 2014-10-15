@@ -1,5 +1,4 @@
-from graph import Graph, Vertex
-from itertools import chain
+from graph import Graph, Vertex, VertexSet
 from random import randint, choice
 from utils import DictChain
 
@@ -9,8 +8,8 @@ class Bipartite(Graph):
     def __init__(self):
         Graph.__init__(self)
 
-        self.group1 = {}
-        self.group2 = {}
+        self.group1 = VertexSet()
+        self.group2 = VertexSet()
 
     @property
     def vertices(self):
@@ -23,22 +22,22 @@ class Bipartite(Graph):
         """Add a new vertex to the graph."""
         if not isinstance(vertex, Vertex):
             raise ValueError
-        if not vertex.identifier not in self.vertices:
+        if not vertex not in self.vertices:
             raise ValueError
 
 
         if group == 1:
-            self.group1[vertex.identifier] = vertex
+            self.group1.add(vertex)
         elif group == 2:
-            self.group2[vertex.identifier] = vertex
+            self.group2.add(vertex)
         else:
             raise ValueError
 
     def connect(self, v, w):
         """Connect two vertices."""
-        if not ((v.identifier in self.group1 and w.identifier in self.group2)
+        if not ((v in self.group1 and w in self.group2)
                 or
-                (v.identifier in self.group2 and w.identifier in self.group1)):
+                (v in self.group2 and w in self.group1)):
             raise ValueError
 
         Graph.connect(self, v, w)
@@ -50,16 +49,16 @@ class Bipartite(Graph):
         """Construct a graph representing the bipartite complement of self."""
         graph = Bipartite()
 
-        for v in self.group1.values():
+        for v in self.group1:
             v_new = Vertex(v.identifier)
             graph.add_vertex(v_new, group=1)
-        for v in self.group2.values():
+        for v in self.group2:
             v_new = Vertex(v.identifier)
             graph.add_vertex(v_new, group=2)
 
-        for v in graph.group1.values():
-            for w in graph.group2.values():
-                if not self.vertices[v.identifier].identifier in self.vertices[w.identifier].neighbours:
+        for v in graph.group1:
+            for w in graph.group2:
+                if not self.vertices[v.identifier] in self.vertices[w.identifier].neighbours:
                     graph.connect(v, w)
 
         return graph
@@ -95,7 +94,7 @@ class Bipartite(Graph):
             while 1:
                 v = choice(group1)
                 w = choice(group2)
-                if not w.identifier in v.neighbours:
+                if not w in v.neighbours:
                     break
             graph.connect(v, w)
 
