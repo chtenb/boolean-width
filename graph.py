@@ -1,4 +1,5 @@
 from random import choice
+import pickle
 
 
 class Vertex:
@@ -82,6 +83,20 @@ class Graph:
         self._vertices = VertexSet()
         # Set of edges
         self._edges = set()
+
+    def save(self, filename):
+        with open(filename, 'wb') as file:
+            pickle.dump(self, file)
+
+    @classmethod
+    def load(cls, filename):
+        with open(filename, 'rb') as file:
+            graph = pickle.load(file)
+            if not isinstance(graph, cls):
+                raise TypeError(
+                    'File {} does not contain a graph of class {}'.format(filename, cls)
+                )
+            return graph
 
     @property
     def vertices(self):
