@@ -5,9 +5,9 @@ from itertools import combinations
 
 
 def cutsets(vertices):
-    for k in range(len(vertices) + 1):
-        yield from (VertexSet(subset, hashcode=i)
-                    for i, subset in enumerate(combinations(vertices, k)))
+    """Return a subvertexsets except the empty and the entire set."""
+    for k in range(1, len(vertices)):
+        yield from (VertexSet(subset) for subset in combinations(vertices, k))
 
 
 def cut(graph, vertices):
@@ -41,6 +41,19 @@ def booleanwidth(graph):
     for subset in cutsets(graph.vertices):
         booldim[subset] = len(list(bron_kerbosch_mis(cut(graph, subset))))
 
-    assert len(booldim) == 2 ** len(graph.vertices)
+    assert len(booldim) == 2 ** len(graph.vertices) - 2
 
-    return booldim
+    # For a fast shortcut we explicitly have hashes as keys
+    boolwidth = {}
+    for v in graph.vertices:
+        vset = VertexSet([v])
+        boolwidth[hash(vset)] = booldim[vset]
+
+    for k in range(2, len(graph.vertices) + 1):
+        for subset in combinations(graph.vertices, k):
+            A = VertexSet(subset)
+            boolwidth[hash(A)] = min(max(booldim[B], boolwidth[hash(B)],
+                                         boolwidth[hash(A) - hash(B)])
+                                     for B in cutsets(A))
+
+    return boolwidth[hash(graph.vertices)]

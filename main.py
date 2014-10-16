@@ -4,17 +4,20 @@ from plot import plot_bipartite_graph, plot_graph
 from bipartite import Bipartite, Graph
 from convexbipartite import ConvexBipartite
 
-from booleanwidth import booleanwidth
+from booleanwidth import booleanwidth, cut
+from graph import VertexSet
 
-#mis_bipartite_complement()
+# mis_bipartite_complement()
 #graph = Bipartite.load('output/10,10.graph')
 
 
 graph = Graph.generate_random(9, 10)
-print(booleanwidth(graph))
+subset = {graph.vertices[i] for i in range(5)}
+graph = cut(graph, VertexSet(subset))
+# print(booleanwidth(graph))
 #vs = set(v for v in graph.vertices)
 #vs = set(graph.vertices)
-#print(vs)
+# print(vs)
 #complement = graph.complement()
 #complement = graph.subgraph(sample(list(graph.vertices.values()), 7))
 #graph = Bipartite.generate_random(10, 10)
@@ -23,7 +26,7 @@ print(booleanwidth(graph))
 
 size = (512, 512)
 im = Image.new('RGB', size, 'white')
-plot_graph(im, graph, color=(178, 0, 0))
-#plot_bipartite_graph(im, graph, color=(178, 0, 0))
+#plot_graph(im, graph, color=(178, 0, 0))
+plot_bipartite_graph(im, graph, color=(178, 0, 0))
 #plot_graph(im, complement, color=(0, 178, 0))
 im.save('output/test.png', 'png')
