@@ -2,13 +2,12 @@ import itertools
 
 
 def powerlist(l):
-    result = []
     for k in range(len(l)):
-        result.append(itertools.combinations(l, k))
+        yield from itertools.combinations(l, k)
 
-    return itertools.chain.from_iterable(result)
 
 class DictChain:
+
     def __init__(self, *dicts):
         self.dicts = dicts
 
@@ -17,16 +16,6 @@ class DictChain:
         for d in self.dicts:
             try:
                 return d[index]
-            except KeyError:
-                pass
-
-        raise KeyError
-
-    def __delitem__(self, index):
-        """Delete all occurrances of index."""
-        for d in self.dicts:
-            try:
-                del d[index]
             except KeyError:
                 pass
 
@@ -57,5 +46,3 @@ class DictChain:
 
     def items(self):
         return itertools.chain.from_iterable(d.items() for d in self.dicts)
-
-

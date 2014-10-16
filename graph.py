@@ -62,8 +62,19 @@ class VertexSet(dict):
     vertices.
     """
 
-    def __init__(self, *args):
-        dict.__init__(self, args)
+    def __init__(self, vertices=None, hashcode=0):
+        self.hashcode = hashcode
+        vertices = vertices or {}
+        dict.__init__(self, {v.identifier : v for v in vertices})
+
+    def __repr__(self):
+        return 'VertexSet({})'.format(self.hashcode)
+
+    def __str__(self):
+        return str(self)
+
+    def __unicode__(self):
+        pass
 
     def __contains__(self, vertex):
         return dict.__contains__(self, vertex.identifier)
@@ -71,6 +82,9 @@ class VertexSet(dict):
     def __iter__(self):
         for v in self.values():
             yield v
+
+    def __hash__(self):
+        return self.hashcode
 
     def add(self, vertex):
         self[vertex.identifier] = vertex
