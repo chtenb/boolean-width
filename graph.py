@@ -54,18 +54,6 @@ class Edge:
             return self.w
         raise IndexError
 
-primes = [
-    2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43,
-    47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101,
-    103, 107, 109, 113, 127, 131, 137, 139, 149, 151,
-    157, 163, 167, 173, 179, 181, 191, 193, 197, 199,
-    211, 223, 227, 229, 233, 239, 241, 251, 257, 263,
-    269, 271, 277, 281, 283, 293, 307, 311, 313, 317,
-    331, 337, 347, 349, 353, 359, 367, 373, 379, 383,
-    389, 397, 401, 409, 419, 421, 431, 433, 439, 443,
-    449, 457, 461, 463, 467, 479, 487, 491, 499
-]
-
 
 class VertexSet(dict):
 
@@ -84,9 +72,6 @@ class VertexSet(dict):
     def __str__(self):
         return str(self)
 
-    def __unicode__(self):
-        pass
-
     def __contains__(self, vertex):
         return dict.__contains__(self, vertex.identifier)
 
@@ -104,13 +89,44 @@ class VertexSet(dict):
         self[vertex.identifier] = vertex
 
 
+class EdgeSet(dict):
+
+    """
+    A edgeset is just a dict with some modifications to make it work easier with edges.
+    """
+
+    def __init__(self, edges=None):
+        edges = edges or {}
+        dict.__init__(self, {hash(e): e for e in edges})
+
+    def __repr__(self):
+        return 'EdgeSet({})'.format(hash(self))
+
+    def __str__(self):
+        return str(self)
+
+    def __contains__(self, edge):
+        return dict.__contains__(self, hash(edge))
+
+    def __iter__(self):
+        for e in self.values():
+            yield e
+
+    def __hash__(self):
+        return sum(2 ** hash(e) for e in self)
+
+    def add(self, edge):
+        if edge in self:
+            raise ValueError('EdgeSet already contains a edge with hash {}'
+                             .format(hash(edge)))
+        self[hash(edge)] = edge
+
+
 class Graph:
 
     def __init__(self):
-        # Dictionary from identifiers to vertices
         self._vertices = VertexSet()
-        # Set of edges
-        self._edges = set()
+        self._edges = EdgeSet()
 
     def save(self, filename):
         with open(filename, 'wb') as file:

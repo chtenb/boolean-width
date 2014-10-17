@@ -25,6 +25,7 @@ def cut(graph, vertices):
         new_v = Vertex(v.identifier)
         result.add_vertex(new_v, group=2)
 
+    # TODO: make sure this works
     for e in graph.edges:
         if (e.v in vertices and e.w in complement or
                 e.w in vertices and e.v in complement):
