@@ -18,7 +18,7 @@ class Vertex:
         return self.identifier
 
     def __str__(self):
-        return 'vertex {}: {}'.format(self.identifier, self.neighbours)
+        return 'vertex {}: {}'.format(self.identifier, repr(self.neighbours))
 
     def add_neighbour(self, neighbour):
         """Add a neighbour."""
@@ -45,7 +45,7 @@ class Edge:
         return (2 ** self.v.identifier) * (3 ** self.w.identifier)
 
     def __str__(self):
-        return repr(self)
+        return dict.__str__(self)
 
     def __getitem__(self, index):
         if index == 0:
@@ -70,7 +70,7 @@ class VertexSet(dict):
         return 'VertexSet({})'.format(hash(self))
 
     def __str__(self):
-        return str(self)
+        return dict.__repr__(self)
 
     def __contains__(self, vertex):
         return dict.__contains__(self, vertex.identifier)
@@ -87,6 +87,9 @@ class VertexSet(dict):
             raise ValueError('VertexSet already contains a vertex with identifier {}'
                              .format(vertex.identifier))
         self[vertex.identifier] = vertex
+
+    def minus(self, vset):
+        return VertexSet(value for value in self if value not in vset)
 
 
 class EdgeSet(dict):
@@ -128,19 +131,19 @@ class Graph:
         self._vertices = VertexSet()
         self._edges = EdgeSet()
 
-    def save(self, filename):
-        with open(filename, 'wb') as file:
-            pickle.dump(self, file)
+    def __str__(self):
+        return 'vertices: {}, edges: {}'.format(list(self.vertices), list(self.edges))
 
-    @classmethod
-    def load(cls, filename):
-        with open(filename, 'rb') as file:
-            graph = pickle.load(file)
-            if not isinstance(graph, cls):
-                raise TypeError(
-                    'File {} does not contain a graph of class {}'.format(filename, cls)
-                )
-            return graph
+    def __repr__(self):
+        return 'vertices: {}, edges: {}'.format(list(self.vertices), list(self.edges))
+
+    def save(self, filename):
+        with open(filename, 'w') as f:
+            f.write(repr(self))
+
+    def load(self, filename):
+        with open(filename, 'r') as f:
+            pass
 
     @property
     def vertices(self):
@@ -152,9 +155,6 @@ class Graph:
 
     def count_vertices(self):
         return len(self.vertices)
-
-    def __str__(self):
-        return 'vertices: {}, edges: {}'.format(list(self.vertices), list(self.edges))
 
     def add_vertex(self, v):
         """Add a new vertex to the graph."""

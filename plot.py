@@ -73,4 +73,7 @@ def plot_bipartite_graph(im, graph, color=128):
     for e in graph.edges:
         i = e.v.identifier
         j = e.w.identifier
-        draw.line([vertexcoords1[i], vertexcoords2[j]], fill=color)
+        try:
+            draw.line([vertexcoords1[i], vertexcoords2[j]], fill=color)
+        except KeyError:
+            draw.line([vertexcoords1[j], vertexcoords2[i]], fill=color)
