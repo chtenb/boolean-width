@@ -1,6 +1,7 @@
 from mis import bron_kerbosch_mis
 from bipartite import Bipartite
-from graph import Vertex, VertexSet
+from graph import Vertex
+from sets import VertexSet, VertexBitSet
 from itertools import combinations
 
 
@@ -8,6 +9,12 @@ def cutsets(vertices):
     """Return a subvertexsets except the empty and the entire set."""
     for k in range(1, len(vertices)):
         yield from (VertexSet(subset) for subset in combinations(vertices, k))
+
+
+def cutbitsets(vertices):
+    """Return a subvertexbitsets except the empty and the entire set."""
+    for k in range(1, len(vertices)):
+        yield from (VertexBitSet(subset) for subset in combinations(vertices, k))
 
 
 def cut(graph, vertices):
@@ -52,15 +59,15 @@ def booleanwidth(graph):
     # For a fast shortcut we explicitly have hashes as keys
     boolwidth = {}
     for v in graph.vertices:
-        vset = VertexSet([v])
-        boolwidth[hash(vset)] = 2  # booldim[hash(vset)]
+        vbitset = VertexBitSet([v])
+        boolwidth[vbitset] = 2  # booldim[hash(vset)]
 
     for k in range(2, len(graph.vertices) + 1):
         for subset in combinations(graph.vertices, k):
-            A = VertexSet(subset)
-            boolwidth[hash(A)] = min(max(booldim[hash(B)], booldim[hash(A) - hash(B)],
-                                         boolwidth[hash(B)], boolwidth[hash(A) - hash(B)])
-                                     for B in cutsets(A))
+            A = VertexBitSet(subset)
+            boolwidth[A] = min(max(booldim[B], booldim[A - B],
+                                   boolwidth[B], boolwidth[A - B])
+                               for B in cutbitsets(subset))
     # Reconstruct decomposition tree
     booleanwidth_decomposition(boolwidth, graph.vertices)
 
@@ -69,15 +76,15 @@ def booleanwidth(graph):
     return boolwidth[hash(graph.vertices)]
 
 
-def booleanwidth_decomposition(boolwidth, vset):
-    bound = boolwidth[hash(vset)]
-    A = vset
+def booleanwidth_decomposition(boolwidth, vbitset):
+    bound = boolwidth[vbitset]
+    A = vbitset
     if len(A) > 1:
         for B in cutsets(A):
-            if boolwidth[hash(B)] <= bound:
+            if boolwidth[B] <= bound:
                 yield B
                 booleanwidth_decomposition(boolwidth, B)
-                booleanwidth_decomposition(boolwidth, A.minus(B))
+                booleanwidth_decomposition(boolwidth, A - B)
                 break
 
 
@@ -106,6 +113,7 @@ def booleancost(graph):
 
 
 def booleancost_decomposition(boolcost, vset):
+    # TODO: make this work correctly
     cost = boolcost[hash(vset)]
     A = vset
     if len(A) > 1:

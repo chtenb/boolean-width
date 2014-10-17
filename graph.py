@@ -1,5 +1,5 @@
 from random import choice
-import pickle
+from sets import VertexSet, EdgeSet
 
 
 class Vertex:
@@ -54,75 +54,6 @@ class Edge:
             return self.w
         raise IndexError
 
-
-class VertexSet(dict):
-
-    """
-    A vertexset is just a dict with some modifications to make it work easier with
-    vertices.
-    """
-
-    def __init__(self, vertices=None):
-        vertices = vertices or {}
-        dict.__init__(self, {v.identifier: v for v in vertices})
-
-    def __repr__(self):
-        return 'VertexSet({})'.format(hash(self))
-
-    def __str__(self):
-        return dict.__repr__(self)
-
-    def __contains__(self, vertex):
-        return dict.__contains__(self, vertex.identifier)
-
-    def __iter__(self):
-        for v in self.values():
-            yield v
-
-    def __hash__(self):
-        return sum(2 ** v.identifier for v in self)
-
-    def add(self, vertex):
-        if vertex in self:
-            raise ValueError('VertexSet already contains a vertex with identifier {}'
-                             .format(vertex.identifier))
-        self[vertex.identifier] = vertex
-
-    def minus(self, vset):
-        return VertexSet(value for value in self if value not in vset)
-
-
-class EdgeSet(dict):
-
-    """
-    A edgeset is just a dict with some modifications to make it work easier with edges.
-    """
-
-    def __init__(self, edges=None):
-        edges = edges or {}
-        dict.__init__(self, {hash(e): e for e in edges})
-
-    def __repr__(self):
-        return 'EdgeSet({})'.format(hash(self))
-
-    def __str__(self):
-        return str(self)
-
-    def __contains__(self, edge):
-        return dict.__contains__(self, hash(edge))
-
-    def __iter__(self):
-        for e in self.values():
-            yield e
-
-    def __hash__(self):
-        return sum(2 ** hash(e) for e in self)
-
-    def add(self, edge):
-        if edge in self:
-            raise ValueError('EdgeSet already contains a edge with hash {}'
-                             .format(hash(edge)))
-        self[hash(edge)] = edge
 
 
 class Graph:
