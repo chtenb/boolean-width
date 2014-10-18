@@ -12,7 +12,7 @@ from sets import VertexSet
 #graph = Bipartite.load('output/10,10.graph')
 
 
-graph = Graph.generate_random(11, 20)
+graph = Graph.generate_random(7, 10)
 #graph = Bipartite.generate_random(10, 10)
 #subset = VertexSet(graph.vertices[i] for i in range(1))
 #subgraph = cut(graph, subset)

@@ -79,9 +79,12 @@ class VertexBitSet(int):
     vertices.
     """
 
-    def __new__(cls, vertices):
-        i = sum(2 ** v.identifier for v in vertices)
-        return int.__new__(cls, i)
+    def __new__(cls, arg):
+        if type(arg) == int:
+            return int.__new__(cls, arg)
+        else:
+            i = sum(2 ** v.identifier for v in arg)
+            return int.__new__(cls, i)
 
     def __repr__(self):
         return 'VertexBitSet({})'.format(int.__repr__(self))
@@ -90,7 +93,7 @@ class VertexBitSet(int):
         return repr(self)
 
     def __contains__(self, vertex):
-        return self & 2 ** vertex.identifier != 0
+        return self & (2 ** vertex.identifier) != 0
 
     def __iter__(self):
         # TODO
@@ -99,12 +102,42 @@ class VertexBitSet(int):
     def __len__(self):
         sum(int(char) for char in bin(self)[2:])
 
-    #def union(self, vbitset):
-        #return self | vbitset
+    def __and__(self, other):
+        return VertexBitSet(int.__and__(self, other))
 
-    #def intersection(self, vbitset):
-        #return self & vbitset
+    def __or__(self, other):
+        return VertexBitSet(int.__and__(self, other))
 
-    def minus(self, vbitset):
-        return self - (self & vbitset)
+    def __xor__(self, other):
+        return VertexBitSet(int.__and__(self, other))
+
+    def __sub__(self, other):
+        return VertexBitSet(int.__sub__(self, (self & other)))
+
+    def __add__(self, other):
+        return NotImplemented
+
+    def __mul__(self, other):
+        return NotImplemented
+
+    def __truediv__(self, other):
+        return NotImplemented
+
+    def __floordiv__(self, other):
+        return NotImplemented
+
+    def __divmod__(self, other):
+        return NotImplemented
+
+    def __mod__(self, other):
+        return NotImplemented
+
+    def __pow__(self, other):
+        return NotImplemented
+
+    def __lshift__(self, other):
+        return NotImplemented
+
+    def __rshift__(self, other):
+        return NotImplemented
 

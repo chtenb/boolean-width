@@ -53,39 +53,47 @@ def booleandim(graph):
     return booldim
 
 
-def booleanwidth(graph):
+def boolwidthtable(graph):
     booldim = booleandim(graph)
 
-    # For a fast shortcut we explicitly have hashes as keys
-    boolwidth = {}
+    bwtable = {}
     for v in graph.vertices:
         vbitset = VertexBitSet([v])
-        boolwidth[vbitset] = 2  # booldim[hash(vset)]
+        bwtable[vbitset] = 2  # booldim[hash(vset)]
 
     for k in range(2, len(graph.vertices) + 1):
         for subset in combinations(graph.vertices, k):
             A = VertexBitSet(subset)
-            boolwidth[A] = min(max(booldim[B], booldim[A - B],
-                                   boolwidth[B], boolwidth[A - B])
-                               for B in cutbitsets(subset))
-    # Reconstruct decomposition tree
-    booleanwidth_decomposition(boolwidth, graph.vertices)
+            bwtable[A] = min(max(booldim[B], booldim[A - B],
+                                 bwtable[B], bwtable[A - B])
+                             for B in cutbitsets(subset))
 
     # print(booldim.values())
     # print(boolwidth.values())
-    return boolwidth[hash(graph.vertices)]
+    return bwtable
 
 
-def booleanwidth_decomposition(boolwidth, vbitset):
-    bound = boolwidth[vbitset]
+def booleanwidth_decomposition(bwtable, vbitset):
+    try:
+        bound = bwtable[vbitset]
+    except:
+        print(repr(vbitset))
+        print(bwtable)
+        raise
     A = vbitset
     if len(A) > 1:
-        for B in cutsets(A):
-            if boolwidth[B] <= bound:
+        for B in cutbitsets(A):
+            if bwtable[B] <= bound:
                 yield B
-                booleanwidth_decomposition(boolwidth, B)
-                booleanwidth_decomposition(boolwidth, A - B)
+                booleanwidth_decomposition(bwtable, B)
+                booleanwidth_decomposition(bwtable, A - B)
                 break
+
+
+def booleanwidth(graph):
+    bwtable = boolwidthtable(graph)
+    return (bwtable[VertexBitSet(graph.vertices)],
+            list(booleanwidth_decomposition(bwtable, graph.vertices)))
 
 
 def booleancost(graph):
@@ -94,32 +102,32 @@ def booleancost(graph):
     # For a fast shortcut we explicitly have hashes as keys
     boolcost = {}
     for v in graph.vertices:
-        vset = VertexSet([v])
-        boolcost[hash(vset)] = 2  # booldim[hash(vset)]
+        vbitset = VertexBitSet([v])
+        boolcost[vbitset] = 2  # booldim[hash(vset)]
 
     for k in range(2, len(graph.vertices) + 1):
         for subset in combinations(graph.vertices, k):
-            A = VertexSet(subset)
-            boolcost[hash(A)] = min(booldim[hash(B)] + booldim[hash(A) - hash(B)] +
-                                    boolcost[hash(B)] + boolcost[hash(A) - hash(B)]
-                                    for B in cutsets(A))
+            A = VertexBitSet(subset)
+            boolcost[A] = min(booldim[B] + booldim[A - B] +
+                              boolcost[B] + boolcost[A - B]
+                              for B in cutsets(subset))
 
     # Reconstruct decomposition tree
     print(list(booleancost_decomposition(boolcost, graph.vertices)))
 
     # print(booldim.values())
     # print(boolcost.values())
-    return boolcost[hash(graph.vertices)]
+    return boolcost[VertexBitSet(graph.vertices)]
 
 
-def booleancost_decomposition(boolcost, vset):
+def booleancost_decomposition(boolcost, vbitset):
     # TODO: make this work correctly
-    cost = boolcost[hash(vset)]
-    A = vset
+    cost = boolcost[vbitset]
+    A = vbitset
     if len(A) > 1:
-        for B in cutsets(A):
-            if boolcost[hash(B)] == cost:
+        for B in cutbitsets(A):
+            if boolcost[B] == cost:
                 yield B
                 booleanwidth_decomposition(boolcost, B)
-                booleanwidth_decomposition(boolcost, A.minus(B))
+                booleanwidth_decomposition(boolcost, A - B)
                 break
