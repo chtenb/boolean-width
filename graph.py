@@ -1,12 +1,14 @@
 from random import choice
-from sets import VertexSet, EdgeSet
+from copy import deepcopy
+from sets import HashSet, BitSet, NeighbourhoodSet
 
 
 class Vertex:
 
     def __init__(self, identifier):
+        if not isinstance(identifier, int):
+            raise ValueError
         self.identifier = identifier
-        self.neighbours = VertexSet()
 
     def __repr__(self):
         return 'vertex ' + str(self.identifier)
@@ -15,16 +17,10 @@ class Vertex:
         return self.identifier == other.identifier
 
     def __hash__(self):
-        return self.identifier
+        return 2 ** self.identifier
 
     def __str__(self):
-        return 'vertex {}: {}'.format(self.identifier, repr(self.neighbours))
-
-    def add_neighbour(self, neighbour):
-        """Add a neighbour."""
-        assert isinstance(neighbour, Vertex)
-
-        self.neighbours[neighbour.identifier] = neighbour
+        return 'Vertex({})'.format(self.identifier)
 
 
 class Edge:
@@ -36,6 +32,9 @@ class Edge:
     def __repr__(self):
         return str((self.v, self.w))
 
+    def __str__(self):
+        return repr(self)
+
     def __eq__(self, other):
         return (self.v == other.v and self.w is other.w
                 or
@@ -43,9 +42,6 @@ class Edge:
 
     def __hash__(self):
         return (2 ** self.v.identifier) * (3 ** self.w.identifier)
-
-    def __str__(self):
-        return dict.__str__(self)
 
     def __getitem__(self, index):
         if index == 0:
@@ -59,8 +55,9 @@ class Edge:
 class Graph:
 
     def __init__(self):
-        self._vertices = VertexSet()
-        self._edges = EdgeSet()
+        self.vertices = HashSet()
+        self.edges = HashSet()
+        self.neighbourhoods = NeighbourhoodSet()
 
     def __str__(self):
         return 'vertices: {}, edges: {}'.format(list(self.vertices), list(self.edges))
@@ -69,23 +66,14 @@ class Graph:
         return 'vertices: {}, edges: {}'.format(list(self.vertices), list(self.edges))
 
     def save(self, filename):
+        # TODO
         with open(filename, 'w') as f:
             f.write(repr(self))
 
     def load(self, filename):
+        # TODO
         with open(filename, 'r') as f:
             pass
-
-    @property
-    def vertices(self):
-        return self._vertices
-
-    @property
-    def edges(self):
-        return self._edges
-
-    def count_vertices(self):
-        return len(self.vertices)
 
     def add_vertex(self, v):
         """Add a new vertex to the graph."""
@@ -102,23 +90,15 @@ class Graph:
             raise ValueError
         if not w in self.vertices:
             raise ValueError
-        if w in v.neighbours:
-            raise ValueError
-        if v in w.neighbours:
-            raise ValueError
 
         edge = Edge(v, w)
-        v.add_neighbour(w)
-        w.add_neighbour(v)
         self.edges.add(edge)
+        self.neighbourhoods.connect(v, w)
 
     def complement(self):
         """Construct a graph representing the complement of self."""
         graph = Graph()
-
-        for identifier in self.vertices.keys():
-            v_new = Vertex(identifier)
-            graph.add_vertex(v_new)
+        graph.vertices = deepcopy(self.vertices)
 
         for v in graph.vertices:
             for w in graph.vertices:

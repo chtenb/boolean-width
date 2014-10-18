@@ -14,7 +14,7 @@ def cutsets(vertices):
 def cutbitsets(vertices):
     """Return a subvertexbitsets except the empty and the entire set."""
     for k in range(1, len(vertices)):
-        yield from (VertexBitSet(subset) for subset in combinations(vertices, k))
+        yield from (VertexBitSet(sum(subset)) for subset in combinations(vertices, k))
 
 
 def cut(graph, vertices):
