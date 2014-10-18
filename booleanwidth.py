@@ -75,6 +75,7 @@ def boolwidthtable(graph):
 
 def booleanwidth_decomposition(bwtable, vbitset):
     try:
+        assert isinstance(vbitset, VertexBitSet)
         bound = bwtable[vbitset]
     except:
         print(repr(vbitset))
@@ -92,8 +93,8 @@ def booleanwidth_decomposition(bwtable, vbitset):
 
 def booleanwidth(graph):
     bwtable = boolwidthtable(graph)
-    return (bwtable[VertexBitSet(graph.vertices)],
-            list(booleanwidth_decomposition(bwtable, graph.vertices)))
+    vbitset = VertexBitSet(graph.vertices)
+    return (bwtable[vbitset], list(booleanwidth_decomposition(bwtable, vbitset)))
 
 
 def booleancost(graph):

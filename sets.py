@@ -2,6 +2,7 @@
 This module contains datastructures for vertex and edge sets.
 """
 
+
 class VertexSet(dict):
 
     """
@@ -96,23 +97,29 @@ class VertexBitSet(int):
         return self & (2 ** vertex.identifier) != 0
 
     def __iter__(self):
-        # TODO
-        return NotImplemented
+        n = self
+        while n:
+            b = n & (~n + 1)
+            yield b
+            n ^= b
 
     def __len__(self):
-        sum(int(char) for char in bin(self)[2:])
+        return len(list(self.__iter__()))
 
     def __and__(self, other):
         return VertexBitSet(int.__and__(self, other))
 
     def __or__(self, other):
-        return VertexBitSet(int.__and__(self, other))
+        return VertexBitSet(int.__or__(self, other))
 
     def __xor__(self, other):
-        return VertexBitSet(int.__and__(self, other))
+        return VertexBitSet(int.__xor__(self, other))
 
     def __sub__(self, other):
         return VertexBitSet(int.__sub__(self, (self & other)))
+
+    def __invert__(self):
+        return VertexBitSet(int.__invert__(self))
 
     def __add__(self, other):
         return NotImplemented
