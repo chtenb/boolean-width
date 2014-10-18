@@ -1,34 +1,50 @@
 """
 This module contains datastructures for vertex and edge sets.
 """
-from graph import Vertex
+
+
+class Vertex:
+
+    def __init__(self, identifier):
+        if not isinstance(identifier, int):
+            raise ValueError
+        self.identifier = identifier
+
+    def __repr__(self):
+        return 'Vertex({})'.format(self.identifier)
+
+    def __str__(self):
+        return repr(self)
+
+    def __eq__(self, other):
+        return self.identifier == other.identifier
 
 
 class NeighbourhoodSet:
 
     """
     Contains all neighbourhoods for all vertices.
-    Lookup is possible by vertex as well as hash.
+    Lookup is possible by vertex as well as bitset.
     """
 
     def __init__(self, vertices=None):
         vertices = vertices or []
-        self.neighbourhoods = {hash(v): BitSet(0) for v in vertices}
+        self.neighbourhoods = {BitSet(v): BitSet(0) for v in vertices}
 
     def __getitem__(self, vertex):
-        if isinstance(vertex, Vertex):
-            vertex = hash(vertex)
-        elif not isinstance(vertex, BitSet):
-            raise ValueError
+        if not isinstance(vertex, BitSet):
+            vertex = BitSet(vertex)
+
+        assert isinstance(vertex, BitSet)
 
         return self.neighbourhoods[vertex]
 
     def connect(self, v, w):
-        if isinstance(v, Vertex) and isinstance(w, Vertex):
-            v = hash(v)
-            w = hash(w)
-        elif not isinstance(v, BitSet) and isinstance(w, BitSet):
-            raise ValueError
+        if not isinstance(v, BitSet) and not isinstance(w, BitSet):
+            v = BitSet(v)
+            w = BitSet(w)
+
+        assert isinstance(v, BitSet) and isinstance(w, BitSet)
 
         if w in self.neighbourhoods[v]:
             raise ValueError('{} and {} already connected.'.format(v, w))
@@ -40,36 +56,35 @@ class NeighbourhoodSet:
         self.neighbourhoods[w] |= v
 
 
-class HashSet(dict):
+class VertexSet(dict):
 
     """
-    A hashset is just a dict with some modifications to make it work easier with
-    vertices and edges.
-    Values must be objects with a hash function.
+    A VertexSet is just a dict with some modifications to make it work easier with
+    vertices.
     """
 
-    def __init__(self, values=None):
-        values = values or {}
-        dict.__init__(self, {hash(v): v for v in values})
+    def __init__(self, vertices=None):
+        vertices = vertices or {}
+        dict.__init__(self, {BitSet(v): v for v in vertices})
 
     def __repr__(self):
-        return 'HashSet({})'.format(dict.__repr__(self))
+        return 'VertexSet({})'.format(dict.__repr__(self))
 
     def __str__(self):
         return repr(self)
 
-    def __contains__(self, values):
-        return dict.__contains__(self, hash(values))
+    def __contains__(self, vertex):
+        return dict.__contains__(self, BitSet(vertex))
 
     def __iter__(self):
         for v in self.values():
             yield v
 
-    def add(self, value):
-        if value in self:
-            raise ValueError('HashSet already contains item with hash {}'
-                             .format(hash(value)))
-        self[hash(value)] = value
+    def add(self, vertex):
+        if vertex in self:
+            raise ValueError('VertexSet already contains item with identifier {}'
+                             .format(vertex.identifier))
+        self[BitSet(vertex)] = vertex
 
 
 class BitSet(int):
@@ -81,8 +96,10 @@ class BitSet(int):
     def __new__(cls, arg):
         if isinstance(arg, int):
             return int.__new__(cls, arg)
+        elif isinstance(arg, Vertex):
+            return int.__new__(cls, 2 ** arg.identifier)
         else:
-            i = sum(hash(v) for v in arg)
+            i = sum(BitSet(v) for v in arg)
             return int.__new__(cls, i)
 
     def __repr__(self):
@@ -92,7 +109,7 @@ class BitSet(int):
         return repr(self)
 
     def __contains__(self, vertex):
-        return self & hash(vertex) != 0
+        return self & BitSet(vertex) != 0
 
     def __iter__(self):
         n = int(self)
@@ -116,8 +133,12 @@ class BitSet(int):
     def __sub__(self, other):
         return BitSet(int.__sub__(self, (self & other)))
 
+    def invert(self, length):
+        # TODO: optionally provide universe against which the complement is computed
+        return BitSet(int.__sub__(2 ** length, 1) - self)
+
     def __invert__(self):
-        return BitSet(int.__invert__(self))
+        raise NotImplementedError
 
     def __add__(self, other):
         raise NotImplementedError

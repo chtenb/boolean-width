@@ -1,4 +1,5 @@
-from graph import Graph, Vertex, VertexSet
+from graph import Graph, Vertex
+from sets import HashSet
 from random import randint, choice
 from utils import DictChain
 
@@ -8,8 +9,8 @@ class Bipartite(Graph):
     def __init__(self):
         Graph.__init__(self)
 
-        self.group1 = VertexSet()
-        self.group2 = VertexSet()
+        self.group1 = HashSet()
+        self.group2 = HashSet()
 
     @property
     def vertices(self):

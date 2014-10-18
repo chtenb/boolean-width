@@ -1,26 +1,21 @@
 from mis import bron_kerbosch_mis
 from bipartite import Bipartite
 from graph import Vertex
-from sets import VertexSet, VertexBitSet
+from sets import HashSet, BitSet
 from itertools import combinations
 
 
 def cutsets(vertices):
     """Return a subvertexsets except the empty and the entire set."""
     for k in range(1, len(vertices)):
-        yield from (VertexSet(subset) for subset in combinations(vertices, k))
-
-
-def cutbitsets(vertices):
-    """Return a subvertexbitsets except the empty and the entire set."""
-    for k in range(1, len(vertices)):
-        yield from (VertexBitSet(sum(subset)) for subset in combinations(vertices, k))
+        yield from (BitSet(subset) for subset in combinations(vertices, k))
 
 
 def cut(graph, vertices):
     """Return the bipartite graph of cut induced by given vertex subset."""
     result = Bipartite()
-    complement = VertexSet(v for v in graph.vertices if v not in vertices)
+    # TODO: this can be done in O(1) time
+    complement = BitSet(v for v in graph.vertices if v not in vertices)
 
     for v in vertices:
         assert v in graph.vertices
@@ -58,15 +53,15 @@ def boolwidthtable(graph):
 
     bwtable = {}
     for v in graph.vertices:
-        vbitset = VertexBitSet([v])
+        vbitset = BitSet([v])
         bwtable[vbitset] = 2  # booldim[hash(vset)]
 
     for k in range(2, len(graph.vertices) + 1):
         for subset in combinations(graph.vertices, k):
-            A = VertexBitSet(subset)
+            A = BitSet(subset)
             bwtable[A] = min(max(booldim[B], booldim[A - B],
                                  bwtable[B], bwtable[A - B])
-                             for B in cutbitsets(subset))
+                             for B in cutsets(subset))
 
     # print(booldim.values())
     # print(boolwidth.values())
@@ -75,7 +70,7 @@ def boolwidthtable(graph):
 
 def booleanwidth_decomposition(bwtable, vbitset):
     try:
-        assert isinstance(vbitset, VertexBitSet)
+        assert isinstance(vbitset, BitSet)
         bound = bwtable[vbitset]
     except:
         print(repr(vbitset))
@@ -83,7 +78,7 @@ def booleanwidth_decomposition(bwtable, vbitset):
         raise
     A = vbitset
     if len(A) > 1:
-        for B in cutbitsets(A):
+        for B in cutsets(A):
             if bwtable[B] <= bound:
                 yield B
                 booleanwidth_decomposition(bwtable, B)
@@ -93,7 +88,7 @@ def booleanwidth_decomposition(bwtable, vbitset):
 
 def booleanwidth(graph):
     bwtable = boolwidthtable(graph)
-    vbitset = VertexBitSet(graph.vertices)
+    vbitset = BitSet(graph.vertices)
     return (bwtable[vbitset], list(booleanwidth_decomposition(bwtable, vbitset)))
 
 
@@ -103,12 +98,12 @@ def booleancost(graph):
     # For a fast shortcut we explicitly have hashes as keys
     boolcost = {}
     for v in graph.vertices:
-        vbitset = VertexBitSet([v])
+        vbitset = BitSet([v])
         boolcost[vbitset] = 2  # booldim[hash(vset)]
 
     for k in range(2, len(graph.vertices) + 1):
         for subset in combinations(graph.vertices, k):
-            A = VertexBitSet(subset)
+            A = BitSet(subset)
             boolcost[A] = min(booldim[B] + booldim[A - B] +
                               boolcost[B] + boolcost[A - B]
                               for B in cutsets(subset))
@@ -118,7 +113,7 @@ def booleancost(graph):
 
     # print(booldim.values())
     # print(boolcost.values())
-    return boolcost[VertexBitSet(graph.vertices)]
+    return boolcost[BitSet(graph.vertices)]
 
 
 def booleancost_decomposition(boolcost, vbitset):
@@ -126,7 +121,7 @@ def booleancost_decomposition(boolcost, vbitset):
     cost = boolcost[vbitset]
     A = vbitset
     if len(A) > 1:
-        for B in cutbitsets(A):
+        for B in cutsets(A):
             if boolcost[B] == cost:
                 yield B
                 booleanwidth_decomposition(boolcost, B)

@@ -1,12 +1,11 @@
 from PIL import Image
 
 from plot import plot_bipartite_graph, plot_graph
-from bipartite import Bipartite
+#from bipartite import Bipartite
 from graph import Graph
-from convexbipartite import ConvexBipartite
+#from convexbipartite import ConvexBipartite
 
-from booleanwidth import booleanwidth, booleancost, cut
-from sets import VertexSet
+#from booleanwidth import booleanwidth, booleancost, cut
 
 # mis_bipartite_complement()
 #graph = Bipartite.load('output/10,10.graph')
@@ -16,7 +15,7 @@ graph = Graph.generate_random(7, 10)
 #graph = Bipartite.generate_random(10, 10)
 #subset = VertexSet(graph.vertices[i] for i in range(1))
 #subgraph = cut(graph, subset)
-print(booleanwidth(graph))
+#print(booleanwidth(graph))
 #print(booleancost(graph))
 #vs = set(v for v in graph.vertices)
 #vs = set(graph.vertices)

@@ -1,5 +1,6 @@
 from PIL import ImageDraw, ImageFont
 import math
+from vertex import BitSet
 
 
 def draw_vertex(draw, vertex, coords, color=128):
@@ -22,18 +23,18 @@ def plot_graph(im, graph, color=128):
 
     radius = min(size) / 2 - margin
     vertexcoords = {}
-    nr_vertices = graph.count_vertices()
+    nr_vertices = len(graph.vertices)
     for i, v in enumerate(graph.vertices.values()):
         r = i * 2 * math.pi / nr_vertices
-        vertexcoords[v.identifier] = (radius * (1 + math.cos(r)) + margin,
-                                      radius * (1 + math.sin(r)) + margin)
+        vertexcoords[BitSet(v)] = (radius * (1 + math.cos(r)) + margin,
+                                   radius * (1 + math.sin(r)) + margin)
 
-    for v in graph.vertices.values():
-        coords = vertexcoords[v.identifier]
-        draw_vertex(draw, v, coords, color)
+    for v in graph.vertices.keys():
+        coords = vertexcoords[v]
+        draw_vertex(draw, graph.vertices[v], coords, color)
 
-        for w in v.neighbours.values():
-            draw.line([vertexcoords[v.identifier], vertexcoords[w.identifier]],
+        for w in graph.neighbourhoods[v]:
+            draw.line([vertexcoords[v], vertexcoords[w]],
                       fill=color, width=1)
 
 
@@ -52,14 +53,14 @@ def plot_bipartite_graph(im, graph, color=128):
     size_group1 = len(graph.group1)
     interval_length = size[1] / size_group1
     for i, v in enumerate(graph.group1):
-        ycoord = i * interval_length  + interval_length / 2
+        ycoord = i * interval_length + interval_length / 2
         vertexcoords1[v.identifier] = (xcoord_group1, ycoord)
 
     vertexcoords2 = {}
     size_group2 = len(graph.group2)
     interval_length = size[1] / size_group2
     for i, v in enumerate(graph.group2):
-        ycoord = i * interval_length  + interval_length / 2
+        ycoord = i * interval_length + interval_length / 2
         vertexcoords2[v.identifier] = (xcoord_group2, ycoord)
 
     for v in graph.group1:
