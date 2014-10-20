@@ -1,7 +1,7 @@
 from mis import bron_kerbosch_mis
 from bipartite import Bipartite
 from graph import Vertex
-from sets import HashSet, BitSet
+from vertex import BitSet
 from itertools import combinations
 
 

@@ -5,7 +5,11 @@ from copy import deepcopy
 class Graph:
 
     def __init__(self, vertices=None):
-        self.vertices = VertexSet(vertices)
+        self._vertices = VertexSet(vertices)
+
+    @property
+    def vertices(self):
+        return self._vertices
 
     def __repr__(self):
         return 'vertices: {}'.format(list(self.vertices))
@@ -65,23 +69,14 @@ class Graph:
 
     def subgraph(self, vertices):
         """Return a graph which is the subgraph of self induced by given vertex subset."""
-        raise NotImplementedError
-        #graph = Graph()
-        # for v in vertices:
-        #assert v in self.vertices
-        #new_v = Vertex(v.identifier)
-        # graph.add_vertex(new_v)
-        # for w in v.neighbors:
-        # Only connect if w is already in the graph
-        # Otherwise it comes later
-        # try:
-        #new_w = graph.vertices[w.identifier]
-        # except KeyError:
-        # pass
-        # else:
-        #graph.connect(new_v, new_w)
+        vertices = deepcopy(list(self.vertices))
+        graph = Graph(vertices)
 
-        # return graph
+        vertices_bitset = BitSet(vertices)
+        for v in self.vertices:
+            v.neighbors &= vertices_bitset
+
+        return graph
 
     @staticmethod
     def generate_random(nr_vertices, nr_edges):

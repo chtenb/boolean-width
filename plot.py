@@ -24,7 +24,7 @@ def plot_graph(im, graph, color=128):
     radius = min(size) / 2 - margin
     vertexcoords = {}
     nr_vertices = len(graph.vertices)
-    for i, v in enumerate(graph.vertices.values()):
+    for i, v in enumerate(graph.vertices):
         r = i * 2 * math.pi / nr_vertices
         vertexcoords[BitSet(v)] = (radius * (1 + math.cos(r)) + margin,
                                    radius * (1 + math.sin(r)) + margin)
@@ -71,10 +71,13 @@ def plot_bipartite_graph(im, graph, color=128):
         coords = vertexcoords2[v.identifier]
         draw_vertex(draw, v, coords, color)
 
-    for e in graph.edges:
-        i = e.v.identifier
-        j = e.w.identifier
-        try:
-            draw.line([vertexcoords1[i], vertexcoords2[j]], fill=color)
-        except KeyError:
-            draw.line([vertexcoords1[j], vertexcoords2[i]], fill=color)
+    for v in graph.group1:
+        for b in v.neighbors:
+            w = graph.vertices[b]
+            i = v.identifier
+            j = w.identifier
+            try:
+                draw.line([vertexcoords1[i], vertexcoords2[j]], fill=color)
+            except KeyError:
+                draw.line([vertexcoords1[j], vertexcoords2[i]], fill=color)
+

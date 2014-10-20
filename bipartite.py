@@ -1,23 +1,20 @@
 from graph import Graph, Vertex
-from sets import HashSet
+from vertex import VertexSet
 from random import randint, choice
 from utils import DictChain
 
 
 class Bipartite(Graph):
 
-    def __init__(self):
+    def __init__(self, group1=None, group2=None):
         Graph.__init__(self)
 
-        self.group1 = HashSet()
-        self.group2 = HashSet()
+        self.group1 = VertexSet(group1)
+        self.group2 = VertexSet(group2)
 
     @property
     def vertices(self):
         return DictChain(self.group1, self.group2)
-
-    def count_vertices(self):
-        return len(self.group1) + len(self.group2)
 
     def add_vertex(self, vertex, group):
         """Add a new vertex to the graph."""
@@ -44,25 +41,26 @@ class Bipartite(Graph):
         Graph.connect(self, v, w)
 
     def subgraph(self, vertices):
-        return NotImplemented
+        raise NotImplementedError
 
     def bipartite_complement(self):
         """Construct a graph representing the bipartite complement of self."""
-        graph = Bipartite()
+        raise NotImplementedError
+        #graph = Bipartite()
 
-        for v in self.group1:
-            v_new = Vertex(v.identifier)
-            graph.add_vertex(v_new, group=1)
-        for v in self.group2:
-            v_new = Vertex(v.identifier)
-            graph.add_vertex(v_new, group=2)
+        #for v in self.group1:
+            #v_new = Vertex(v.identifier)
+            #graph.add_vertex(v_new, group=1)
+        #for v in self.group2:
+            #v_new = Vertex(v.identifier)
+            #graph.add_vertex(v_new, group=2)
 
-        for v in graph.group1:
-            for w in graph.group2:
-                if not self.vertices[v.identifier] in self.vertices[w.identifier].neighbors:
-                    graph.connect(v, w)
+        #for v in graph.group1:
+            #for w in graph.group2:
+                #if not self.vertices[v.identifier] in self.vertices[w.identifier].neighbors:
+                    #graph.connect(v, w)
 
-        return graph
+        #return graph
 
     @staticmethod
     def generate_random(nr_vertices, nr_edges):
@@ -77,21 +75,14 @@ class Bipartite(Graph):
             if size1 * size2 >= nr_edges:
                 break
 
-        graph = Bipartite()
-
         # For both groups create vertices
-        for i in range(size1):
-            vertex = Vertex(i)
-            graph.add_vertex(vertex, group=1)
+        group1 = [Vertex(i) for i in range(size1)]
+        group2 = [Vertex(size1 + i) for i in range(size2)]
 
-        for i in range(size2):
-            vertex = Vertex(size1 + i)
-            graph.add_vertex(vertex, group=2)
+        graph = Bipartite(group1, group2)
 
         # Add random edges between groups
-        group1 = list(graph.group1.values())
-        group2 = list(graph.group2.values())
-        for i in range(nr_edges):
+        for _ in range(nr_edges):
             while 1:
                 v = choice(group1)
                 w = choice(group2)
