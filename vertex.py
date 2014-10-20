@@ -1,5 +1,7 @@
 """
 This module contains datastructures for vertex and edge sets.
+We want to be indifferent whether a pointer to a vertex is supplied or a bitset
+representation.
 """
 
 
@@ -52,32 +54,37 @@ class VertexSet(dict):
         self[BitSet(vertex)] = vertex
 
 
-class BitSet(int):
+class BitSet:
 
     """
     A bitset is just an int with some modifications to make it work like a set.
     """
 
-    def __new__(cls, arg):
+    def __init__(self, arg):
         if isinstance(arg, int):
-            return int.__new__(cls, arg)
+            self.i = arg
         elif isinstance(arg, Vertex):
-            return int.__new__(cls, 2 ** arg.identifier)
+            self.i = 2 ** arg.identifier
         else:
-            i = sum(BitSet(v) for v in arg)
-            return int.__new__(cls, i)
+            self.i = sum(BitSet(v) for v in arg)
 
     def __repr__(self):
-        return 'BitSet({})'.format(int.__repr__(self))
+        return 'BitSet({})'.format(self.i)
 
     def __str__(self):
         return repr(self)
 
+    def __hash__(self):
+        return self.i
+
+    def __eq__(self, other):
+        return self.i == other.i
+
     def __contains__(self, vertex):
-        return self & BitSet(vertex) != 0
+        return self.i & BitSet(vertex).i != 0
 
     def __iter__(self):
-        n = int(self)
+        n = self.i
         while n:
             b = n & (~n + 1)
             yield BitSet(b)
@@ -87,47 +94,18 @@ class BitSet(int):
         return len(list(self.__iter__()))
 
     def __and__(self, other):
-        return BitSet(int.__and__(self, other))
+        return BitSet(self.i & other.i)
 
     def __or__(self, other):
-        return BitSet(int.__or__(self, other))
+        return BitSet(self.i | other.i)
 
     def __xor__(self, other):
-        return BitSet(int.__xor__(self, other))
+        return BitSet(self.i ^ other.i)
 
     def __sub__(self, other):
-        return BitSet(int.__sub__(self, (self & other)))
+        return BitSet(self.i - (self.i & other.i))
 
     def invert(self, length):
         # TODO: optionally provide universe against which the complement is computed
-        return BitSet(int.__sub__(2 ** length, 1) - self)
+        return BitSet(2 ** length - 1 - self.i)
 
-    def __invert__(self):
-        raise NotImplementedError
-
-    def __add__(self, other):
-        raise NotImplementedError
-
-    def __mul__(self, other):
-        raise NotImplementedError
-
-    def __truediv__(self, other):
-        raise NotImplementedError
-
-    def __floordiv__(self, other):
-        raise NotImplementedError
-
-    def __divmod__(self, other):
-        raise NotImplementedError
-
-    def __mod__(self, other):
-        raise NotImplementedError
-
-    def __pow__(self, other):
-        raise NotImplementedError
-
-    def __lshift__(self, other):
-        raise NotImplementedError
-
-    def __rshift__(self, other):
-        raise NotImplementedError
