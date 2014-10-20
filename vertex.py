@@ -42,6 +42,11 @@ class VertexSet(dict):
         return repr(self)
 
     def __contains__(self, vertex):
+        if isinstance(vertex, int):
+            for v in self:
+                if v.identifier == vertex:
+                    return True
+            return False
         return dict.__contains__(self, BitSet(vertex))
 
     def __iter__(self):

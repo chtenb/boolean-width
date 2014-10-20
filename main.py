@@ -11,14 +11,16 @@ from booleanwidth import booleanwidth#, booleancost, cut
 #graph = Bipartite.load('output/10,10.graph')
 
 
-graph = Graph.load('test.dgf')
+graph = Graph.load('input/test3.dgf')
 #graph = Graph.generate_random(7, 10)
 #subvertices = [graph.vertices[BitSet(2 ** i)] for i in range(4)]
 #subgraph = graph.subgraph(subvertices)
 #graph = Bipartite.generate_random(10, 10)
 #subset = VertexSet(graph.vertices[i] for i in range(1))
 #subgraph = cut(graph, subset)
-print(booleanwidth(graph))
+bw, decomposition = booleanwidth(graph)
+print('booleanwidth: {}'.format(bw))
+print('decomposition: {}'.format([str(graph[b]) for b in decomposition]))
 #print(booleancost(graph))
 #vs = set(v for v in graph.vertices)
 #vs = set(graph.vertices)

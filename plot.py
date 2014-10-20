@@ -24,7 +24,7 @@ def plot_graph(im, graph, color=128):
     radius = min(size) / 2 - margin
     vertexcoords = {}
     nr_vertices = len(graph.vertices)
-    for i, v in enumerate(graph.vertices):
+    for i, v in enumerate(sorted(graph.vertices, key=lambda v: v.identifier)):
         r = i * 2 * math.pi / nr_vertices
         vertexcoords[BitSet(v)] = (radius * (1 + math.cos(r)) + margin,
                                    radius * (1 + math.sin(r)) + margin)

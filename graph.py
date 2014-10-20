@@ -32,6 +32,7 @@ class Graph:
         with open(filename, 'r') as f:
             while 1:
                 line = f.readline()
+                print('Parsing `{}`'.format(line))
                 if line == '':
                     break
                 if line == '\n':
@@ -42,6 +43,10 @@ class Graph:
                     graph.add_vertex(v)
                 elif line[0] == 'e':
                     v, w = (int(i) for i in line[1:].split())
+                    if v not in graph.vertices:
+                        graph.add_vertex(Vertex(v))
+                    if w not in graph.vertices:
+                        graph.add_vertex(Vertex(w))
                     graph.connect(v, w)
         return graph
 
