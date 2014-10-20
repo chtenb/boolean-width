@@ -17,6 +17,9 @@ class Graph:
     def __str__(self):
         return repr(self)
 
+    def __getitem__(self, index):
+        return self.vertices[index]
+
     def save(self, filename):
         # TODO
         with open(filename, 'w') as f:
@@ -83,7 +86,7 @@ class Graph:
         if not nr_edges <= nr_vertices * (nr_vertices - 1) / 2:
             raise ValueError
 
-        vertices = [Vertex(i) for i in range(nr_vertices)]
+        vertices = [Vertex(i + 1) for i in range(nr_vertices)]
         graph = Graph(vertices)
 
         for _ in range(nr_edges):

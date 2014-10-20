@@ -10,6 +10,8 @@ class Vertex:
     def __init__(self, identifier):
         if not isinstance(identifier, int):
             raise ValueError
+        if identifier < 1:
+            raise ValueError
         self.identifier = identifier
         self.neighbors = BitSet(0)
 
@@ -47,6 +49,13 @@ class VertexSet(dict):
         for v in self.values():
             yield v
 
+    def __getitem__(self, bitset):
+        result = [dict.__getitem__(self, b) for b in bitset]
+        if len(result) == 1:
+            return result[0]
+        return result
+
+
     def add(self, vertex):
         if vertex in self:
             raise ValueError('VertexSet already contains item with identifier {}'
@@ -63,10 +72,14 @@ class BitSet:
     def __init__(self, arg):
         if isinstance(arg, int):
             self.i = arg
+        elif isinstance(arg, BitSet):
+            self.i = arg.i
         elif isinstance(arg, Vertex):
             self.i = 2 ** arg.identifier
         else:
-            self.i = sum(BitSet(v) for v in arg)
+            self.i = 0
+            for v in arg:
+                self.i |= BitSet(v).i
 
     def __repr__(self):
         return 'BitSet({})'.format(self.i)

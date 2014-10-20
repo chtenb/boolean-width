@@ -1,7 +1,10 @@
 """This module contains algorithms for computing the maximal independent sets."""
 
+from vertex import BitSet
+
 
 def bron_kerbosch_mc(graph):
+    # TODO: rewrite for bitsets
     """Compute all maximal cliques."""
     def recursion(include, rest, exclude):
         assert include or exclude or rest
@@ -29,24 +32,23 @@ def bron_kerbosch_mis(graph):
     """Compute all maximal independent sets."""
     def recursion(include, rest, exclude):
         assert include or exclude or rest
-        assert include.isdisjoint(rest)
-        assert include.isdisjoint(exclude)
-        assert rest.isdisjoint(exclude)
+        assert not include & rest
+        assert not include & exclude
+        assert not rest & exclude
 
         #print('{}, {}, {}'.format(include, rest, exclude))
 
         if not exclude and not rest:
             yield include
 
-        for v in list(rest):
-            assert not v in v.neighbors
-            yield from recursion(include.union({v}),
-                                 rest.difference(set(v.neighbors).union({v})),
-                                 exclude.difference(set(v.neighbors)))
-            rest.difference_update({v})
-            exclude.update({v})
+        for v in rest:
+            yield from recursion(include | v,
+                                 rest - (graph[v].neighbors | v),
+                                 exclude - graph[v].neighbors)
+            rest -= v
+            exclude |= v
 
-    yield from recursion(set(), set(graph.vertices), set())
+    yield from recursion(BitSet(0), BitSet(graph.vertices), BitSet(0))
 
 
 from random import randint
