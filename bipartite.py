@@ -76,8 +76,8 @@ class Bipartite(Graph):
                 break
 
         # For both groups create vertices
-        group1 = [Vertex(i + 1) for i in range(size1)]
-        group2 = [Vertex(size1 + i + 1) for i in range(size2)]
+        group1 = [Vertex(i) for i in range(size1)]
+        group2 = [Vertex(size1 + i) for i in range(size2)]
 
         graph = Bipartite(group1, group2)
 

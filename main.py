@@ -11,7 +11,8 @@ from booleanwidth import booleanwidth#, booleancost, cut
 #graph = Bipartite.load('output/10,10.graph')
 
 
-graph = Graph.generate_random(7, 10)
+graph = Graph.load('test.dgf')
+#graph = Graph.generate_random(7, 10)
 #subvertices = [graph.vertices[BitSet(2 ** i)] for i in range(4)]
 #subgraph = graph.subgraph(subvertices)
 #graph = Bipartite.generate_random(10, 10)

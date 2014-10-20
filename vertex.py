@@ -28,8 +28,7 @@ class Vertex:
 class VertexSet(dict):
 
     """
-    A VertexSet is just a dict with some modifications to make it work easier with
-    vertices.
+    A VertexSet is dict with some modifications to make it work easier with vertices.
     """
 
     def __init__(self, vertices=None):
@@ -49,11 +48,23 @@ class VertexSet(dict):
         for v in self.values():
             yield v
 
-    def __getitem__(self, bitset):
-        result = [dict.__getitem__(self, b) for b in bitset]
-        if len(result) == 1:
-            return result[0]
-        return result
+    def __getitem__(self, index):
+        """
+        Support access by identifier, and bitset representation.
+        If a bitset contains more vertices, return a list of vertices.
+        """
+        # Get by bitset representation
+        if isinstance(index, BitSet):
+            result = [dict.__getitem__(self, b) for b in index]
+            if len(result) == 1:
+                return result[0]
+            return result
+
+        # Get by identifier
+        if isinstance(index, int):
+            for v in self:
+                if v.identifier == index:
+                    return v
 
 
     def add(self, vertex):
@@ -66,7 +77,7 @@ class VertexSet(dict):
 class BitSet:
 
     """
-    A bitset is just an int with some modifications to make it work like a set.
+    A bitset wraps around an int with functionality to make it work like a set.
     """
 
     def __init__(self, arg):

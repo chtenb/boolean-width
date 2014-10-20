@@ -2,6 +2,7 @@ from random import sample
 from vertex import Vertex, VertexSet, BitSet
 from copy import deepcopy
 
+
 class Graph:
 
     def __init__(self, vertices=None):
@@ -25,10 +26,24 @@ class Graph:
         with open(filename, 'w') as f:
             f.write(repr(self))
 
-    def load(self, filename):
-        # TODO
+    @staticmethod
+    def load(filename):
+        graph = Graph()
         with open(filename, 'r') as f:
-            pass
+            while 1:
+                line = f.readline()
+                if line == '':
+                    break
+                if line == '\n':
+                    continue
+
+                if line[0] == 'n':
+                    v = Vertex(int(line[1:]))
+                    graph.add_vertex(v)
+                elif line[0] == 'e':
+                    v, w = (int(i) for i in line[1:].split())
+                    graph.connect(v, w)
+        return graph
 
     def add_vertex(self, v):
         """Add a new vertex to the graph."""
@@ -41,14 +56,15 @@ class Graph:
 
     def connect(self, v, w):
         """Connect two vertices."""
+        if (isinstance(v, BitSet) and isinstance(w, BitSet) or
+                (isinstance(v, int) and isinstance(w, int))):
+            v = self.vertices[v]
+            w = self.vertices[w]
+
         if not v in self.vertices:
             raise ValueError
         if not w in self.vertices:
             raise ValueError
-
-        if isinstance(v, BitSet) and isinstance(w, BitSet):
-            v = self.vertices[v]
-            w = self.vertices[w]
 
         if w in v.neighbors:
             raise ValueError('{} and {} already connected.'.format(v, w))
@@ -86,7 +102,7 @@ class Graph:
         if not nr_edges <= nr_vertices * (nr_vertices - 1) / 2:
             raise ValueError
 
-        vertices = [Vertex(i + 1) for i in range(nr_vertices)]
+        vertices = [Vertex(i) for i in range(nr_vertices)]
         graph = Graph(vertices)
 
         for _ in range(nr_edges):
