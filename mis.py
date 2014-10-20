@@ -15,10 +15,10 @@ def bron_kerbosch_mc(graph):
             yield include
 
         for v in list(rest):
-            assert not v in v.neighbours
+            assert not v in v.neighbors
             yield from recursion(include.union({v}),
-                                 rest.intersection(set(v.neighbours)),
-                                 exclude.intersection(set(v.neighbours)))
+                                 rest.intersection(set(v.neighbors)),
+                                 exclude.intersection(set(v.neighbors)))
             rest.difference_update({v})
             exclude.update({v})
 
@@ -39,10 +39,10 @@ def bron_kerbosch_mis(graph):
             yield include
 
         for v in list(rest):
-            assert not v in v.neighbours
+            assert not v in v.neighbors
             yield from recursion(include.union({v}),
-                                 rest.difference(set(v.neighbours).union({v})),
-                                 exclude.difference(set(v.neighbours)))
+                                 rest.difference(set(v.neighbors).union({v})),
+                                 exclude.difference(set(v.neighbors)))
             rest.difference_update({v})
             exclude.update({v})
 

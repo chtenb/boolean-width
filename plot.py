@@ -29,12 +29,12 @@ def plot_graph(im, graph, color=128):
         vertexcoords[BitSet(v)] = (radius * (1 + math.cos(r)) + margin,
                                    radius * (1 + math.sin(r)) + margin)
 
-    for v in graph.vertices.keys():
-        coords = vertexcoords[v]
-        draw_vertex(draw, graph.vertices[v], coords, color)
+    for h, v in graph.vertices.items():
+        coords = vertexcoords[h]
+        draw_vertex(draw, graph.vertices[h], coords, color)
 
-        for w in graph.neighbourhoods[v]:
-            draw.line([vertexcoords[v], vertexcoords[w]],
+        for w in v.neighbors:
+            draw.line([vertexcoords[h], vertexcoords[w]],
                       fill=color, width=1)
 
 

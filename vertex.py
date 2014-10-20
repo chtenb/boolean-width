@@ -9,6 +9,7 @@ class Vertex:
         if not isinstance(identifier, int):
             raise ValueError
         self.identifier = identifier
+        self.neighbors = BitSet(0)
 
     def __repr__(self):
         return 'Vertex({})'.format(self.identifier)
@@ -18,42 +19,6 @@ class Vertex:
 
     def __eq__(self, other):
         return self.identifier == other.identifier
-
-
-class NeighbourhoodSet:
-
-    """
-    Contains all neighbourhoods for all vertices.
-    Lookup is possible by vertex as well as bitset.
-    """
-
-    def __init__(self, vertices=None):
-        vertices = vertices or []
-        self.neighbourhoods = {BitSet(v): BitSet(0) for v in vertices}
-
-    def __getitem__(self, vertex):
-        if not isinstance(vertex, BitSet):
-            vertex = BitSet(vertex)
-
-        assert isinstance(vertex, BitSet)
-
-        return self.neighbourhoods[vertex]
-
-    def connect(self, v, w):
-        if not isinstance(v, BitSet) and not isinstance(w, BitSet):
-            v = BitSet(v)
-            w = BitSet(w)
-
-        assert isinstance(v, BitSet) and isinstance(w, BitSet)
-
-        if w in self.neighbourhoods[v]:
-            raise ValueError('{} and {} already connected.'.format(v, w))
-
-        # Only support undirected edges
-        assert not v in self.neighbourhoods[w]
-
-        self.neighbourhoods[v] |= w
-        self.neighbourhoods[w] |= v
 
 
 class VertexSet(dict):

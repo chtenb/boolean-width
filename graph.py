@@ -1,11 +1,11 @@
 from random import sample
-from vertex import Vertex, VertexSet, NeighbourhoodSet
+from vertex import Vertex, VertexSet, BitSet
+from copy import deepcopy
 
 class Graph:
 
     def __init__(self, vertices=None):
         self.vertices = VertexSet(vertices)
-        self.neighbourhoods = NeighbourhoodSet(vertices)
 
     def __repr__(self):
         return 'vertices: {}'.format(list(self.vertices))
@@ -39,16 +39,27 @@ class Graph:
         if not w in self.vertices:
             raise ValueError
 
-        self.neighbourhoods.connect(v, w)
+        if isinstance(v, BitSet) and isinstance(w, BitSet):
+            v = self.vertices[v]
+            w = self.vertices[w]
+
+        if w in v.neighbors:
+            raise ValueError('{} and {} already connected.'.format(v, w))
+
+        # Only support undirected edges
+        assert not v in w.neighbors
+
+        v.neighbors |= BitSet(w)
+        w.neighbors |= BitSet(v)
 
     def complement(self):
         """Construct a graph representing the complement of self."""
-        vertices = list(self.vertices)
+        vertices = deepcopy(list(self.vertices))
         graph = Graph(vertices)
 
         setlength = len(vertices)
-        for v, neighbourhood in self.neighbourhoods:
-            graph.neighbourhoods[v] = neighbourhood.invert(setlength)
+        for v in self.vertices:
+            v.neighbors = v.neighbors.invert(setlength)
 
         return graph
 
@@ -60,7 +71,7 @@ class Graph:
         #assert v in self.vertices
         #new_v = Vertex(v.identifier)
         # graph.add_vertex(new_v)
-        # for w in v.neighbours:
+        # for w in v.neighbors:
         # Only connect if w is already in the graph
         # Otherwise it comes later
         # try:
@@ -84,7 +95,7 @@ class Graph:
             while 1:
                 v, w = sample(vertices, 2)
                 # Don't connect vertices twice
-                if not w in graph.neighbourhoods[v]:
+                if not w in v.neighbors:
                     break
             graph.connect(v, w)
 

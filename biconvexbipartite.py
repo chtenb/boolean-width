@@ -12,7 +12,7 @@ class BiconvexBipartite(Bipartite):
         """Check that we are indeed biconvex."""
         def verify_group(group):
             for v in group:
-                ids = [w.identifier for w in v.neighbours]
+                ids = [w.identifier for w in v.neighbors]
                 ids.sort()
                 differences = diff(ids)
                 if differences.size > 0 and max(differences) > 1:

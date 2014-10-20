@@ -28,7 +28,7 @@ class ConvexBipartite(Bipartite):
     def verify_convexity(self):
         """Check that we are indeed convex."""
         for v in self.group2:
-            ids = [w.identifier for w in v.neighbours]
+            ids = [w.identifier for w in v.neighbors]
             ids.sort()
             differences = diff(ids)
             if differences.size > 0 and max(differences) > 1:
@@ -63,14 +63,14 @@ class ConvexBipartite(Bipartite):
             vertex = Vertex(size1 + i)
             graph.add_vertex(vertex, group=2)
 
-        # For each vertex in group2 we can determine the neighbourhood by
-        # a starting vertex and the length of the neighbourhood.
+        # For each vertex in group2 we can determine the neighborhood by
+        # a starting vertex and the length of the neighborhood.
         len_group1 = len(graph.group1)
-        neighbourhoodlengths = random_partition(nr_edges,
+        neighborhoodlengths = random_partition(nr_edges,
                                                 len(graph.group2),
                                                 len_group1)
         for i, v in enumerate(graph.group2):
-            length = neighbourhoodlengths[i]
+            length = neighborhoodlengths[i]
             start = randint(0, len_group1 - length)
             for j in range(start, start + length):
                 graph.connect(graph.group1[j], v)

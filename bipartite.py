@@ -59,7 +59,7 @@ class Bipartite(Graph):
 
         for v in graph.group1:
             for w in graph.group2:
-                if not self.vertices[v.identifier] in self.vertices[w.identifier].neighbours:
+                if not self.vertices[v.identifier] in self.vertices[w.identifier].neighbors:
                     graph.connect(v, w)
 
         return graph
@@ -95,7 +95,7 @@ class Bipartite(Graph):
             while 1:
                 v = choice(group1)
                 w = choice(group2)
-                if not w in v.neighbours:
+                if not w in v.neighbors:
                     break
             graph.connect(v, w)
 
