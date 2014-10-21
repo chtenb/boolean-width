@@ -6,6 +6,7 @@ from graph import Graph
 #from convexbipartite import ConvexBipartite
 
 from booleanwidth import booleanwidth  # , booleancost, cut
+from linearbooleanwidth import linearbooleanwidth  # , booleancost, cut
 
 # mis_bipartite_complement()
 #graph = Bipartite.load('output/10,10.graph')
@@ -18,7 +19,8 @@ graph = Graph.load('input/petersen.dgf')
 #graph = Bipartite.generate_random(10, 10)
 #subset = VertexSet(graph.vertices[i] for i in range(1))
 #subgraph = cut(graph, subset)
-bw, booldim, decomposition = booleanwidth(graph)
+bw, booldim, decomposition = linearbooleanwidth(graph)
+#bw, booldim, decomposition = booleanwidth(graph)
 print('booleanwidth: ' + str(bw))
 print('decomposition: ' + '\n'.join('({}, {}): {},{}'.format(
     graph[a], graph[b], booldim[a], booldim[b]) for a, b in decomposition))

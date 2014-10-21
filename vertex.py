@@ -10,7 +10,7 @@ class Vertex:
     def __init__(self, identifier):
         if not isinstance(identifier, int):
             raise ValueError
-        if identifier < 1:
+        if identifier < 0:
             raise ValueError
         self.identifier = identifier
         self.neighbors = BitSet(0)
@@ -134,7 +134,7 @@ class BitSet:
     def __sub__(self, other):
         return BitSet(self.i - (self.i & other.i))
 
-    def invert(self, length):
-        # TODO: optionally provide universe against which the complement is computed
-        return BitSet(2 ** length - 1 - self.i)
+    #def invert(self, length):
+        ## TODO: provide universe against which the complement is computed
+        #return BitSet(2 ** length - 1 - self.i)
 

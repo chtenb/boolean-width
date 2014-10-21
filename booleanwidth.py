@@ -48,6 +48,12 @@ def booleandim(graph):
 
     assert len(booldim) == 2 ** len(graph.vertices) - 2
 
+    # Verify symmetry
+    for subset in subsets(graph.vertices, 1, len(graph.vertices) - 1):
+        set1 = BitSet(subset)
+        set2 = BitSet(graph.vertices) - set1
+        assert booldim[set1] == booldim[set2]
+
     return booldim
 
 
