@@ -109,8 +109,8 @@ class BitSet:
     def __eq__(self, other):
         return self.i == other.i
 
-    def __contains__(self, vertex):
-        return self.i & BitSet(vertex).i != 0
+    def __contains__(self, other):
+        return self.i | BitSet(other).i == self.i
 
     def __iter__(self):
         n = self.i

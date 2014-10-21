@@ -32,7 +32,7 @@ class Graph:
         with open(filename, 'r') as f:
             while 1:
                 line = f.readline()
-                print('Parsing `{}`'.format(line))
+                print('Parsing `{}`'.format(line[:-1]))
                 if line == '':
                     break
                 if line == '\n':

@@ -5,23 +5,25 @@ from bipartite import Bipartite
 from graph import Graph
 #from convexbipartite import ConvexBipartite
 
-from booleanwidth import booleanwidth#, booleancost, cut
+from booleanwidth import booleanwidth  # , booleancost, cut
 
 # mis_bipartite_complement()
 #graph = Bipartite.load('output/10,10.graph')
 
 
-graph = Graph.load('input/test3.dgf')
+graph = Graph.load('input/petersen.dgf')
 #graph = Graph.generate_random(7, 10)
 #subvertices = [graph.vertices[BitSet(2 ** i)] for i in range(4)]
 #subgraph = graph.subgraph(subvertices)
 #graph = Bipartite.generate_random(10, 10)
 #subset = VertexSet(graph.vertices[i] for i in range(1))
 #subgraph = cut(graph, subset)
-bw, decomposition = booleanwidth(graph)
-print('booleanwidth: {}'.format(bw))
-print('decomposition: {}'.format([str(graph[b]) for b in decomposition]))
-#print(booleancost(graph))
+bw, booldim, decomposition = booleanwidth(graph)
+print('booleanwidth: ' + str(bw))
+print('decomposition: ' + '\n'.join('({}, {}): {},{}'.format(
+    graph[a], graph[b], booldim[a], booldim[b]) for a, b in decomposition))
+#print('booldim: ' + ''.join('{}: {}\n'.format(graph[b], booldim[b]) for a, b in decomposition))
+# print(booleancost(graph))
 #vs = set(v for v in graph.vertices)
 #vs = set(graph.vertices)
 # print(vs)
