@@ -13,6 +13,8 @@ def linearboolwidthtable(graph):
     for b in vertices:
         bwtable[b] = 2
 
+    print('Solving recurrence')
+
     for A in subbitsets(vertices, 2):
         bwtable[A] = min(max(booldim[B], booldim[A - B],
                              bwtable[B], bwtable[A - B])
@@ -43,4 +45,5 @@ def linearbooleanwidth_decomposition(bwtable, booldim, A, rec=0):
 def linearbooleanwidth(graph):
     bwtable, booldim = linearboolwidthtable(graph)
     vbitset = BitSet(graph.vertices)
+    print('Computing decomposition')
     return bwtable[vbitset], booldim, list(linearbooleanwidth_decomposition(bwtable, booldim, vbitset))

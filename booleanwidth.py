@@ -42,17 +42,25 @@ def cut(graph, vertices):
 
 
 def booleandim(graph):
+    print('Computing booldim')
     booldim = {}
     for subset in subsets(graph.vertices, 1, len(graph.vertices) - 1):
-        booldim[BitSet(subset)] = len(list(bron_kerbosch_mis(cut(graph, subset))))
+        print('Processing subset ' + str(subset))
+        subbitset = BitSet(subset)
+        if not subbitset in booldim:
+            complement = BitSet(graph.vertices) - subbitset
+            result = len(list(bron_kerbosch_mis(cut(graph, subset))))
+            booldim[subbitset] = result
+            booldim[complement] = result
 
     assert len(booldim) == 2 ** len(graph.vertices) - 2
 
     # Verify symmetry
-    for subset in subsets(graph.vertices, 1, len(graph.vertices) - 1):
-        set1 = BitSet(subset)
-        set2 = BitSet(graph.vertices) - set1
-        assert booldim[set1] == booldim[set2]
+    #print('Verify booldim symmetry')
+    #for subset in subsets(graph.vertices, 1, len(graph.vertices) - 1):
+        #set1 = BitSet(subset)
+        #set2 = BitSet(graph.vertices) - set1
+        #assert booldim[set1] == booldim[set2]
 
     return booldim
 
@@ -68,6 +76,8 @@ def boolwidthtable(graph):
     bwtable = {}
     for b in vertices:
         bwtable[b] = 2
+
+    print('Solving recurrence')
 
     for A in subbitsets(vertices, 2):
         bwtable[A] = min(max(booldim[B], booldim[A - B],
@@ -99,4 +109,5 @@ def booleanwidth_decomposition(bwtable, booldim, A, rec=0):
 def booleanwidth(graph):
     bwtable, booldim = boolwidthtable(graph)
     vbitset = BitSet(graph.vertices)
+    print('Computing decomposition')
     return bwtable[vbitset], booldim, list(booleanwidth_decomposition(bwtable, booldim, vbitset))
