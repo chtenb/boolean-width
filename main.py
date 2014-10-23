@@ -16,13 +16,12 @@ from linearbooleanwidth import linearbooleanwidth
 #graph = Graph.load('input/petersen.dgf')
 def compare_linear_balanced():
     while 1:
-        graph = Bipartite.generate_random(6, 6)
+        graph = Bipartite.generate_random(10, 10)
         bw, booldim, decomposition = booleanwidth(graph)
         lbw, lbooldim, ldecomposition = linearbooleanwidth(graph)
 
-        if bw < lbw:
+        if bw < lbw - 1:
             print('booleanwidth: ' + str(bw))
-            print('d: ' + str(decomposition))
             print('decomposition: ' + '\n'.join('({}, {}): {},{}'.format(
                 graph[a], graph[b], booldim[a], booldim[b]) for a, b in decomposition))
 

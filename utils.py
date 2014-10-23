@@ -12,7 +12,10 @@ class DictChain:
         self.dicts = dicts
 
     def __getitem__(self, index):
-        """Return first occurrance of index."""
+        """
+        Return all occurrances of index.
+        Return iterables in a chained manner.
+        """
         resultlist = []
         for d in self.dicts:
             try:
