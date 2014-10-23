@@ -16,6 +16,7 @@ def bron_kerbosch_mc(graph):
 
         if not exclude and not rest:
             yield include
+            return
 
         for v in list(rest):
             assert not v in v.neighbors
@@ -36,12 +37,18 @@ def bron_kerbosch_mis(graph):
         assert not include & exclude
         assert not rest & exclude
 
-        #print('{}, {}, {}'.format(include, rest, exclude))
-
         if not exclude and not rest:
             yield include
+            return
 
-        for v in rest:
+        minsize = float('inf')
+        for u in rest | exclude:
+            size = len(rest & graph[u].neighbors)
+            if size < minsize:
+                pivot = u
+                minsize = size
+
+        for v in rest & (graph[pivot].neighbors | pivot):
             yield from recursion(include | v,
                                  rest - (graph[v].neighbors | v),
                                  exclude - graph[v].neighbors)

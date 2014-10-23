@@ -45,7 +45,7 @@ def booleandim(graph):
     print('Computing booldim')
     booldim = {}
     for subset in subsets(graph.vertices, 1, len(graph.vertices) - 1):
-        print('Processing subset ' + str(subset))
+        #print('Processing subset ' + str(subset))
         subbitset = BitSet(subset)
         if not subbitset in booldim:
             complement = BitSet(graph.vertices) - subbitset
