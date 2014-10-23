@@ -10,14 +10,16 @@ class Tree(Graph):
         Graph.__init__(self)
         self.root = None
 
-    def depth(self):
+    def depth(self, root=None):
+        root = root or self.root
+
         def recursion(vertex, parent):
             if len(vertex.neighbors) < 2:
                 return 1
             return max(recursion(self[bchild], vertex) for bchild in vertex.neighbors
                        if not parent or self[bchild] != parent) + 1
 
-        return recursion(self.root, None)
+        return recursion(root, None)
 
     def count_branches(self):
         """

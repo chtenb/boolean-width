@@ -97,7 +97,7 @@ class Graph:
         graph = Graph(vertices)
 
         vertices_bitset = BitSet(vertices)
-        for v in self.vertices:
+        for v in graph.vertices:
             v.neighbors &= vertices_bitset
 
         return graph

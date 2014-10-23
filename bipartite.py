@@ -1,7 +1,8 @@
 from graph import Graph, Vertex
-from vertex import VertexSet
+from vertex import VertexSet, BitSet
 from random import randint, choice
 from utils import DictChain
+from copy import deepcopy
 
 
 class Bipartite(Graph):
@@ -9,12 +10,17 @@ class Bipartite(Graph):
     def __init__(self, group1=None, group2=None):
         Graph.__init__(self)
 
-        self.group1 = VertexSet(group1)
-        self.group2 = VertexSet(group2)
+        self._group1 = VertexSet(group1)
+        self._group2 = VertexSet(group2)
+        self._vertices = DictChain(self._group1, self._group2)
 
     @property
-    def vertices(self):
-        return DictChain(self.group1, self.group2)
+    def group1(self):
+        return self._group1
+
+    @property
+    def group2(self):
+        return self._group2
 
     def add_vertex(self, vertex, group):
         """Add a new vertex to the graph."""
@@ -22,7 +28,6 @@ class Bipartite(Graph):
             raise ValueError
         if not vertex not in self.vertices:
             raise ValueError
-
 
         if group == 1:
             self.group1.add(vertex)
@@ -41,26 +46,39 @@ class Bipartite(Graph):
         Graph.connect(self, v, w)
 
     def subgraph(self, vertices):
-        raise NotImplementedError
+        """Return a graph which is the subgraph of self induced by given vertex subset."""
+        group1 = deepcopy(list(self.group1))
+        group2 = deepcopy(list(self.group2))
+        graph = Bipartite(group1, group2)
+
+        group1_bitset = BitSet(group1)
+        for v in graph.group1:
+            v.neighbors &= group1_bitset
+
+        group2_bitset = BitSet(group2)
+        for v in graph.group2:
+            v.neighbors &= group2_bitset
+
+        return graph
 
     def bipartite_complement(self):
         """Construct a graph representing the bipartite complement of self."""
         raise NotImplementedError
         #graph = Bipartite()
 
-        #for v in self.group1:
-            #v_new = Vertex(v.identifier)
-            #graph.add_vertex(v_new, group=1)
-        #for v in self.group2:
-            #v_new = Vertex(v.identifier)
-            #graph.add_vertex(v_new, group=2)
+        # for v in self.group1:
+        #v_new = Vertex(v.identifier)
+        #graph.add_vertex(v_new, group=1)
+        # for v in self.group2:
+        #v_new = Vertex(v.identifier)
+        #graph.add_vertex(v_new, group=2)
 
-        #for v in graph.group1:
-            #for w in graph.group2:
-                #if not self.vertices[v.identifier] in self.vertices[w.identifier].neighbors:
-                    #graph.connect(v, w)
+        # for v in graph.group1:
+        # for w in graph.group2:
+        # if not self.vertices[v.identifier] in self.vertices[w.identifier].neighbors:
+        #graph.connect(v, w)
 
-        #return graph
+        # return graph
 
     @staticmethod
     def generate_random(nr_vertices, nr_edges):

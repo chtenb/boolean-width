@@ -60,7 +60,9 @@ class VertexSet(dict):
         """
         # Get by bitset representation
         if isinstance(index, BitSet):
-            result = [dict.__getitem__(self, b) for b in index]
+            result = [dict.__getitem__(self, b) for b in index if b in self]
+            if len(result) == 0:
+                raise KeyError
             if len(result) == 1:
                 return result[0]
             return result
@@ -70,7 +72,7 @@ class VertexSet(dict):
             for v in self:
                 if v.identifier == index:
                     return v
-
+            raise KeyError
 
     def add(self, vertex):
         if vertex in self:
@@ -134,7 +136,6 @@ class BitSet:
     def __sub__(self, other):
         return BitSet(self.i - (self.i & other.i))
 
-    #def invert(self, length):
-        ## TODO: provide universe against which the complement is computed
-        #return BitSet(2 ** length - 1 - self.i)
-
+    # def invert(self, length):
+        # TODO: provide universe against which the complement is computed
+        # return BitSet(2 ** length - 1 - self.i)

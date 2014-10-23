@@ -16,12 +16,13 @@ from linearbooleanwidth import linearbooleanwidth
 #graph = Graph.load('input/petersen.dgf')
 def compare_linear_balanced():
     while 1:
-        graph = Graph.generate_random(6, 6)
+        graph = Bipartite.generate_random(6, 6)
         bw, booldim, decomposition = booleanwidth(graph)
         lbw, lbooldim, ldecomposition = linearbooleanwidth(graph)
 
         if bw < lbw:
             print('booleanwidth: ' + str(bw))
+            print('d: ' + str(decomposition))
             print('decomposition: ' + '\n'.join('({}, {}): {},{}'.format(
                 graph[a], graph[b], booldim[a], booldim[b]) for a, b in decomposition))
 
@@ -35,7 +36,8 @@ def compare_linear_balanced():
             im.save('output/test.png', 'png')
             break
 
-graph = 0
+compare_linear_balanced()
+
 def compare_lbw_branches():
     global graph
     for _ in range(1):
@@ -49,7 +51,6 @@ def compare_lbw_branches():
         #print('linear decomposition: ' + '\n'.join('({}, {}): {},{}'.format(
             #graph[a], graph[b], lbooldim[a], lbooldim[b]) for a, b in ldecomposition))
 
-compare_lbw_branches()
 #graph = Graph.generate_random(10, 10)
 #cProfile.run('booleandim(graph)')
 #booleandim(graph)
@@ -65,7 +66,7 @@ compare_lbw_branches()
 #print('linear decomposition: ' + '\n'.join('({}, {}): {},{}'.format(
     #graph[a], graph[b], lbooldim[a], lbooldim[b]) for a, b in ldecomposition))
 
-size = (512, 512)
-im = Image.new('RGB', size, 'white')
-plot_graph(im, graph, color=(178, 0, 0))
-im.save('output/test.png', 'png')
+#size = (512, 512)
+#im = Image.new('RGB', size, 'white')
+#plot_graph(im, graph, color=(178, 0, 0))
+#im.save('output/test.png', 'png')

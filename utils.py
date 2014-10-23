@@ -13,13 +13,23 @@ class DictChain:
 
     def __getitem__(self, index):
         """Return first occurrance of index."""
+        resultlist = []
         for d in self.dicts:
             try:
-                return d[index]
+                result = d[index]
             except KeyError:
                 pass
+            else:
+                try:
+                    resultlist.extend(result)
+                except TypeError:
+                    resultlist.append(result)
 
-        raise KeyError
+        if not resultlist:
+            raise KeyError
+        if len(resultlist) == 1:
+            return resultlist[0]
+        return resultlist
 
     def __len__(self):
         """Return sum of all lengths."""
