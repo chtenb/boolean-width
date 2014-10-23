@@ -35,9 +35,24 @@ def compare_linear_balanced():
             im.save('output/test.png', 'png')
             break
 
-graph = Graph.generate_random(10, 10)
+graph = 0
+def compare_lbw_branches():
+    global graph
+    for _ in range(1):
+        #graph = Tree.generate_random(12, 3)
+        graph = Tree.generate_random_binary(12)
+        lbw, lbooldim, ldecomposition = linearbooleanwidth(graph)
+        print('linear booleanwidth: ' + str(lbw))
+        print('depth: ' + str(graph.depth()))
+        print('number of branches: ' + str(graph.count_branches()))
+        print('number of branching nodes: ' + str(graph.count_branching_nodes()))
+        #print('linear decomposition: ' + '\n'.join('({}, {}): {},{}'.format(
+            #graph[a], graph[b], lbooldim[a], lbooldim[b]) for a, b in ldecomposition))
+
+compare_lbw_branches()
+#graph = Graph.generate_random(10, 10)
 #cProfile.run('booleandim(graph)')
-booleandim(graph)
+#booleandim(graph)
 
 #graph = Tree.generate_random(9)
 #bw, booldim, decomposition = booleanwidth(graph)
@@ -50,7 +65,7 @@ booleandim(graph)
 #print('linear decomposition: ' + '\n'.join('({}, {}): {},{}'.format(
     #graph[a], graph[b], lbooldim[a], lbooldim[b]) for a, b in ldecomposition))
 
-#size = (512, 512)
-#im = Image.new('RGB', size, 'white')
-#plot_graph(im, graph, color=(178, 0, 0))
-#im.save('output/test.png', 'png')
+size = (512, 512)
+im = Image.new('RGB', size, 'white')
+plot_graph(im, graph, color=(178, 0, 0))
+im.save('output/test.png', 'png')
