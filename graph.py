@@ -14,12 +14,11 @@ class Graph:
 
     @property
     def edges(self):
-        #result = set()
-        #for v in self.vertices:
-            #for w in v.neighbors:
-                #result.add(set(v, self.vertices[w]))
-        #return result
-        return set(set([v, self[w]]) for v in self.vertices for w in v.neighbors)
+        for v in self:
+            for w in v.neighbors:
+                w = self[w]
+                if w.identifier < v.identifier:
+                    yield (v, w)
 
     def __repr__(self):
         return 'vertices: {}'.format(list(self.vertices))
@@ -29,6 +28,9 @@ class Graph:
 
     def __getitem__(self, index):
         return self.vertices[index]
+
+    def __iter__(self):
+        return iter(self.vertices)
 
     def save(self, filename):
         # TODO
