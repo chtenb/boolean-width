@@ -12,6 +12,15 @@ class Graph:
     def vertices(self):
         return self._vertices
 
+    @property
+    def edges(self):
+        #result = set()
+        #for v in self.vertices:
+            #for w in v.neighbors:
+                #result.add(set(v, self.vertices[w]))
+        #return result
+        return set(set([v, self[w]]) for v in self.vertices for w in v.neighbors)
+
     def __repr__(self):
         return 'vertices: {}'.format(list(self.vertices))
 

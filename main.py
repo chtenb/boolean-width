@@ -1,7 +1,8 @@
 from PIL import Image
 import cProfile
 
-from plot import plot_bipartite_graph, plot_graph
+#from plot import plot_bipartite_graph, plot_graph
+from plot2 import plot_graph
 from bipartite import Bipartite
 from graph import Graph
 from tree import Tree
@@ -35,7 +36,6 @@ def compare_linear_balanced():
             im.save('output/test.png', 'png')
             break
 
-compare_linear_balanced()
 
 def compare_lbw_branches():
     global graph
@@ -50,7 +50,8 @@ def compare_lbw_branches():
         #print('linear decomposition: ' + '\n'.join('({}, {}): {},{}'.format(
             #graph[a], graph[b], lbooldim[a], lbooldim[b]) for a, b in ldecomposition))
 
-#graph = Graph.generate_random(10, 10)
+graph = Graph.generate_random(10, 10)
+plot_graph(graph)
 #cProfile.run('booleandim(graph)')
 #booleandim(graph)
 

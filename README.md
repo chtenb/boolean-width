@@ -8,3 +8,4 @@ Dependencies
 ------------
 - Python Imaging Library (`PIL`).
 - NumPy (`numpy`).
+- graphviz https://pypi.python.org/pypi/graphviz

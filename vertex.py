@@ -19,7 +19,7 @@ class Vertex:
         return 'Vertex({})'.format(self.identifier)
 
     def __str__(self):
-        return repr(self)
+        return str(self.identifier)
 
     def __eq__(self, other):
         return self.identifier == other.identifier
