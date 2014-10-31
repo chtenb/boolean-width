@@ -2,11 +2,15 @@ from random import sample
 from vertex import Vertex, VertexSet, BitSet
 from copy import deepcopy
 
+# TODO: make sure that assignments with bitsets are call by value
+# TODO: where to convert id's to bitsets and vice versa?
+#       Preferably inside BitSet
 
 class Graph:
 
     def __init__(self, vertices=None):
-        self._vertices = VertexSet(vertices)
+        self.neighborhoods = {}
+        self._vertices = BitSet()
 
     @property
     def vertices(self):
@@ -15,9 +19,8 @@ class Graph:
     @property
     def edges(self):
         for v in self:
-            for w in v.neighbors:
-                w = self[w]
-                if w.identifier < v.identifier:
+            for w in self[v]:
+                if w < v:
                     yield (v, w)
 
     def __repr__(self):
@@ -27,15 +30,20 @@ class Graph:
         return repr(self)
 
     def __getitem__(self, index):
-        return self.vertices[index]
+        result = BitSet()
+        for v in index:
+            result |= self.neighborhoods[v]
+        return result
 
     def __iter__(self):
         return iter(self.vertices)
 
+    def __contains__(self, v):
+        return v in self.vertices
+
     def save(self, filename):
         # TODO
-        with open(filename, 'w') as f:
-            f.write(repr(self))
+        raise NotImplementedError
 
     @staticmethod
     def load(filename):
@@ -63,53 +71,50 @@ class Graph:
 
     def add_vertex(self, v):
         """Add a new vertex to the graph."""
-        if not isinstance(v, Vertex):
-            raise ValueError
-        if v in self.vertices:
+        if v in self:
             raise ValueError
 
-        self.vertices.add(v)
+        self.vertices |= v
 
     def connect(self, v, w):
         """Connect two vertices."""
-        if (isinstance(v, BitSet) and isinstance(w, BitSet) or
-                (isinstance(v, int) and isinstance(w, int))):
-            v = self.vertices[v]
-            w = self.vertices[w]
+        #if (isinstance(v, BitSet) and isinstance(w, BitSet) or
+                #(isinstance(v, int) and isinstance(w, int))):
+            #v = self.vertices[v]
+            #w = self.vertices[w]
 
-        if not v in self.vertices:
+        if not v in self:
             raise ValueError
-        if not w in self.vertices:
+        if not w in self:
             raise ValueError
 
-        if w in v.neighbors:
+        if w in self[v]:
             raise ValueError('{} and {} already connected.'.format(v, w))
 
         # Only support undirected edges
-        assert not v in w.neighbors
+        assert not v in self[w]
 
-        v.neighbors |= BitSet(w)
-        w.neighbors |= BitSet(v)
+        self.neighborhoods[v] |= w
+        self.neighborhoods[w] |= v
 
     def complement(self):
         """Construct a graph representing the complement of self."""
-        vertices = deepcopy(list(self.vertices))
-        graph = Graph(vertices)
+        graph = Graph()
+        graph._vertices = self.vertices
 
-        setlength = len(vertices)
-        for v in self.vertices:
-            v.neighbors = v.neighbors.invert(setlength)
+        setlength = len(self.vertices)
+        for v in self:
+            self[v] = self[v].invert(setlength)
 
         return graph
 
     def subgraph(self, vertices):
         """Return a graph which is the subgraph of self induced by given vertex subset."""
-        vertices = deepcopy(list(self.vertices))
-        graph = Graph(vertices)
+        graph = Graph()
+        graph._vertices = vertices
 
-        vertices_bitset = BitSet(vertices)
-        for v in graph.vertices:
-            v.neighbors &= vertices_bitset
+        for v in graph:
+            graph.neighborhoods[v] = self[v] & vertices
 
         return graph
 
@@ -118,14 +123,15 @@ class Graph:
         if not nr_edges <= nr_vertices * (nr_vertices - 1) / 2:
             raise ValueError
 
-        vertices = [Vertex(i) for i in range(nr_vertices)]
-        graph = Graph(vertices)
+        graph = Graph()
+        for i in range(nr_vertices):
+            graph.add_vertex(BitSet(i))
 
         for _ in range(nr_edges):
             while 1:
-                v, w = sample(vertices, 2)
+                v, w = sample(graph.vertices, 2)
                 # Don't connect vertices twice
-                if not w in v.neighbors:
+                if not w in graph[v]:
                     break
             graph.connect(v, w)
 

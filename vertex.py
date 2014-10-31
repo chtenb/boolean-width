@@ -87,8 +87,10 @@ class BitSet:
     A bitset wraps around an int with functionality to make it work like a set.
     """
 
-    def __init__(self, arg):
-        if isinstance(arg, int):
+    def __init__(self, arg=None):
+        if arg == None:
+            self.i = 0
+        elif isinstance(arg, int):
             self.i = arg
         elif isinstance(arg, BitSet):
             self.i = arg.i
