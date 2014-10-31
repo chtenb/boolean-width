@@ -24,10 +24,10 @@ A vertex can be identified with a unique number, or alternatively by the bitset 
 only that vertex.
 
 The most efficient syntax for this paradigm would be as follows.
-Let `v` be a vertex.
-Then `graph[v]` represents the neighborhood of `v`.
 Let `X` be a bitset of vertices.
-Then `graph[X]` represents the union of the neighborhoods of all vertices in `X`.
+Then `graph(X)` represents the union of the neighborhoods of all vertices in `X`.
+and `graph[X]` represents the union of the neighborhoods of all vertices in `X`, together with
+`X` itself.
 
 To loop over all pairs of connected vertices in linear time,
 the iterable `graph.edges` would be appropriate.

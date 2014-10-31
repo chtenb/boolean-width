@@ -1,20 +1,36 @@
 from random import sample
-from vertex import Vertex, VertexSet, BitSet
-from copy import deepcopy
+from vertex import BitSet
 
-# TODO: make sure that assignments with bitsets are call by value
 # TODO: where to convert id's to bitsets and vice versa?
 #       Preferably inside BitSet
+# TODO: Differentiate between inclusive and exclusive neighborhood
 
 class Graph:
 
-    def __init__(self, vertices=None):
-        self.neighborhoods = {}
-        self._vertices = BitSet()
+    def __init__(self, vertices=None, neighborhoods=None):
+        self.neighborhoods = neighborhoods or {}
+        self.vertices = vertices or BitSet()
 
-    @property
-    def vertices(self):
-        return self._vertices
+    def __repr__(self):
+        return 'vertices: {}'.format(list(self.vertices))
+
+    def __str__(self):
+        return repr(self)
+
+    def __iter__(self):
+        return iter(self.vertices)
+
+    def __contains__(self, v):
+        return v in self.vertices
+
+    def __call__(self, vertices):
+        result = BitSet()
+        for v in vertices:
+            result |= self.neighborhoods[v]
+        return result
+
+    def __getitem__(self, vertices):
+        return self(vertices) | vertices
 
     @property
     def edges(self):
@@ -23,26 +39,7 @@ class Graph:
                 if w < v:
                     yield (v, w)
 
-    def __repr__(self):
-        return 'vertices: {}'.format(list(self.vertices))
-
-    def __str__(self):
-        return repr(self)
-
-    def __getitem__(self, index):
-        result = BitSet()
-        for v in index:
-            result |= self.neighborhoods[v]
-        return result
-
-    def __iter__(self):
-        return iter(self.vertices)
-
-    def __contains__(self, v):
-        return v in self.vertices
-
     def save(self, filename):
-        # TODO
         raise NotImplementedError
 
     @staticmethod
@@ -58,14 +55,14 @@ class Graph:
                     continue
 
                 if line[0] == 'n':
-                    v = Vertex(int(line[1:]))
+                    v = BitSet(int(line[1:]))
                     graph.add_vertex(v)
                 elif line[0] == 'e':
-                    v, w = (int(i) for i in line[1:].split())
-                    if v not in graph.vertices:
-                        graph.add_vertex(Vertex(v))
-                    if w not in graph.vertices:
-                        graph.add_vertex(Vertex(w))
+                    v, w = BitSet(int(i) for i in line[1:].split())
+                    if v not in graph:
+                        graph.add_vertex(v)
+                    if w not in graph:
+                        graph.add_vertex(w)
                     graph.connect(v, w)
         return graph
 
@@ -78,11 +75,6 @@ class Graph:
 
     def connect(self, v, w):
         """Connect two vertices."""
-        #if (isinstance(v, BitSet) and isinstance(w, BitSet) or
-                #(isinstance(v, int) and isinstance(w, int))):
-            #v = self.vertices[v]
-            #w = self.vertices[w]
-
         if not v in self:
             raise ValueError
         if not w in self:
@@ -97,26 +89,32 @@ class Graph:
         self.neighborhoods[v] |= w
         self.neighborhoods[w] |= v
 
+    def disconnect(self, v, w):
+        """Disconnect two vertices."""
+        if not v in self:
+            raise ValueError
+        if not w in self:
+            raise ValueError
+
+        if not w in self[v]:
+            raise ValueError('{} and {} are not connected.'.format(v, w))
+
+        # Only support undirected edges
+        assert v in self[w]
+
+        self.neighborhoods[v] -= w
+        self.neighborhoods[w] -= v
+
     def complement(self):
         """Construct a graph representing the complement of self."""
-        graph = Graph()
-        graph._vertices = self.vertices
-
         setlength = len(self.vertices)
-        for v in self:
-            self[v] = self[v].invert(setlength)
-
-        return graph
+        neighborhoods = {v : self[v].invert(setlength) for v in self}
+        return Graph(self.vertices, neighborhoods)
 
     def subgraph(self, vertices):
         """Return a graph which is the subgraph of self induced by given vertex subset."""
-        graph = Graph()
-        graph._vertices = vertices
-
-        for v in graph:
-            graph.neighborhoods[v] = self[v] & vertices
-
-        return graph
+        neighborhoods = {v : self[v] & vertices for v in self}
+        return Graph(self.vertices, neighborhoods)
 
     @staticmethod
     def generate_random(nr_vertices, nr_edges):
