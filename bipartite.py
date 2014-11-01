@@ -1,5 +1,5 @@
-from graph import Graph, Vertex
-from vertex import VertexSet, BitSet
+from graph import Graph
+from bitset import BitSet
 from random import randint, choice
 from utils import DictChain
 from copy import deepcopy
@@ -10,31 +10,30 @@ class Bipartite(Graph):
     def __init__(self, group1=None, group2=None):
         Graph.__init__(self)
 
-        self._group1 = VertexSet(group1)
-        self._group2 = VertexSet(group2)
-        self._vertices = DictChain(self._group1, self._group2)
+        self.group1 = group1 or BitSet()
+        self.group2 = group2 or BitSet()
+
+        for v in self.vertices:
+            self.neighborhoods[v] = BitSet()
 
     @property
-    def group1(self):
-        return self._group1
+    def vertices(self):
+        return self.group1 | self.group2
 
-    @property
-    def group2(self):
-        return self._group2
-
-    def add(self, vertex, group):
+    def add(self, vertices, group):
         """Add a new vertex to the graph."""
-        if not isinstance(vertex, Vertex):
-            raise ValueError
-        if not vertex not in self.vertices:
-            raise ValueError
+        if not self.vertices.disjoint(vertices):
+            raise ValueError('Graph already contain some of [{}]'.format(vertices))
 
         if group == 1:
-            self.group1.add(vertex)
+            self.group1 |= vertices
         elif group == 2:
-            self.group2.add(vertex)
+            self.group2 |= vertices
         else:
             raise ValueError
+
+        for v in vertices:
+            self.neighborhoods[v] = BitSet()
 
     def connect(self, v, w):
         """Connect two vertices."""
@@ -47,17 +46,10 @@ class Bipartite(Graph):
 
     def subgraph(self, vertices):
         """Return a graph which is the subgraph of self induced by given vertex subset."""
-        group1 = deepcopy(list(self.group1))
-        group2 = deepcopy(list(self.group2))
-        graph = Bipartite(group1, group2)
+        graph = Bipartite(self.group1 & vertices, self.group2 & vertices)
 
-        group1_bitset = BitSet(group1)
-        for v in graph.group1:
-            v.neighbors &= group1_bitset
-
-        group2_bitset = BitSet(group2)
-        for v in graph.group2:
-            v.neighbors &= group2_bitset
+        for v in graph.vertices:
+            graph.neighborhoods[v] &= vertices
 
         return graph
 
@@ -94,17 +86,17 @@ class Bipartite(Graph):
                 break
 
         # For both groups create vertices
-        group1 = [Vertex(i) for i in range(size1)]
-        group2 = [Vertex(size1 + i) for i in range(size2)]
+        group1 = range(size1)
+        group2 = range(size1, size1 + size2)
 
-        graph = Bipartite(group1, group2)
+        graph = Bipartite(BitSet.from_identifier(*group1), BitSet.from_identifier(*group2))
 
         # Add random edges between groups
         for _ in range(nr_edges):
             while 1:
-                v = choice(group1)
-                w = choice(group2)
-                if not w in v.neighbors:
+                v = BitSet.from_identifier(choice(group1))
+                w = BitSet.from_identifier(choice(group2))
+                if not w in graph(v):
                     break
             graph.connect(v, w)
 

@@ -2,7 +2,7 @@ from PIL import Image
 import cProfile
 
 from plot import plot_bipartite, plot_circle, plot
-#from bipartite import Bipartite
+from bipartite import Bipartite
 from graph import Graph
 from bitset import BitSet
 from tree import Tree
@@ -12,8 +12,7 @@ from tree import Tree
 #print(b)
 #print(choice(list(b)))
 
-#graph = Tree.generate_random(10, 10)
-graph = Tree.generate_random_binary(10)
+graph = Bipartite.generate_random(10, 10)
 plot(graph)
 
 #from booleanwidth import booleanwidth, booleandim

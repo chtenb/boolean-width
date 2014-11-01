@@ -6,7 +6,11 @@ class Graph:
 
     def __init__(self, vertices=None, neighborhoods=None):
         self.neighborhoods = neighborhoods or {}
-        self.vertices = vertices or BitSet()
+        self._vertices = vertices or BitSet()
+
+    @property
+    def vertices(self):
+        return self._vertices
 
     def __repr__(self):
         return 'vertices: {}'.format(list(self.vertices))
