@@ -1,21 +1,22 @@
 from PIL import ImageDraw, ImageFont
 import math
-from vertex import BitSet
+from bitset import BitSet
+
+from graphviz import Graph
 
 
-def draw_vertex(draw, vertex, coords, color=128):
-    """Draw a single vertex."""
-    radius = 5
-    uppercoords = (coords[0] - radius, coords[1] - radius)
-    lowercoords = (coords[0] + radius, coords[1] + radius)
-    box = [uppercoords, lowercoords]
-    draw.ellipse(box, fill=color)
+def plot(graph, engine='dot'):
+    g = Graph(format='png', engine=engine)
+    for v in graph:
+        g.node(str(v))
 
-    font = ImageFont.truetype("resources/FreeMono.ttf", 30)
-    draw.text(lowercoords, str(vertex.identifier), fill=color, font=font)
+    for v, w in graph.edges:
+        g.edge(str(v), str(w))
+
+    g.render('output/test')
 
 
-def plot_graph(im, graph, color=128):
+def plot_circle(im, graph, color=128):
     """Draw given graph on given draw object."""
     size = im.size
     margin = 30
@@ -38,7 +39,7 @@ def plot_graph(im, graph, color=128):
                       fill=color, width=1)
 
 
-def plot_bipartite_graph(im, graph, color=128):
+def plot_bipartite(im, graph, color=128):
     """Draw given graph on given draw object."""
     size = im.size
     margin = 30
@@ -81,3 +82,14 @@ def plot_bipartite_graph(im, graph, color=128):
             except KeyError:
                 draw.line([vertexcoords1[j], vertexcoords2[i]], fill=color)
 
+
+def draw_vertex(draw, vertex, coords, color=128):
+    """Draw a single vertex."""
+    radius = 5
+    uppercoords = (coords[0] - radius, coords[1] - radius)
+    lowercoords = (coords[0] + radius, coords[1] + radius)
+    box = [uppercoords, lowercoords]
+    draw.ellipse(box, fill=color)
+
+    font = ImageFont.truetype("resources/FreeMono.ttf", 30)
+    draw.text(lowercoords, str(vertex.identifier), fill=color, font=font)
