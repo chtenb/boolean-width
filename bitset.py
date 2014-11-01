@@ -32,7 +32,7 @@ class BitSet:
         return int(log(self.i, 2))
 
     def __repr__(self):
-        return 'BitSet.from_identifier({})'.format(', '.join(str(v) for v in self))
+        return 'BitSet{{{}}}'.format(', '.join(str(v) for v in self))
 
     def __str__(self):
         if len(self) == 1:

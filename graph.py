@@ -50,7 +50,7 @@ class Graph:
         if not self.vertices.disjoint(vertices):
             raise ValueError('Graph already contain some of [{}]'.format(vertices))
 
-        self.vertices |= vertices
+        self._vertices |= vertices
 
         for v in vertices:
             self.neighborhoods[v] = BitSet()
@@ -114,10 +114,11 @@ class Graph:
                     continue
 
                 if line[0] == 'n':
-                    v = BitSet(int(line[1:]))
+                    v = BitSet.from_identifier(int(line[1:]))
                     graph.add(v)
                 elif line[0] == 'e':
-                    v, w = BitSet(int(i) for i in line[1:].split())
+                    edge = line[1:].split()
+                    v, w = BitSet.from_identifier(int(edge[0]), int(edge[1]))
                     if v not in graph:
                         graph.add(v)
                     if w not in graph:

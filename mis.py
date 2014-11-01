@@ -1,16 +1,15 @@
 """This module contains algorithms for computing the maximal independent sets."""
 
-from vertex import BitSet
+from bitset import BitSet
 
 
 def bron_kerbosch_mc(graph):
-    # TODO: rewrite for bitsets
     """Compute all maximal cliques."""
     def recursion(include, rest, exclude):
         assert include or exclude or rest
-        assert include.isdisjoint(rest)
-        assert include.isdisjoint(exclude)
-        assert rest.isdisjoint(exclude)
+        assert not include & rest
+        assert not include & exclude
+        assert not rest & exclude
 
         #print('{}, {}, {}'.format(include, rest, exclude))
 
@@ -18,15 +17,14 @@ def bron_kerbosch_mc(graph):
             yield include
             return
 
-        for v in list(rest):
-            assert not v in v.neighbors
-            yield from recursion(include.union({v}),
-                                 rest.intersection(set(v.neighbors)),
-                                 exclude.intersection(set(v.neighbors)))
-            rest.difference_update({v})
-            exclude.update({v})
+        for v in rest:
+            yield from recursion(include | v,
+                                 rest & graph(v),
+                                 exclude & graph(v))
+            rest -= v
+            exclude |= v
 
-    yield from recursion(set(), set(graph.vertices), set())
+    yield from recursion(BitSet(), graph.vertices, BitSet())
 
 
 def bron_kerbosch_mis(graph):
@@ -43,24 +41,23 @@ def bron_kerbosch_mis(graph):
 
         minsize = float('inf')
         for u in rest | exclude:
-            size = len(rest & graph[u].neighbors)
+            size = len(rest & graph(u))
             if size < minsize:
                 pivot = u
                 minsize = size
 
-        for v in rest & (graph[pivot].neighbors | pivot):
+        for v in rest & (graph[pivot]):
             yield from recursion(include | v,
-                                 rest - (graph[v].neighbors | v),
-                                 exclude - graph[v].neighbors)
+                                 rest - (graph[v]),
+                                 exclude - graph(v))
             rest -= v
             exclude |= v
 
-    yield from recursion(BitSet(0), BitSet(graph.vertices), BitSet(0))
+    yield from recursion(BitSet(), graph.vertices, BitSet())
 
 
 from random import randint
 from PIL import Image
-from plot import plot_bipartite_graph, plot_graph
 from graph import Graph
 from bipartite import Bipartite
 
@@ -125,10 +122,10 @@ def mis_bipartite_complement():
 
             graph.save('output/{},{}.graph'.format(nr_vertices, difference))
 
-            size = (512, 512)
-            im = Image.new('RGB', size, 'white')
-            plot_bipartite_graph(im, graph, color=(178, 0, 0))
-            im.save('output/test.png', 'png')
+            #size = (512, 512)
+            #im = Image.new('RGB', size, 'white')
+            #plot_bipartite_graph(im, graph, color=(178, 0, 0))
+            #im.save('output/test.png', 'png')
 
             break
 

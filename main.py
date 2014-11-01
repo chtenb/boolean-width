@@ -12,9 +12,6 @@ from tree import Tree
 #print(b)
 #print(choice(list(b)))
 
-graph = Bipartite.generate_random(10, 10)
-plot(graph)
-
 #from booleanwidth import booleanwidth, booleandim
 #from linearbooleanwidth import linearbooleanwidth
 
@@ -22,7 +19,10 @@ plot(graph)
 #graph = Bipartite.load('output/10,10.graph')
 
 
-#graph = Graph.load('input/petersen.dgf')
+graph = Graph.load('input/petersen.dgf')
+plot(graph)
+import mis
+print(list(mis.bron_kerbosch_mis(graph)))
 
 #cProfile.run('booleandim(graph)')
 #booleandim(graph)
