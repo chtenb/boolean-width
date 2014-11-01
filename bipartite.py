@@ -22,7 +22,7 @@ class Bipartite(Graph):
     def group2(self):
         return self._group2
 
-    def add_vertex(self, vertex, group):
+    def add(self, vertex, group):
         """Add a new vertex to the graph."""
         if not isinstance(vertex, Vertex):
             raise ValueError
@@ -68,10 +68,10 @@ class Bipartite(Graph):
 
         # for v in self.group1:
         #v_new = Vertex(v.identifier)
-        #graph.add_vertex(v_new, group=1)
+        #graph.add(v_new, group=1)
         # for v in self.group2:
         #v_new = Vertex(v.identifier)
-        #graph.add_vertex(v_new, group=2)
+        #graph.add(v_new, group=2)
 
         # for v in graph.group1:
         # for w in graph.group2:

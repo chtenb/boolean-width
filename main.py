@@ -5,10 +5,16 @@ from plot import plot_bipartite, plot_circle, plot
 #from bipartite import Bipartite
 from graph import Graph
 from bitset import BitSet
+from tree import Tree
 
+#from random import choice
+#b = BitSet.from_identifier(1,2,3)
+#print(b)
+#print(choice(list(b)))
 
-#print(BitSet.from_identifier(3,4,5))
-#from tree import Tree
+#graph = Tree.generate_random(10, 10)
+graph = Tree.generate_random_binary(10)
+plot(graph)
 
 #from booleanwidth import booleanwidth, booleandim
 #from linearbooleanwidth import linearbooleanwidth
@@ -19,8 +25,6 @@ from bitset import BitSet
 
 #graph = Graph.load('input/petersen.dgf')
 
-graph = Graph.generate_random(10, 10)
-plot(graph)
 #cProfile.run('booleandim(graph)')
 #booleandim(graph)
 

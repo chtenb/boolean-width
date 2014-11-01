@@ -41,10 +41,10 @@ class Graph:
                 if w < v:
                     yield (v, w)
 
-    def add_vertices(self, vertices):
+    def add(self, vertices):
         """Add new vertices to the graph."""
         if not self.vertices.disjoint(vertices):
-            raise ValueError('Graph already contain some of ' + str(vertices))
+            raise ValueError('Graph already contain some of [{}]'.format(vertices))
 
         self.vertices |= vertices
 
@@ -111,13 +111,13 @@ class Graph:
 
                 if line[0] == 'n':
                     v = BitSet(int(line[1:]))
-                    graph.add_vertices(v)
+                    graph.add(v)
                 elif line[0] == 'e':
                     v, w = BitSet(int(i) for i in line[1:].split())
                     if v not in graph:
-                        graph.add_vertices(v)
+                        graph.add(v)
                     if w not in graph:
-                        graph.add_vertices(w)
+                        graph.add(w)
                     graph.connect(v, w)
         return graph
 
@@ -127,7 +127,7 @@ class Graph:
             raise ValueError
 
         graph = Graph()
-        graph.add_vertices(BitSet.from_identifier(*range(nr_vertices)))
+        graph.add(BitSet.from_identifier(*range(nr_vertices)))
 
         vertex_list = list(graph.vertices)
         for _ in range(nr_edges):

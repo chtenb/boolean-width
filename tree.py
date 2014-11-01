@@ -1,7 +1,6 @@
-from graph import Graph, Vertex
-from vertex import VertexSet
+from graph import Graph
+from bitset import BitSet
 from random import randint, choice
-from utils import DictChain
 
 
 class Tree(Graph):
@@ -39,15 +38,15 @@ class Tree(Graph):
             raise ValueError
 
         graph = Tree()
-        root = Vertex(0)
-        graph.add_vertex(root)
+        graph.root = BitSet.from_identifier(0)
+        graph.add(graph.root)
 
         for i in range(1, nr_vertices):
             while 1:
-                v = choice(graph.vertices)
-                if len(v.neighbors) < maxdegree:
-                    w = Vertex(i)
-                    graph.add_vertex(w)
+                v = choice(list(graph.vertices))
+                if len(graph(v)) < maxdegree:
+                    w = BitSet.from_identifier(i)
+                    graph.add(w)
                     graph.connect(v, w)
                     break
 
@@ -56,18 +55,18 @@ class Tree(Graph):
     @staticmethod
     def generate_random_binary(nr_vertices):
         graph = Tree()
-        graph.root = Vertex(0)
-        graph.add_vertex(graph.root)
+        graph.root = BitSet.from_identifier(0)
+        graph.add(graph.root)
 
         leaves = [graph.root]
         for i in range(1, nr_vertices):
             v = leaves[0]
-            w = Vertex(i)
-            graph.add_vertex(w)
+            w = BitSet.from_identifier(i)
+            graph.add(w)
             graph.connect(v, w)
             leaves.append(w)
 
-            if len(v.neighbors) == 3:
+            if len(graph(v)) == 3:
                 leaves.pop(0)
 
         return graph
