@@ -5,6 +5,7 @@ representation.
 """
 
 from math import log
+from itertools import combinations
 
 
 class BitSet:
@@ -25,6 +26,13 @@ class BitSet:
             self.i |= 2 ** v
         return self
 
+    @staticmethod
+    def join(*args):
+        self = BitSet()
+        for v in args:
+            self.i |= v.i
+        return self
+
     def identifier(self):
         """If we only contain a single vertex, return its identifier."""
         if len(self) > 1:
@@ -43,20 +51,8 @@ class BitSet:
     def __hash__(self):
         return self.i
 
-    def __eq__(self, other):
-        return isinstance(other, BitSet) and self.i == other.i
-
-    def __lt__(self, other):
-        return self.i < other.i
-
-    def __gt__(self, other):
-        return self.i > other.i
-
     def __contains__(self, other):
         return self.i | other.i == self.i
-
-    def disjoint(self, other):
-        return self.i & other.i == 0
 
     def __iter__(self):
         n = self.i
@@ -64,6 +60,14 @@ class BitSet:
             b = n & (~n + 1)
             yield BitSet(b)
             n ^= b
+
+    def subsets(self, minsize=None, maxsize=None):
+        """Yield subbitsets from specified size ordered by size ascending."""
+        # TODO in linear time
+        minsize = minsize or 0
+        maxsize = maxsize or len(self)
+        for k in range(minsize, maxsize + 1):
+            yield from (BitSet.join(*b) for b in combinations(list(self), k))
 
     def __len__(self):
         return len(list(self.__iter__()))
@@ -80,6 +84,17 @@ class BitSet:
     def __sub__(self, other):
         return BitSet(self.i - (self.i & other.i))
 
-    # def invert(self, length):
-        # TODO: provide universe against which the complement is computed
-        # return BitSet(2 ** length - 1 - self.i)
+    def disjoint(self, other):
+        return self.i & other.i == 0
+
+    def invert(self, universe_length):
+        return BitSet(2 ** universe_length - 1) - self
+
+    def __eq__(self, other):
+        return isinstance(other, BitSet) and self.i == other.i
+
+    def __lt__(self, other):
+        return self.i < other.i
+
+    def __gt__(self, other):
+        return self.i > other.i

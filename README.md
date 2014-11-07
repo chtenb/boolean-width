@@ -25,10 +25,10 @@ only that vertex. We use the latter representation throughout the code, because 
 several advantages.
 
 The syntax we use to support this paradigm is as follows.
-Let `X` be a bitset of vertices.
-Then `graph(X)` represents the union of the neighborhoods of all vertices in `X`.
-and `graph[X]` represents the union of the neighborhoods of all vertices in `X`, together with
-`X` itself.
+Let `vertices` be a bitset of vertices.
+Then `graph(vertices)` represents the union of the neighborhoods of all vertices in `vertices`,
+while `graph[vertices]` represents the union of the neighborhoods of all vertices in `vertices`
+together with `vertices` itself.
 
 Check out the definitions of `BitSet` and `Graph` for more details.
 

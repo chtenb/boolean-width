@@ -6,6 +6,7 @@ from bipartite import Bipartite
 from graph import Graph
 from bitset import BitSet
 from tree import Tree
+from linearbooleanwidth import linearbooleanwidth
 
 #from random import choice
 #b = BitSet.from_identifier(1,2,3)
@@ -21,8 +22,7 @@ from tree import Tree
 
 graph = Graph.load('input/petersen.dgf')
 plot(graph)
-import mis
-print(list(mis.bron_kerbosch_mis(graph)))
+print(list(linearbooleanwidth(graph)))
 
 #cProfile.run('booleandim(graph)')
 #booleandim(graph)
