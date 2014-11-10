@@ -12,8 +12,12 @@ from convexbipartite import ConvexBipartite
 #from linearbooleanwidth import linearbooleanwidth
 
 #graph = Graph.load('input/petersen.dgf')
-graph = ConvexBipartite.generate_random(10, 10)
-plot(graph)
+graph = Bipartite.generate_random(10, 10)
+im = plot_bipartite(graph)
+compl = graph.bipartite_complement()
+plot_bipartite(compl, im, color=(0, 128, 0))
+im.save('output/test.png', 'png')
+
 
 #import cProfile
 #cProfile.run('booleandim(graph)')
@@ -28,7 +32,5 @@ plot(graph)
 #print('linear decomposition: ' + '\n'.join('({}, {}): {},{}'.format(
     #graph[a], graph[b], lbooldim[a], lbooldim[b]) for a, b in ldecomposition))
 
-#size = (512, 512)
-#im = Image.new('RGB', size, 'white')
 #plot_graph(im, graph, color=(178, 0, 0))
 #im.save('output/test.png', 'png')

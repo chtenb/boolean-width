@@ -55,22 +55,14 @@ class Bipartite(Graph):
 
     def bipartite_complement(self):
         """Construct a graph representing the bipartite complement of self."""
-        raise NotImplementedError
-        #graph = Bipartite()
+        graph = Bipartite(self.group1, self.group2)
 
-        # for v in self.group1:
-        #v_new = Vertex(v.identifier)
-        #graph.add(v_new, group=1)
-        # for v in self.group2:
-        #v_new = Vertex(v.identifier)
-        #graph.add(v_new, group=2)
+        for v in graph.group1:
+            for w in graph.group2:
+                if not v in self[w]:
+                    graph.connect(v, w)
 
-        # for v in graph.group1:
-        # for w in graph.group2:
-        # if not self.vertices[v.identifier] in self.vertices[w.identifier].neighbors:
-        #graph.connect(v, w)
-
-        # return graph
+        return graph
 
     @staticmethod
     def generate_random(nr_vertices, nr_edges):
@@ -96,7 +88,7 @@ class Bipartite(Graph):
             while 1:
                 v = BitSet.from_identifier(choice(group1))
                 w = BitSet.from_identifier(choice(group2))
-                if not w in graph(v):
+                if not w in graph[v]:
                     break
             graph.connect(v, w)
 

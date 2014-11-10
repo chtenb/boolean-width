@@ -62,6 +62,9 @@ class Graph:
         if not w in self:
             raise ValueError
 
+        if w == v:
+            raise ValueError('{} and {} are the same vertex.'.format(v, w))
+
         if w in self(v):
             raise ValueError('{} and {} already connected.'.format(v, w))
 
@@ -77,6 +80,9 @@ class Graph:
             raise ValueError
         if not w in self:
             raise ValueError
+
+        if w == v:
+            raise ValueError('{} and {} are the same vertex.'.format(v, w))
 
         if not w in self(v):
             raise ValueError('{} and {} are not connected.'.format(v, w))

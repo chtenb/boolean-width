@@ -1,11 +1,11 @@
-from PIL import ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont
 import math
 from bitset import BitSet
 
 from graphviz import Graph
 
 
-def plot(graph, engine='dot'):
+def plot(graph, engine='dot', filename='output/test'):
     g = Graph(format='png', engine=engine)
     for v in graph:
         g.node(str(v))
@@ -13,12 +13,17 @@ def plot(graph, engine='dot'):
     for v, w in graph.edges:
         g.edge(str(v), str(w))
 
-    g.render('output/test')
+    g.render(filename)
 
 
-def plot_circle(im, graph, color=128):
+def plot_circle(graph, im=None, color=128):
     """Draw given graph on given draw object."""
-    size = im.size
+    if im == None:
+        size = (512, 512)
+        im = Image.new('RGB', size, 'white')
+    else:
+        size = im.size
+
     margin = 30
     draw = ImageDraw.Draw(im)
 
@@ -38,49 +43,52 @@ def plot_circle(im, graph, color=128):
             draw.line([vertexcoords[b], vertexcoords[w]],
                       fill=color, width=1)
 
+    return im
 
-def plot_bipartite(im, graph, color=128):
+
+def plot_bipartite(graph, im=None, color=128):
     """Draw given graph on given draw object."""
-    size = im.size
+    if im == None:
+        size = (512, 512)
+        im = Image.new('RGB', size, 'white')
+    else:
+        size = im.size
+
     margin = 30
     draw = ImageDraw.Draw(im)
 
-    xcoord_group1 = margin
-    xcoord_group2 = size[0] - margin
-
     # For each vertex we assign a vertical interval
     # The vertex is drawn in the center of that interval
+    xcoord = margin
     vertexcoords1 = {}
-    size_group1 = len(graph.group1)
-    interval_length = size[1] / size_group1
+    interval_length = size[1] / len(graph.group1)
     for i, v in enumerate(graph.group1):
         ycoord = i * interval_length + interval_length / 2
-        vertexcoords1[v.identifier] = (xcoord_group1, ycoord)
+        vertexcoords1[v] = (xcoord, ycoord)
 
     vertexcoords2 = {}
-    size_group2 = len(graph.group2)
-    interval_length = size[1] / size_group2
+    xcoord = size[0] - margin
+    interval_length = size[1] / len(graph.group2)
     for i, v in enumerate(graph.group2):
         ycoord = i * interval_length + interval_length / 2
-        vertexcoords2[v.identifier] = (xcoord_group2, ycoord)
+        vertexcoords2[v] = (xcoord, ycoord)
 
     for v in graph.group1:
-        coords = vertexcoords1[v.identifier]
+        coords = vertexcoords1[v]
         draw_vertex(draw, v, coords, color)
 
     for v in graph.group2:
-        coords = vertexcoords2[v.identifier]
+        coords = vertexcoords2[v]
         draw_vertex(draw, v, coords, color)
 
     for v in graph.group1:
-        for b in v.neighbors:
-            w = graph.vertices[b]
-            i = v.identifier
-            j = w.identifier
+        for w in graph(v):
             try:
-                draw.line([vertexcoords1[i], vertexcoords2[j]], fill=color)
+                draw.line([vertexcoords1[v], vertexcoords2[w]], fill=color)
             except KeyError:
-                draw.line([vertexcoords1[j], vertexcoords2[i]], fill=color)
+                draw.line([vertexcoords1[w], vertexcoords2[v]], fill=color)
+
+    return im
 
 
 def draw_vertex(draw, vertex, coords, color=128):
