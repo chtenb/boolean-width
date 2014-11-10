@@ -2,7 +2,7 @@ from random import randint, randrange
 from numpy import diff
 
 from bipartite import Bipartite
-from graph import Vertex
+from bitset import BitSet
 
 
 def random_partition(n, k, limit):
@@ -28,15 +28,12 @@ class ConvexBipartite(Bipartite):
     def verify_convexity(self):
         """Check that we are indeed convex."""
         for v in self.group2:
-            ids = [w.identifier for w in v.neighbors]
+            ids = [w.identifier for w in self[v]]
             ids.sort()
             differences = diff(ids)
             if differences.size > 0 and max(differences) > 1:
                 return False
         return True
-
-    def subgraph(self, vertices):
-        return NotImplemented
 
     @staticmethod
     def generate_random(nr_vertices, nr_edges):
@@ -52,26 +49,23 @@ class ConvexBipartite(Bipartite):
             if size1 * size2 >= nr_edges:
                 break
 
-        graph = ConvexBipartite()
-
         # For both groups create vertices
-        for i in range(size1):
-            vertex = Vertex(i)
-            graph.add_vertex(vertex, group=1)
+        group1 = range(size1)
+        group2 = range(size1, size1 + size2)
 
-        for i in range(size2):
-            vertex = Vertex(size1 + i)
-            graph.add_vertex(vertex, group=2)
+        graph = ConvexBipartite(BitSet.from_identifier(*group1),
+                                BitSet.from_identifier(*group2))
 
         # For each vertex in group2 we can determine the neighborhood by
         # a starting vertex and the length of the neighborhood.
         len_group1 = len(graph.group1)
         neighborhoodlengths = random_partition(nr_edges,
-                                                len(graph.group2),
-                                                len_group1)
+                                               len(graph.group2),
+                                               len_group1)
         for i, v in enumerate(graph.group2):
             length = neighborhoodlengths[i]
             start = randint(0, len_group1 - length)
-            for j in range(start, start + length):
-                graph.connect(graph.group1[j], v)
+            neighbors = BitSet.from_identifier(*range(start, start + length))
+            for w in neighbors:
+                graph.connect(w, v)
         return graph

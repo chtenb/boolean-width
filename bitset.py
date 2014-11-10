@@ -33,6 +33,7 @@ class BitSet:
             self.i |= v.i
         return self
 
+    @property
     def identifier(self):
         """If we only contain a single vertex, return its identifier."""
         if len(self) > 1:
@@ -44,7 +45,7 @@ class BitSet:
 
     def __str__(self):
         if len(self) == 1:
-            return str(self.identifier())
+            return str(self.identifier)
         else:
             return repr(self)
 

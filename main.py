@@ -1,5 +1,4 @@
 from PIL import Image
-import cProfile
 
 from plot import plot_bipartite, plot_circle, plot
 from bipartite import Bipartite
@@ -7,27 +6,18 @@ from graph import Graph
 from bitset import BitSet
 from tree import Tree
 from linearbooleanwidth import linearbooleanwidth
-
-#from random import choice
-#b = BitSet.from_identifier(1,2,3)
-#print(b)
-#print(choice(list(b)))
+from convexbipartite import ConvexBipartite
 
 #from booleanwidth import booleanwidth, booleandim
 #from linearbooleanwidth import linearbooleanwidth
 
-# mis_bipartite_complement()
-#graph = Bipartite.load('output/10,10.graph')
-
-
-graph = Graph.load('input/petersen.dgf')
+#graph = Graph.load('input/petersen.dgf')
+graph = ConvexBipartite.generate_random(10, 10)
 plot(graph)
-print(list(linearbooleanwidth(graph)))
 
+#import cProfile
 #cProfile.run('booleandim(graph)')
-#booleandim(graph)
 
-#graph = Tree.generate_random(9)
 #bw, booldim, decomposition = booleanwidth(graph)
 #print('booleanwidth: ' + str(bw))
 #print('decomposition: ' + '\n'.join('({}, {}): {},{}'.format(
