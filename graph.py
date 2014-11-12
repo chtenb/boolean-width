@@ -55,6 +55,20 @@ class Graph:
         for v in vertices:
             self.neighborhoods[v] = BitSet()
 
+    def remove(self, vertices):
+        """Remove vertices from the graph."""
+        if not vertices in self.vertices:
+            raise ValueError('Graph don\'t contain some of [{}]'.format(vertices))
+
+        for v in vertices:
+            for w in self(v):
+                self.disconnect(v, w)
+
+        self._vertices -= vertices
+
+        for v in vertices:
+            del self.neighborhoods[v]
+
     def connect(self, v, w):
         """Connect two vertices."""
         if not v in self:

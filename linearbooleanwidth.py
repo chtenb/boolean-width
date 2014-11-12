@@ -52,6 +52,54 @@ def linearbooleanwidth(graph):
             booldim,
             list(linearbooleanwidth_decomposition(bwtable, booldim, graph.vertices)))
 
+#
+# Trees
+#
+
+
+def preprocess(graph):
+    # Remove all pendant with parent of degree > 2
+    change = True
+    while change:
+        change = False
+        for v in graph:
+            if len(graph(v)) == 1 and len(graph(graph(v))) > 2:
+                print('Removing ' + str(v))
+                graph.remove(v)
+                change = True
+
+
+def secondmax(iterable):
+    largest = -float('inf')
+    secondlargest = -float('inf')
+    for i in iterable:
+        if i > largest:
+            secondlargest = largest
+            largest = i
+        elif i > secondlargest:
+            secondlargest = i
+
+    if secondlargest == -float('inf'):
+        raise ValueError('Iterable must have length > 1')
+
+    return secondlargest
+
+
+def linearbooleanwidth_trees(graph):
+
+    def depthfirst(graph, node, parent):
+        children = graph(node) - parent
+        if not children:
+            return 2
+        if len(children) == 1:
+            return depthfirst(graph, children, node)
+        return max(
+            max(depthfirst(graph, child, node) for child in children),
+            2 * secondmax(depthfirst(graph, child, node) for child in children)
+        )
+
+    return min(depthfirst(graph, root, BitSet()) for root in graph)
+
 
 #
 # Comparisons
@@ -60,18 +108,19 @@ def linearbooleanwidth(graph):
 
 def compare_linear_balanced():
     while 1:
-        graph = Bipartite.generate_random(10, 10)
+        graph = Bipartite.generate_random(6, 6)
         bw, booldim, decomposition = booleanwidth(graph)
         lbw, lbooldim, ldecomposition = linearbooleanwidth(graph)
+        print('bw: {}, lbw: {}'.format(bw, lbw))
 
-        if bw < lbw - 1:
+        if bw != lbw:
             print('booleanwidth: ' + str(bw))
             print('decomposition: ' + '\n'.join('({}, {}): {},{}'.format(
-                graph[a], graph[b], booldim[a], booldim[b]) for a, b in decomposition))
+                a, b, booldim[a], booldim[b]) for a, b in decomposition))
 
             print('linear booleanwidth: ' + str(lbw))
             print('linear decomposition: ' + '\n'.join('({}, {}): {},{}'.format(
-                graph[a], graph[b], lbooldim[a], lbooldim[b]) for a, b in ldecomposition))
+                a, b, lbooldim[a], lbooldim[b]) for a, b in ldecomposition))
 
             plot(graph)
             break

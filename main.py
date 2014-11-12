@@ -1,22 +1,19 @@
-from PIL import Image
-
-from plot import plot_bipartite, plot_circle, plot
-from bipartite import Bipartite
-from graph import Graph
 from bitset import BitSet
+from graph import Graph
+from bipartite import Bipartite
 from tree import Tree
-from linearbooleanwidth import linearbooleanwidth
 from convexbipartite import ConvexBipartite
 
-#from booleanwidth import booleanwidth, booleandim
-#from linearbooleanwidth import linearbooleanwidth
+from linearbooleanwidth import linearbooleanwidth, compare_linear_balanced, linearbooleanwidth_trees, preprocess
+from booleanwidth import booleanwidth, booleandim
+from plot import plot_bipartite, plot_circle, plot
 
 #graph = Graph.load('input/petersen.dgf')
-graph = Bipartite.generate_random(10, 10)
-im = plot_bipartite(graph)
-compl = graph.bipartite_complement()
-plot_bipartite(compl, im, color=(0, 128, 0))
-im.save('output/test.png', 'png')
+#graph = Bipartite.generate_random(10, 10)
+#im = plot_bipartite(graph)
+#compl = graph.bipartite_complement()
+#plot_bipartite(compl, im, color=(0, 128, 0))
+#im.save('output/test.png', 'png')
 
 
 #import cProfile
@@ -27,10 +24,24 @@ im.save('output/test.png', 'png')
 #print('decomposition: ' + '\n'.join('({}, {}): {},{}'.format(
     #graph[a], graph[b], booldim[a], booldim[b]) for a, b in decomposition))
 
-#lbw, lbooldim, ldecomposition = linearbooleanwidth(graph)
-#print('linear booleanwidth: ' + str(lbw))
+#graph = Tree.generate_random(10)
+graph = Tree.generate_random_binary(10)
+plot(graph, filename='output/test2')
+lbw, lbooldim, ldecomposition = linearbooleanwidth(graph)
+print('linear booleanwidth: ' + str(lbw))
 #print('linear decomposition: ' + '\n'.join('({}, {}): {},{}'.format(
-    #graph[a], graph[b], lbooldim[a], lbooldim[b]) for a, b in ldecomposition))
+    #a, b, lbooldim[a], lbooldim[b]) for a, b in ldecomposition))
+print('linear decomposition: ' + ', '.join('({}: {})'.format(
+    a, lbooldim[b]) for a, b in ldecomposition))
+
+preprocess(graph)
+plot(graph)
+lbw, lbooldim, ldecomposition = linearbooleanwidth(graph)
+print('linear booleanwidth: ' + str(lbw))
+#print('linear decomposition: ' + '\n'.join('({}, {}): {},{}'.format(
+    #a, b, lbooldim[a], lbooldim[b]) for a, b in ldecomposition))
+print('linear decomposition: ' + ', '.join('({}: {})'.format(
+    a, lbooldim[b]) for a, b in ldecomposition))
 
 #plot_graph(im, graph, color=(178, 0, 0))
 #im.save('output/test.png', 'png')

@@ -3,17 +3,6 @@ from bipartite import Bipartite
 from bitset import BitSet
 
 
-# def subsets(vertices, minsize=None, maxsize=None):
-#"""Return subsets from specified size ordered by size ascending."""
-#minsize = minsize or 0
-#maxsize = maxsize or len(vertices)
-# for k in range(minsize, maxsize + 1):
-# yield from combinations(vertices, k)
-# yield from (BitSet(i) for i in range(1, 2 ** (len(vertices) - 1)))
-# for k in range(1, len(vertices)):
-# yield from (BitSet(subset) for subset in combinations(vertices, k))
-
-
 def cut(graph, vertices):
     """Return the bipartite graph of cut induced by given vertex subset."""
     complement = graph.vertices - vertices
