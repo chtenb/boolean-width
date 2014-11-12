@@ -52,13 +52,14 @@ def linearbooleanwidth(graph):
             booldim,
             list(linearbooleanwidth_decomposition(bwtable, booldim, graph.vertices)))
 
+
 #
 # Trees
 #
 
 
 def preprocess(graph):
-    # Remove all pendant with parent of degree > 2
+    # Remove pendants with parent of degree > 2
     change = True
     while change:
         change = False
@@ -67,6 +68,24 @@ def preprocess(graph):
                 print('Removing ' + str(v))
                 graph.remove(v)
                 change = True
+
+    # Contract chains with length > 2
+    for v in graph:
+        if len(graph(v)) == 2:
+            w1, w2 = graph(v)
+            if graph(w1) - v and graph(w2) - v:
+                print('Contracting ' + str(v))
+                graph.contract(v)
+
+    # Remove reduced leaves if parent has degree > 3
+    for v in graph:
+        if len(graph(v)) == 1 and len(graph(graph(v))) == 2:
+            parent = graph(graph(v)) - v
+            if len(graph(parent)) > 3:
+                print('Removing ' + str(graph(v)))
+                graph.remove(graph(v))
+                print('Removing ' + str(v))
+                graph.remove(v)
 
 
 def secondmax(iterable):
@@ -93,6 +112,12 @@ def linearbooleanwidth_trees(graph):
             return 2
         if len(children) == 1:
             return depthfirst(graph, children, node)
+
+        child = children
+        # Look ahead for leaves
+        if not graph(child) - node:
+            return
+
         return max(
             max(depthfirst(graph, child, node) for child in children),
             2 * secondmax(depthfirst(graph, child, node) for child in children)

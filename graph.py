@@ -107,6 +107,20 @@ class Graph:
         self.neighborhoods[v] -= w
         self.neighborhoods[w] -= v
 
+    def contract(self, v):
+        """Contract a vertex."""
+        if not v in self:
+            raise ValueError
+
+        neighbors = self(v)
+        self.remove(v)
+
+        for w1 in neighbors:
+            for w2 in neighbors:
+                if w1 < w2:
+                    self.connect(w1, w2)
+
+
     def complement(self):
         """Construct a graph representing the complement of self."""
         setlength = len(self.vertices)

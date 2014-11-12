@@ -24,24 +24,19 @@ from plot import plot_bipartite, plot_circle, plot
 #print('decomposition: ' + '\n'.join('({}, {}): {},{}'.format(
     #graph[a], graph[b], booldim[a], booldim[b]) for a, b in decomposition))
 
-#graph = Tree.generate_random(10)
-graph = Tree.generate_random_binary(10)
+graph = Tree.generate_random(20, maxdegree=4)
+#graph = Tree.generate_random_binary(15)
 plot(graph, filename='output/test2')
+preprocess(graph)
+plot(graph)
 lbw, lbooldim, ldecomposition = linearbooleanwidth(graph)
+print('linear booleanwidth tree: ' + str(linearbooleanwidth_trees(graph)))
 print('linear booleanwidth: ' + str(lbw))
 #print('linear decomposition: ' + '\n'.join('({}, {}): {},{}'.format(
     #a, b, lbooldim[a], lbooldim[b]) for a, b in ldecomposition))
 print('linear decomposition: ' + ', '.join('({}: {})'.format(
     a, lbooldim[b]) for a, b in ldecomposition))
 
-preprocess(graph)
-plot(graph)
-lbw, lbooldim, ldecomposition = linearbooleanwidth(graph)
-print('linear booleanwidth: ' + str(lbw))
-#print('linear decomposition: ' + '\n'.join('({}, {}): {},{}'.format(
-    #a, b, lbooldim[a], lbooldim[b]) for a, b in ldecomposition))
-print('linear decomposition: ' + ', '.join('({}: {})'.format(
-    a, lbooldim[b]) for a, b in ldecomposition))
 
 #plot_graph(im, graph, color=(178, 0, 0))
 #im.save('output/test.png', 'png')
