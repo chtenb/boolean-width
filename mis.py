@@ -3,6 +3,30 @@
 from bitset import BitSet
 
 
+def bron_kerbosch_mis_count(graph):
+    """Compute all maximal independent sets."""
+    def recursion(include, rest, exclude):
+        if not exclude and not rest:
+            return 1
+
+        minsize = float('inf')
+        for u in rest | exclude:
+            size = len(rest & graph(u))
+            if size < minsize:
+                pivot = u
+                minsize = size
+
+        count = 0
+        for v in rest & (graph[pivot]):
+            count += recursion(include | v, rest - (graph[v]), exclude - graph(v))
+            rest -= v
+            exclude |= v
+
+        return count
+
+    return recursion(BitSet(), graph.vertices, BitSet())
+
+
 def bron_kerbosch_mc(graph):
     """Compute all maximal cliques."""
     def recursion(include, rest, exclude):
@@ -18,9 +42,7 @@ def bron_kerbosch_mc(graph):
             return
 
         for v in rest:
-            yield from recursion(include | v,
-                                 rest & graph(v),
-                                 exclude & graph(v))
+            yield from recursion(include | v, rest & graph(v), exclude & graph(v))
             rest -= v
             exclude |= v
 
@@ -47,19 +69,22 @@ def bron_kerbosch_mis(graph):
                 minsize = size
 
         for v in rest & (graph[pivot]):
-            yield from recursion(include | v,
-                                 rest - (graph[v]),
-                                 exclude - graph(v))
+            yield from recursion(include | v, rest - (graph[v]), exclude - graph(v))
             rest -= v
             exclude |= v
 
     yield from recursion(BitSet(), graph.vertices, BitSet())
 
 
+#
+# Comparisons and Misc
+#
+
+
 from random import randint
-from PIL import Image
 from graph import Graph
 from bipartite import Bipartite
+
 
 def mul_abs(x):
     return max(x, 1 / x)

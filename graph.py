@@ -43,7 +43,7 @@ class Graph:
         for v in self:
             for w in self(v):
                 if w < v:
-                    yield (v, w)
+                    yield v | w
 
     def add(self, vertices):
         """Add new vertices to the graph."""
@@ -120,20 +120,26 @@ class Graph:
                 if w1 < w2:
                     self.connect(w1, w2)
 
-
     def complement(self):
         """Construct a graph representing the complement of self."""
         setlength = len(self.vertices)
-        neighborhoods = {v : self[v].invert(setlength) for v in self}
+        neighborhoods = {v: self[v].invert(setlength) for v in self}
         return Graph(self.vertices, neighborhoods)
 
     def subgraph(self, vertices):
         """Return a graph which is the subgraph of self induced by given vertex subset."""
-        neighborhoods = {v : self(v) & vertices for v in self}
+        neighborhoods = {v: self(v) & vertices for v in self}
         return Graph(self.vertices, neighborhoods)
 
     def save(self, filename):
-        raise NotImplementedError
+        with open(filename, 'w') as f:
+            f.write('p edges {} {}\n'.format(len(self.vertices), len(list(self.edges))))
+            f.writelines(
+                'n {}\n'.format(v.identifier) for v in self
+            )
+            f.writelines(
+                'e {} {}\n'.format(v.identifier, w. identifier) for v, w in self.edges
+            )
 
     @staticmethod
     def load(filename):

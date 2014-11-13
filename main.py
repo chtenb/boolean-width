@@ -16,7 +16,7 @@ from plot import plot_bipartite, plot_circle, plot
 #im.save('output/test.png', 'png')
 
 
-#import cProfile
+import cProfile
 #cProfile.run('booleandim(graph)')
 
 #bw, booldim, decomposition = booleanwidth(graph)
@@ -24,9 +24,14 @@ from plot import plot_bipartite, plot_circle, plot
 #print('decomposition: ' + '\n'.join('({}, {}): {},{}'.format(
     #graph[a], graph[b], booldim[a], booldim[b]) for a, b in decomposition))
 
-graph = Tree.generate_random(20, maxdegree=4)
-#graph = Tree.generate_random_binary(15)
-plot(graph, filename='output/test2')
+#graph = Graph.generate_random(20, 50)
+graph = Tree.generate_random_binary(13)
+plot(graph, filename='output/test')
+#graph.save('balanced-13.dgf')
+def run(graph):
+    print(linearbooleanwidth(graph)[0])
+cProfile.run('run(graph)')
+
 preprocess(graph)
 plot(graph)
 lbw, lbooldim, ldecomposition = linearbooleanwidth(graph)

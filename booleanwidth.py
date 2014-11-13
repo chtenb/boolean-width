@@ -1,4 +1,4 @@
-from mis import bron_kerbosch_mis
+from mis import bron_kerbosch_mis, bron_kerbosch_mis_count
 from bipartite import Bipartite
 from bitset import BitSet
 
@@ -18,13 +18,15 @@ def cut(graph, vertices):
 
 
 def booleandim(graph):
+
     print('Computing booldim')
     booldim = {}
     for subset in graph.vertices.subsets(1, len(graph.vertices) - 1):
         #print('Processing subset ' + str(subset))
         if not subset in booldim:
             complement = graph.vertices - subset
-            result = len(list(bron_kerbosch_mis(cut(graph, subset))))
+            #result = len(list(bron_kerbosch_mis(cut(graph, subset))))
+            result = bron_kerbosch_mis_count(cut(graph, subset))
             booldim[subset] = result
             booldim[complement] = result
 
@@ -61,22 +63,16 @@ def boolwidthtable(graph):
     return bwtable, booldim
 
 
-def booleanwidth_decomposition(bwtable, booldim, A, rec=0):
-    assert isinstance(A, BitSet)
+def booleanwidth_decomposition(bwtable, booldim, A):
     bound = bwtable[A]
     if len(A) > 1:
         for B in A.subsets(1, len(A) - 1):
-            assert B in A
             if (bwtable[B] <= bound and booldim[B] <= bound
                     and booldim[A - B] <= bound and bwtable[A - B] <= bound):
-                #print(bound, bwtable[B], bwtable[A - B])
+
                 yield (B, A - B)
                 yield from booleanwidth_decomposition(bwtable, booldim, B)
                 yield from booleanwidth_decomposition(bwtable, booldim, A - B)
-                # print(B)
-                #booleanwidth_decomposition(bwtable, B, rec+1)
-                #booleanwidth_decomposition(bwtable, A - B, rec+1)
-
                 break
 
 
