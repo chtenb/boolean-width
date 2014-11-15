@@ -6,6 +6,11 @@ from bitset import BitSet
 def bron_kerbosch_mis_count(graph):
     """Compute all maximal independent sets."""
     def recursion(include, rest, exclude):
+        assert include or exclude or rest
+        assert not include & rest
+        assert not include & exclude
+        assert not rest & exclude
+
         if not exclude and not rest:
             return 1
 
@@ -34,8 +39,6 @@ def bron_kerbosch_mc(graph):
         assert not include & rest
         assert not include & exclude
         assert not rest & exclude
-
-        #print('{}, {}, {}'.format(include, rest, exclude))
 
         if not exclude and not rest:
             yield include

@@ -25,7 +25,6 @@ def booleandim(graph):
         #print('Processing subset ' + str(subset))
         if not subset in booldim:
             complement = graph.vertices - subset
-            #result = len(list(bron_kerbosch_mis(cut(graph, subset))))
             result = bron_kerbosch_mis_count(cut(graph, subset))
             booldim[subset] = result
             booldim[complement] = result

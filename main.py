@@ -4,7 +4,7 @@ from bipartite import Bipartite
 from tree import Tree
 from convexbipartite import ConvexBipartite
 
-from linearbooleanwidth import linearbooleanwidth, compare_linear_balanced, linearbooleanwidth_trees, preprocess
+from linearbooleanwidth import linearbooleanwidth, compare_linear_balanced, preprocess
 from booleanwidth import booleanwidth, booleandim
 from plot import plot_bipartite, plot_circle, plot
 
@@ -17,25 +17,27 @@ from plot import plot_bipartite, plot_circle, plot
 
 
 import cProfile
-#cProfile.run('booleandim(graph)')
-
 #bw, booldim, decomposition = booleanwidth(graph)
 #print('booleanwidth: ' + str(bw))
 #print('decomposition: ' + '\n'.join('({}, {}): {},{}'.format(
     #graph[a], graph[b], booldim[a], booldim[b]) for a, b in decomposition))
 
 #graph = Graph.generate_random(20, 50)
-graph = Tree.generate_random_binary(13)
-plot(graph, filename='output/test')
+#graph = Tree.generate_random(20, 50)
+#plot(graph, filename='output/test')
 #graph.save('balanced-13.dgf')
+graph = Tree.generate_random_binary(13)
 def run(graph):
     print(linearbooleanwidth(graph)[0])
 cProfile.run('run(graph)')
+#run(graph)
+exit()
 
+graph = Tree.generate_random_binary(22)
 preprocess(graph)
 plot(graph)
 lbw, lbooldim, ldecomposition = linearbooleanwidth(graph)
-print('linear booleanwidth tree: ' + str(linearbooleanwidth_trees(graph)))
+#print('linear booleanwidth tree: ' + str(linearbooleanwidth_trees(graph)))
 print('linear booleanwidth: ' + str(lbw))
 #print('linear decomposition: ' + '\n'.join('({}, {}): {},{}'.format(
     #a, b, lbooldim[a], lbooldim[b]) for a, b in ldecomposition))

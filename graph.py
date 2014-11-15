@@ -28,10 +28,15 @@ class Graph:
 
     def __call__(self, vertices):
         """Return the union of neighborhoods of vertices."""
-        result = BitSet()
+        #result = BitSet()
+        #for v in vertices:
+            #result |= self.neighborhoods[v]
+        #return result
+        result = 0
         for v in vertices:
-            result |= self.neighborhoods[v]
-        return result
+            result = result | self.neighborhoods[v]
+            #result |= self.neighborhoods[v]
+        return BitSet(result)
 
     def __getitem__(self, vertices):
         """Return the union of neighborhoods of vertices including the vertices."""
@@ -47,7 +52,11 @@ class Graph:
 
     def add(self, vertices):
         """Add new vertices to the graph."""
+        assert isinstance(vertices, BitSet)
         if not self.vertices.disjoint(vertices):
+            print(self.vertices)
+            print(repr(vertices))
+            print(vertices)
             raise ValueError('Graph already contain some of [{}]'.format(vertices))
 
         self._vertices |= vertices
