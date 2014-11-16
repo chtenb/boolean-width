@@ -2,34 +2,33 @@
 
 from bitset import BitSet
 
+def mis_count_recursion(graph, include, rest, exclude):
+    assert include or exclude or rest
+    assert not include & rest
+    assert not include & exclude
+    assert not rest & exclude
 
-def bron_kerbosch_mis_count(graph):
+    if not exclude and not rest:
+        return 1
+
+    minsize = float('inf')
+    for u in rest | exclude:
+        size = len(rest & graph(u))
+        if size < minsize:
+            pivot = u
+            minsize = size
+
+    count = 0
+    for v in rest & (graph[pivot]):
+        count += mis_count_recursion(graph, include | v, rest - (graph[v]), exclude - graph(v))
+        rest -= v
+        exclude |= v
+
+    return count
+
+def mis_count(graph):
     """Compute all maximal independent sets."""
-    def recursion(include, rest, exclude):
-        assert include or exclude or rest
-        assert not include & rest
-        assert not include & exclude
-        assert not rest & exclude
-
-        if not exclude and not rest:
-            return 1
-
-        minsize = float('inf')
-        for u in rest | exclude:
-            size = len(rest & graph(u))
-            if size < minsize:
-                pivot = u
-                minsize = size
-
-        count = 0
-        for v in rest & (graph[pivot]):
-            count += recursion(include | v, rest - (graph[v]), exclude - graph(v))
-            rest -= v
-            exclude |= v
-
-        return count
-
-    return recursion(BitSet(), graph.vertices, BitSet())
+    return mis_count_recursion(graph, BitSet(), graph.vertices, BitSet())
 
 
 def bron_kerbosch_mc(graph):
