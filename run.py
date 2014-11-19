@@ -10,17 +10,29 @@ import mis
 import mis64
 
 from graph64 import to64
-#exit()
+from bitset64 import subsets, tostring
 
-#graph = Tree.generate_random_binary(60)
-graph = Graph.load('input/R.dgf')
+from booleanwidth import booleandim
+from booleanwidth64 import booleandim as booleandim64
+
+from bitset import BitSet
+
+#x = BitSet(15)
+#for s in x.subsets(0, -3):
+    #print('{}, {}'.format(s, len(s)))
+#print(len(x.subsets()))
+#exit()
+graph = Graph.generate_random(10, 10)
+#graph = Graph.load('input/R.dgf')
 def run(graph):
-    print(mis.mis_count(graph))
+    return booleandim(graph)
 G = to64(graph)
 def crun(graph):
-    print(mis64.mis_count(G.N, G.V))
+    return booleandim64(G)
+
+print(run(graph) == crun(graph))
 #cProfile.run('run(graph)')
-cProfile.run('crun(graph)')
+#cProfile.run('crun(graph)')
 #run(graph)
 
 

@@ -1,4 +1,4 @@
-from mis import bron_kerbosch_mis, bron_kerbosch_mis_count
+from mis import mis_count
 from bipartite import Bipartite
 from bitset import BitSet
 
@@ -24,7 +24,7 @@ def booleandim(graph):
         #print('Processing subset ' + str(subset))
         if not subset in booldim:
             complement = graph.vertices - subset
-            result = bron_kerbosch_mis_count(cut(graph, subset))
+            result = mis_count(cut(graph, subset))
             booldim[subset] = result
             booldim[complement] = result
 

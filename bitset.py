@@ -65,13 +65,18 @@ class BitSet(int):
             yield BitSet(b)
             n ^= b
 
-    def subsets(self, minsize=None, maxsize=None):
+    def subsets(self, minsize=0, maxsize=-1):
         """Yield subbitsets from specified size ordered by size ascending."""
-        # TODO in 2^n time
-        #minsize = minsize or 0
-        #maxsize = maxsize or len(self)
-        # for k in range(minsize, maxsize + 1):
-        # yield from (BitSet.join(*b) for b in combinations(list(self), k))
+        if minsize < 0:
+            minsize = len(self) + 1 + minsize
+        if maxsize < 0:
+            maxsize = len(self) + 1 + maxsize
+
+        sets = [BitSet()]
+        for v in self:
+            sets.extend([s | v for s in sets])
+
+        return [s for s in sets if len(s) >= minsize and len(s) <= maxsize]
 
     def __len__(self):
         return sum(1 for _ in self)

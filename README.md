@@ -39,4 +39,4 @@ A huge performance boost can be gained by using static `long` ints as bitsets, i
 own bitset type.
 We can implement this using Cython.
 Two drawbacks are that we don't have pretty syntax and that we can only store so much vertices.
-(64 for `unsigned long`s and 128 for `unsigned long long`s)
+(64 for `unsigned long` and 128 for `unsigned long long`)
