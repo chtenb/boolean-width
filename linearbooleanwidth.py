@@ -21,7 +21,7 @@ def linearboolwidthtable(graph):
     for A in graph.vertices.subsets(2):
         bwtable[A] = min(max(booldim[B], booldim[A - B],
                              bwtable[B], bwtable[A - B])
-                         for B in A.subsets(1, 1))
+                         for B in A)
 
     return bwtable, booldim
 
@@ -47,10 +47,11 @@ def linearbooleanwidth_decomposition(bwtable, booldim, A, rec=0):
 
 def linearbooleanwidth(graph):
     bwtable, booldim = linearboolwidthtable(graph)
-    print('Computing decomposition')
-    return (bwtable[graph.vertices],
-            booldim,
-            list(linearbooleanwidth_decomposition(bwtable, booldim, graph.vertices)))
+    return bwtable[graph.vertices]
+    #print('Computing decomposition')
+    #return (bwtable[graph.vertices],
+            #booldim,
+            #list(linearbooleanwidth_decomposition(bwtable, booldim, graph.vertices)))
 
 
 #

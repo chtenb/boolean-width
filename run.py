@@ -12,8 +12,8 @@ import mis64
 from graph64 import to64
 from bitset64 import subsets, tostring
 
-from booleanwidth import booleandim
-from booleanwidth64 import booleandim as booleandim64
+from linearbooleanwidth import linearbooleanwidth
+from linearbooleanwidth64 import linearbooleanwidth as linearbooleanwidth64
 
 from bitset import BitSet
 
@@ -22,15 +22,15 @@ from bitset import BitSet
     #print('{}, {}'.format(s, len(s)))
 #print(len(x.subsets()))
 #exit()
-graph = Graph.generate_random(10, 10)
+graph = Graph.generate_random(13, 20)
 #graph = Graph.load('input/R.dgf')
 def run(graph):
-    return booleandim(graph)
-G = to64(graph)
+    return linearbooleanwidth(graph)
 def crun(graph):
-    return booleandim64(G)
+    return linearbooleanwidth64(graph)
 
-print(run(graph) == crun(graph))
+print(run(graph))
+print(crun(to64(graph)))
 #cProfile.run('run(graph)')
 #cProfile.run('crun(graph)')
 #run(graph)
