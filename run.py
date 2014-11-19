@@ -22,17 +22,17 @@ from bitset import BitSet
     #print('{}, {}'.format(s, len(s)))
 #print(len(x.subsets()))
 #exit()
-graph = Graph.generate_random(13, 20)
+graph = Graph.generate_random(17, 20)
 #graph = Graph.load('input/R.dgf')
 def run(graph):
     return linearbooleanwidth(graph)
 def crun(graph):
     return linearbooleanwidth64(graph)
 
-print(run(graph))
-print(crun(to64(graph)))
+#print(run(graph))
+#print(crun(to64(graph)))
 #cProfile.run('run(graph)')
-#cProfile.run('crun(graph)')
+cProfile.run('print(crun(to64(graph)))')
 #run(graph)
 
 

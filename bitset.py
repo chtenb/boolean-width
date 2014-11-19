@@ -48,7 +48,7 @@ class BitSet(int):
         result = []
         while length:
             result.append(self % 2)
-            self >>= 2
+            self >>= 1
             length -= 1
         return result
 
