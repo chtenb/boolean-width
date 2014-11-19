@@ -1,2 +1,5 @@
 implement generation of Biconvex bipartite graphs
 implement planar and dual graphs?
+
+try using c map for neighborhoods instead of pythons dict
+    compare gcc builtin ffs + array and libcpp.unordered_map

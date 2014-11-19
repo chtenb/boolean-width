@@ -2,11 +2,18 @@
 This module contains cython functions for making int64 work like a set.
 """
 
-#from cpython cimport array
+#from cpython cimport map
 #from array import array
+
+#cdef array.array a = array('L', [1,2,3])
+#print(a)
 
 cpdef long subtract(long self, long other):
     return self - (self & other)
+
+
+#cpdef int ffs(long b):
+    #return __builtin_ffs(b);
 
 
 def iterate(long n):
@@ -36,18 +43,12 @@ from math import log
 def tostring(self):
     return 'BitSet{{{}}}'.format(', '.join(str(int(log(v, 2))) for v in iterate(self)))
 
-cpdef to64(graph):
-    result = {}
-    for key in graph.vertices:
-        result[<long>key] = <long>graph.neighborhoods[key]
-    return result
 
-
-#def subsets(self, minsize=None, maxsize=None):
+#def subsets(long self, int minsize=None, int maxsize=None):
     #"""Yield subbitsets from specified size ordered by size ascending."""
     ## TODO in 2^n time
     #minsize = minsize or 0
-    #maxsize = maxsize or len(self)
+    #maxsize = maxsize or length(self)
     #for k in range(minsize, maxsize + 1):
         #yield from (BitSet.join(*b) for b in combinations(list(self), k))
 

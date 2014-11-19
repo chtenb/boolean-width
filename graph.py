@@ -26,6 +26,10 @@ class Graph:
         """Test if we contain vertex v."""
         return v in self.vertices
 
+    def __len__(self):
+        """Iterate over all vertices."""
+        return len(self.vertices)
+
     def __call__(self, vertices):
         """Return the union of neighborhoods of vertices."""
         #result = BitSet()
@@ -131,7 +135,7 @@ class Graph:
 
     def complement(self):
         """Construct a graph representing the complement of self."""
-        setlength = len(self.vertices)
+        setlength = len(self)
         neighborhoods = {v: self[v].invert(setlength) for v in self}
         return Graph(self.vertices, neighborhoods)
 
@@ -139,6 +143,10 @@ class Graph:
         """Return a graph which is the subgraph of self induced by given vertex subset."""
         neighborhoods = {v: self(v) & vertices for v in self}
         return Graph(self.vertices, neighborhoods)
+
+    def adjacency_matrix(self):
+        l = len(self)
+        return [tuple(self(v).tolist(l)) for v in self]
 
     def save(self, filename):
         with open(filename, 'w') as f:

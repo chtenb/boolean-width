@@ -1,20 +1,23 @@
-from mis import bron_kerbosch_mis, bron_kerbosch_mis_count
-from bipartite import Bipartite
-from bitset import BitSet
+from mis64 import mis_count
+from bitset64 import iterate
+from graph64 import Graph
 
 
-def cut(graph, vertices):
+def cut(long V, N, long vertices):
     """Return the bipartite graph of cut induced by given vertex subset."""
-    complement = graph.vertices - vertices
+    complement = V - vertices
     result = Bipartite(vertices, complement)
 
-    for v in vertices:
-        result.neighborhoods[v] = graph[v] & complement
+    cdef long newV
+    newN = {}
 
-    for v in complement:
-        result.neighborhoods[v] = graph[v] & vertices
+    for v in iterate(vertices):
+        newN[v] = N[v] & complement
 
-    return result
+    for v in iterate(complement):
+        newN[v] = N[v] & vertices
+
+    return Graph(newV, newN)
 
 
 def booleandim(graph):
@@ -24,7 +27,7 @@ def booleandim(graph):
         #print('Processing subset ' + str(subset))
         if not subset in booldim:
             complement = graph.vertices - subset
-            result = bron_kerbosch_mis_count(cut(graph, subset))
+            result = mis_count(cut(graph, subset))
             booldim[subset] = result
             booldim[complement] = result
 

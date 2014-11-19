@@ -3,32 +3,32 @@
 from bitset64 import iterate, length, tostring
 from bitset import BitSet
 
-cpdef int recursion(graph, long _include, long rest, long exclude):
-    if not exclude and not rest:
+cpdef int recursion(N, long includes, long rest, long excludes):
+    if not excludes and not rest:
         return 1
 
     cdef long u, pivot = 0
     cdef int size, minsize = 999999
-    for u in iterate(rest | exclude):
-        size = length(rest & graph[u])
+    for u in iterate(rest | excludes):
+        size = length(rest & N[u])
         if size < minsize:
             pivot = u
             minsize = size
 
     cdef int count = 0
-    for v in iterate(rest & (graph[pivot] | pivot)):
-        count += recursion(graph,
-                _include | v,
-                rest - (rest & (graph[v] | v)),
-                exclude - (exclude & graph[v])
+    for v in iterate(rest & (N[pivot] | pivot)):
+        count += recursion(N,
+                includes | v,
+                rest - (rest & (N[v] | v)),
+                excludes - (excludes & N[v])
                 )
         rest -= v
-        exclude |= v
+        excludes |= v
 
     return count
 
-cpdef mis_count(graph, vertices):
+cpdef mis_count(N, long vertices):
     """Compute all maximal independent sets."""
-    return recursion(graph, 0L, <long>vertices, 0L)
+    return recursion(N, 0L, vertices, 0L)
 
 

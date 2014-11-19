@@ -3,19 +3,23 @@ import pyximport
 pyximport.install()
 
 import cProfile
-from tree import Tree
+#from tree import Tree
+from graph import Graph
 
 import mis
 import mis64
 
-from bitset64 import to64
+from graph64 import to64
+#exit()
 
-graph = Tree.generate_random_binary(40)
+#graph = Tree.generate_random_binary(60)
+graph = Graph.load('input/R.dgf')
 def run(graph):
     print(mis.mis_count(graph))
+G = to64(graph)
 def crun(graph):
-    print(mis64.mis_count(to64(graph), graph.vertices))
-cProfile.run('run(graph)')
+    print(mis64.mis_count(G.N, G.V))
+#cProfile.run('run(graph)')
 cProfile.run('crun(graph)')
 #run(graph)
 

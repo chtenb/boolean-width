@@ -1,6 +1,6 @@
 from graph import Graph
 from bitset import BitSet
-from random import randint, choice
+from random import choice
 
 
 class Tree(Graph):
@@ -53,7 +53,7 @@ class Tree(Graph):
         return graph
 
     @staticmethod
-    def generate_random_binary(nr_vertices):
+    def generate_random_cubic(nr_vertices):
         graph = Tree()
         graph.root = BitSet.from_identifier(0)
         graph.add(graph.root)
