@@ -15,7 +15,7 @@ def linearboolwidthtable(graph):
     for v in iterate(graph.V):
         bwtable[v] = 2
 
-    print('Solving recurrence')
+    #print('Solving recurrence')
 
     for A in subsets(graph.V, 2):
         bwtable[A] = min(max(booldim[B], booldim[A - B],

@@ -144,9 +144,21 @@ class Graph:
         neighborhoods = {v: self(v) & vertices for v in self}
         return Graph(self.vertices, neighborhoods)
 
+    def verify_symmetry(self):
+        for v in self:
+            for w in self(v):
+                assert v in self(w)
+
     def adjacency_matrix(self):
-        l = len(self)
-        return [tuple(self(v).tolist(l)) for v in self]
+        size = self.vertices.fls() + 1
+        result = []
+        for i in range(size):
+            v = BitSet.from_identifier(i)
+            if v in self:
+                result.append(tuple(self(v).tolist(size)))
+            else:
+                result.append(tuple([0] * size))
+        return result
 
     def save(self, filename):
         with open(filename, 'w') as f:

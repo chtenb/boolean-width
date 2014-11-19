@@ -19,7 +19,7 @@ def cut(long V, N, long vertices):
 
 
 def booleandim(graph):
-    print('Computing booldim')
+    #print('Computing booldim')
     V = graph.V
     N = graph.N
     booldim = {}
@@ -35,10 +35,10 @@ def booleandim(graph):
     assert len(booldim) == 2 ** length(V) - 2
 
     # Verify symmetry
-    print('Verify booldim symmetry')
-    for subset in subsets(V, 1, -2):
-        complement = V - subset
-        assert booldim[subset] == booldim[complement]
+    #print('Verify booldim symmetry')
+    #for subset in subsets(V, 1, -2):
+        #complement = V - subset
+        #assert booldim[subset] == booldim[complement]
 
     return booldim
 

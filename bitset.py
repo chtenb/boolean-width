@@ -52,6 +52,14 @@ class BitSet(int):
             length -= 1
         return result
 
+    def ffs(self):
+        return next(self).identifier
+
+    def fls(self):
+        for v in self:
+            last = v
+        return last.identifier
+
     def __hash__(self):
         return self
 
