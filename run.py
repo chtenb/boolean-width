@@ -44,11 +44,12 @@ def preprocess(graph):
                 #print('Removing ' + str(v))
                 graph.remove(v)
 
+#for size in range(5, 100):
 while 1:
     graph = Tree.generate_random(25)
-    graph.verify_symmetry()
-    preprocess(graph)
-    graph.verify_symmetry()
+    #graph.verify_symmetry()
+    #preprocess(graph)
+    #graph.verify_symmetry()
 
     pw = pathwidth(graph)[0] + 1
     lbw = linearbooleanwidth64(to64(graph))

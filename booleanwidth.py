@@ -18,7 +18,7 @@ def cut(graph, vertices):
 
 
 def booleandim(graph):
-    print('Computing booldim')
+    #print('Computing booldim')
     booldim = {}
     for subset in graph.vertices.subsets(1, len(graph.vertices) - 1):
         #print('Processing subset ' + str(subset))
@@ -32,10 +32,10 @@ def booleandim(graph):
     assert len(booldim) == 2 ** len(graph.vertices) - 2
 
     # Verify symmetry
-    print('Verify booldim symmetry')
-    for subset in graph.vertices.subsets(1, len(graph.vertices) - 1):
-        complement = graph.vertices - subset
-        assert booldim[subset] == booldim[complement]
+    #print('Verify booldim symmetry')
+    #for subset in graph.vertices.subsets(1, len(graph.vertices) - 1):
+        #complement = graph.vertices - subset
+        #assert booldim[subset] == booldim[complement]
 
     return booldim
 
@@ -51,7 +51,7 @@ def boolwidthtable(graph):
     for v in graph:
         bwtable[v] = 2
 
-    print('Solving recurrence')
+    #print('Solving recurrence')
 
     for A in graph.vertices.subsets(2):
         bwtable[A] = min(max(booldim[B], booldim[A - B],
@@ -76,7 +76,7 @@ def booleanwidth_decomposition(bwtable, booldim, A):
 
 def booleanwidth(graph):
     bwtable, booldim = boolwidthtable(graph)
-    print('Computing decomposition')
+    #print('Computing decomposition')
     return (bwtable[graph.vertices],
             booldim,
             list(booleanwidth_decomposition(bwtable, booldim, graph.vertices)))
