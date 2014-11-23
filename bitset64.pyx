@@ -1,7 +1,17 @@
 """
 This module contains cython functions for making int64 work like a set.
 """
-from math import log
+
+cdef extern int __builtin_ctzl(unsigned long x)
+cdef extern int __builtin_popcountl(unsigned long x)
+
+cdef int position(long x):
+    """Return position of first vertex in given bitset."""
+    return __builtin_ctzl(x)
+
+cdef int size(long x):
+    """Return size of given bitset."""
+    return __builtin_popcountl(x)
 
 #from cpython cimport map
 #from array import array
@@ -13,8 +23,8 @@ cpdef long subtract(long self, long other):
     return self - (self & other)
 
 
-cpdef int ffs(long v):
-    return int(log(v, 2))
+#cpdef int ffs(long v):
+    #return int(log(v, 2))
     #return __builtin_ffs(b);
 
 
@@ -26,11 +36,11 @@ def iterate(long n):
         n ^= b
 
 
-cpdef int length(long self):
-    cdef result = 0
-    for _ in iterate(self):
-        result += 1
-    return result
+#cpdef int length(long self):
+    #cdef result = 0
+    #for _ in iterate(self):
+        #result += 1
+    #return result
 
 
 cpdef long join(args):
@@ -42,19 +52,19 @@ cpdef long join(args):
 
 
 def tostring(self):
-    return 'BitSet{{{}}}'.format(', '.join(str(ffs(v)) for v in iterate(self)))
+    return 'BitSet{{{}}}'.format(', '.join(str(position(v)) for v in iterate(self)))
 
 
 def subsets(long self, int minsize=0, int maxsize=-1):
     """Yield subbitsets from specified size ordered by size ascending."""
     if minsize < 0:
-        minsize = length(self) + 1 + minsize
+        minsize = size(self) + 1 + minsize
     if maxsize < 0:
-        maxsize = length(self) + 1 + maxsize
+        maxsize = size(self) + 1 + maxsize
 
     sets = [0L]
     for v in iterate(self):
         sets.extend([s | v for s in sets])
 
-    return [s for s in sets if length(s) >= minsize and length(s) <= maxsize]
+    return [s for s in sets if size(s) >= minsize and size(s) <= maxsize]
 

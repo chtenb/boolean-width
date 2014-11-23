@@ -1,4 +1,3 @@
-# distutils: language = c++
 from random import sample
 from bitset64 import iterate
 #from libcpp.unordered_map cimport unordered_map
@@ -11,6 +10,7 @@ cpdef to64(graph):
 
     V = <long>graph.vertices
     return Graph(V, N)
+
 
 class Graph:
 

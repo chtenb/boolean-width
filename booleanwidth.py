@@ -49,7 +49,10 @@ def boolwidthtable(graph):
 
     bwtable = {}
     for v in graph:
-        bwtable[v] = 2
+        if graph(v):
+            bwtable[v] = 1
+        else:
+            bwtable[v] = 2
 
     #print('Solving recurrence')
 

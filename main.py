@@ -41,24 +41,30 @@ import cProfile
 #run(graph)
 from random import randint
 while 1:
-    edges = randint(10, 30)
-    graph = Graph.generate_random(4, 6)
+#for _ in range(10):
+    vertices = 8
+    edges = randint(0, int(vertices * (vertices - 1) / 4))
+    graph = Graph.generate_random(vertices, edges)
     #graph = Graph.load('input/counter.dgf')
-    plot(graph)
+    #plot(graph)
     lbw, lbooldim, ldecomposition = linearbooleanwidth64(to64(graph))
-    print('linearbooleanwidth: ' + str(lbw))
-    print('linear decomposition: ' + ', '.join('({}: {})'.format(
-        a, lbooldim[b]) for a, b in ldecomposition))
 
     complement = graph.complement()
-    plot(complement, filename='output/test2')
+    #plot(complement, filename='output/test2')
     #lbooldim_complement = booleandim(to64(complement))
     #width_complement = linearbooleanwidth_from_decomposition(lbooldim_complement, ldecomposition)
-    lbw, lbooldim, ldecomposition = linearbooleanwidth64(to64(complement))
-    print('linearbooleanwidth complement: ' + str(lbw))
-    print('linear decomposition: ' + ', '.join('({}: {})'.format(
-        a, lbooldim[b]) for a, b in ldecomposition))
-    exit()
+    lbwc, lbooldimc, ldecompositionc = linearbooleanwidth64(to64(complement))
+
+    if abs(lbw - lbwc) > 1:
+        print('linearbooleanwidth: ' + str(lbw))
+        print('linear decomposition: ' + ', '.join('({}: {})'.format(
+            a, lbooldim[b]) for a, b in ldecomposition))
+        print('linearbooleanwidth complement: ' + str(lbwc))
+        print('linear decomposition: ' + ', '.join('({}: {})'.format(
+            a, lbooldim[b]) for a, b in ldecomposition))
+        plot(graph)
+        plot(complement, filename='output/test2')
+        break
 
 #plot_graph(im, graph, color=(178, 0, 0))
 #im.save('output/test.png', 'png')

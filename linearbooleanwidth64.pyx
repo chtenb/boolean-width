@@ -43,7 +43,6 @@ def linearbooleanwidth_decomposition(bwtable, booldim, long A):
 
 def linearbooleanwidth(graph):
     bwtable, booldim = linearboolwidthtable(graph)
-    print(bwtable)
     #return bwtable[graph.V]
     #print('Computing decomposition')
     return (bwtable[graph.V],
