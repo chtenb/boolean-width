@@ -3,15 +3,27 @@ This module contains cython functions for making int64 work like a set.
 """
 
 cdef extern int __builtin_ctzl(unsigned long x)
+cdef extern int __builtin_clzl(unsigned long x)
 cdef extern int __builtin_popcountl(unsigned long x)
 
-cdef int position(long x):
+cpdef int index(long x):
     """Return position of first vertex in given bitset."""
     return __builtin_ctzl(x)
 
-cdef int size(long x):
+cpdef int domain(long x):
+    """Return position of last vertex in given bitset."""
+    return 64 - __builtin_clzl(x)
+
+cpdef int size(long x):
     """Return size of given bitset."""
     return __builtin_popcountl(x)
+
+#cpdef int length(long self):
+    #cdef result = 0
+    #for _ in iterate(self):
+        #result += 1
+    #return result
+
 
 #from cpython cimport map
 #from array import array
@@ -23,24 +35,12 @@ cpdef long subtract(long self, long other):
     return self - (self & other)
 
 
-#cpdef int ffs(long v):
-    #return int(log(v, 2))
-    #return __builtin_ffs(b);
-
-
 def iterate(long n):
     cdef long b
     while n:
         b = n & (~n + 1)
         yield b
         n ^= b
-
-
-#cpdef int length(long self):
-    #cdef result = 0
-    #for _ in iterate(self):
-        #result += 1
-    #return result
 
 
 cpdef long join(args):
@@ -50,9 +50,8 @@ cpdef long join(args):
     return result
 
 
-
 def tostring(self):
-    return 'BitSet{{{}}}'.format(', '.join(str(position(v)) for v in iterate(self)))
+    return 'BitSet{{{}}}'.format(', '.join(str(index(v)) for v in iterate(self)))
 
 
 def subsets(long self, int minsize=0, int maxsize=-1):

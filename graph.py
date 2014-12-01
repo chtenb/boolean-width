@@ -1,4 +1,4 @@
-from random import sample
+from random import sample, randint
 from bitset import BitSet
 
 
@@ -196,9 +196,12 @@ class Graph:
         return graph
 
     @staticmethod
-    def generate_random(nr_vertices, nr_edges):
+    def generate_random(nr_vertices, nr_edges=0):
         if not nr_edges <= nr_vertices * (nr_vertices - 1) / 2:
             raise ValueError
+
+        if not nr_edges:
+            nr_edges = randint(0, int(nr_vertices * (nr_vertices - 1) / 4))
 
         graph = Graph()
         graph.add(BitSet.from_identifier(*range(nr_vertices)))

@@ -83,3 +83,8 @@ def booleanwidth(graph):
     return (bwtable[graph.vertices],
             booldim,
             list(booleanwidth_decomposition(bwtable, booldim, graph.vertices)))
+
+def print_decomposition(graph, bw, booldim, decomposition):
+    print('booleanwidth: ' + str(bw))
+    print('decomposition: ' + '\n'.join('({}, {}): {},{}'.format(
+        graph[a], graph[b], booldim[a], booldim[b]) for a, b in decomposition))

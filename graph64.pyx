@@ -1,15 +1,26 @@
 from random import sample
-from bitset64 import iterate
+from bitset64 import iterate, domain, index
 #from libcpp.unordered_map cimport unordered_map
-#from libcpp.vector cimport vector
+from cpython cimport array
+from array import array
 
 cpdef to64(graph):
+    V = <long>graph.vertices
+
     N = {}
     for key in graph.vertices:
         N[<long>key] = <long>graph.neighborhoods[key]
 
-    V = <long>graph.vertices
     return Graph(V, N)
+
+cpdef to64_2(graph):
+    V = <long>graph.vertices
+
+    cdef array.array N = array('L', domain(V) * [0L])
+    for key in graph.vertices:
+        N[index(<int>key)] = <long>graph.neighborhoods[key]
+
+    return Graph2(V, N)
 
 
 class Graph:
@@ -17,6 +28,15 @@ class Graph:
     def __init__(self, long V=0L, N=None):
         self.V = V
         self.N = N or {}
+
+cdef class Graph2:
+
+    cdef public long V
+    cdef public array.array N
+
+    def __cinit__(self, long V, array.array N):
+        self.V = V
+        self.N = N
 
     #def edges(self):
         #"""Iterate over each pair of connected vertices exactly once."""
