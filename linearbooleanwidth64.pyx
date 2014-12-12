@@ -1,5 +1,5 @@
 from booleanwidth64 import booleandim
-from bitset64 import iterate, subsets, length
+from bitset64 import iterate, subsets, size, invert, tostring
 
 
 def linearboolwidthtable(graph):
@@ -27,10 +27,43 @@ def linearboolwidthtable(graph):
 
     return bwtable, booldim
 
+def linearbooleanwidth_decomposition_greedy(bwtable, booldim, long A, int universe):
+    """A is unprocessed."""
+    bound = bwtable[A]
+    if size(A) > 1:
+        print('trying greedy')
+        # Try greedy step
+        for B in iterate(A):
+            #print(invert(A, universe))
+            if size(A) == universe:
+                greedybound = 1
+            else:
+                greedybound = booldim[A]
+
+            print('Current booldim', greedybound)
+            print(tostring(B), booldim[A - B])
+            if booldim[A - B] <= greedybound:
+                print('choosing {} greedy'.format(tostring(B)))
+                #print(tostring(B))
+                #print(booldim[B], greedybound)
+                yield (B, A - B)
+                yield from linearbooleanwidth_decomposition_greedy(bwtable, booldim, B, universe)
+                yield from linearbooleanwidth_decomposition_greedy(bwtable, booldim, A - B, universe)
+                return
+        print('No greedy step found, trying nongreedy')
+        # Perform normal reconstruction
+        for B in iterate(A):
+            if (bwtable[B] <= bound and booldim[B] <= bound
+                    and booldim[A - B] <= bound and bwtable[A - B] <= bound):
+                print('choosing {} nongreedy'.format(tostring(B)))
+                yield (B, A - B)
+                yield from linearbooleanwidth_decomposition_greedy(bwtable, booldim, B, universe)
+                yield from linearbooleanwidth_decomposition_greedy(bwtable, booldim, A - B, universe)
+                return
 
 def linearbooleanwidth_decomposition(bwtable, booldim, long A):
     bound = bwtable[A]
-    if length(A) > 1:
+    if size(A) > 1:
         for B in iterate(A):
             if (bwtable[B] <= bound and booldim[B] <= bound
                     and booldim[A - B] <= bound and bwtable[A - B] <= bound):

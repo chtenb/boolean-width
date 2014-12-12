@@ -35,6 +35,18 @@ cpdef long subtract(long self, long other):
     return self - (self & other)
 
 
+cpdef long join(args):
+    cdef long v, result = 0
+    for v in args:
+        result |= v
+    return result
+
+
+cpdef long invert(long x, long l):
+    """Return inverse where universe has length l"""
+    return 2 ** l - 1 - x
+
+
 def iterate(long n):
     cdef long b
     while n:
@@ -43,11 +55,8 @@ def iterate(long n):
         n ^= b
 
 
-cpdef long join(args):
-    cdef long v, result = 0
-    for v in args:
-        result |= v
-    return result
+def contains(long self, long other):
+    return self & other == self
 
 
 def tostring(self):

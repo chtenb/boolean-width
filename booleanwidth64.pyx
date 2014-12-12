@@ -1,5 +1,5 @@
 from mis64 import mis_count
-from bitset64 import iterate, subsets, tostring, length
+from bitset64 import iterate, subsets, tostring, size
 from graph64 import Graph
 
 
@@ -32,7 +32,7 @@ def booleandim(graph):
             booldim[complement] = result
 
     # Verify size
-    assert len(booldim) == 2 ** length(V) - 2
+    assert len(booldim) == 2 ** size(V) - 2
 
     # Verify symmetry
     #print('Verify booldim symmetry')

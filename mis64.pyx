@@ -1,19 +1,18 @@
 """This module contains algorithms for computing the maximal independent sets."""
 
-from bitset64 import iterate, length, tostring
-from bitset import BitSet
+from bitset64 import iterate, size
 
 cpdef int recursion(N, long includes, long rest, long excludes):
     if not excludes and not rest:
         return 1
 
     cdef long u, pivot = 0
-    cdef int size, minsize = 999999
+    cdef int s, minsize = 999999
     for u in iterate(rest | excludes):
-        size = length(rest & N[u])
-        if size < minsize:
+        s = size(rest & N[u])
+        if s < minsize:
             pivot = u
-            minsize = size
+            minsize = s
 
     cdef int count = 0
     for v in iterate(rest & (N[pivot] | pivot)):
