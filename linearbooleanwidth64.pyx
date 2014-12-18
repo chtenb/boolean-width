@@ -34,7 +34,6 @@ def linearbooleanwidth_decomposition_greedy(bwtable, booldim, long A, int univer
         print('trying greedy')
         # Try greedy step
         for B in iterate(A):
-            #print(invert(A, universe))
             if size(A) == universe:
                 greedybound = 1
             else:
@@ -42,10 +41,8 @@ def linearbooleanwidth_decomposition_greedy(bwtable, booldim, long A, int univer
 
             print('Current booldim', greedybound)
             print(tostring(B), booldim[A - B])
-            if booldim[A - B] <= greedybound:
+            if booldim[A - B] < greedybound:
                 print('choosing {} greedy'.format(tostring(B)))
-                #print(tostring(B))
-                #print(booldim[B], greedybound)
                 yield (B, A - B)
                 yield from linearbooleanwidth_decomposition_greedy(bwtable, booldim, B, universe)
                 yield from linearbooleanwidth_decomposition_greedy(bwtable, booldim, A - B, universe)

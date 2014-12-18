@@ -1,5 +1,6 @@
-from random import sample, randint
+from random import sample, randint, random
 from bitset import BitSet
+from utils import powerlist
 
 
 class Graph:
@@ -130,7 +131,7 @@ class Graph:
 
         for w1 in neighbors:
             for w2 in neighbors:
-                if w1 < w2:
+                if w1 < w2 and not w1 in self[w2]:
                     self.connect(w1, w2)
 
     def complement(self):
@@ -197,22 +198,42 @@ class Graph:
 
     @staticmethod
     def generate_random(nr_vertices, nr_edges=0):
-        if not nr_edges <= nr_vertices * (nr_vertices - 1) / 2:
+        if not 0 <= nr_edges <= nr_vertices * (nr_vertices - 1) / 2:
             raise ValueError
 
         if not nr_edges:
-            nr_edges = randint(0, int(nr_vertices * (nr_vertices - 1) / 4))
+            nr_edges = 0.5
 
         graph = Graph()
         graph.add(BitSet.from_identifier(*range(nr_vertices)))
 
-        vertex_list = list(graph.vertices)
-        for _ in range(nr_edges):
-            while 1:
-                v, w = sample(vertex_list, 2)
-                # Don't connect vertices twice
-                if not w in graph[v]:
-                    break
-            graph.connect(v, w)
+        if nr_edges < 1:
+            # Add random edges between groups
+            for v in graph:
+                for w in graph:
+                    if v < w and random() < 0.5:
+                        graph.connect(v, w)
+            return graph
+        else:
+            vertex_list = list(graph.vertices)
+            for _ in range(nr_edges):
+                while 1:
+                    v, w = sample(vertex_list, 2)
+                    # Don't connect vertices twice
+                    if not w in graph[v]:
+                        break
+                graph.connect(v, w)
 
-        return graph
+            return graph
+
+    @staticmethod
+    def enumerate(nr_vertices):
+        vertices = BitSet.from_identifier(*range(nr_vertices))
+        possible_edges = [(v, w) for v in vertices for w in vertices if v < w]
+
+        for edge_set in powerlist(possible_edges):
+            graph = Graph()
+            graph.add(vertices)
+            for v, w in edge_set:
+                graph.connect(v, w)
+            yield graph

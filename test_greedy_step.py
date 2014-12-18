@@ -1,20 +1,22 @@
 from linearbooleanwidth64 import (linearbooleanwidth_decomposition,
-        linearbooleanwidth_decomposition_greedy,
-        linearbooleanwidth_from_decomposition,
-        linearboolwidthtable)
+                                  linearbooleanwidth_decomposition_greedy,
+                                  linearbooleanwidth_from_decomposition,
+                                  linearboolwidthtable)
 from booleanwidth64 import booleandim
 from graph import Graph
 from graph64 import to64
 from bitset64 import tostring, size, invert
 from plot import plot
 
+s = 8
+n = 2 ** (s * (s - 1) / 2)
+i = 0
+# for graph in Graph.enumerate(s):
+#print('{}/{}'.format(i, n))
+#i += 1
 while 1:
-    graph = Graph.generate_random(7)
+    graph = Graph.generate_random(13)
     G = to64(graph)
-    #print(G.V)
-    #print(size(G.V))
-    #print(invert(1, size(G.V)))
-    #break
 
     bwtable, booldim = linearboolwidthtable(G)
     decomposition = list(linearbooleanwidth_decomposition(bwtable, booldim, G.V))
@@ -24,9 +26,18 @@ while 1:
     lboolw_greedy = linearbooleanwidth_from_decomposition(booldim, decomposition_greedy)
     print('width: {}, greedy width: {}'.format(lboolw, lboolw_greedy))
 
-    if lboolw != lboolw_greedy:
-        print('\n'.join(('({}, {}): {}'.format(tostring(a), tostring(b), booldim[b]) for a,b in decomposition)))
-        print('\n'.join(('({}, {}): {}'.format(tostring(a), tostring(b), booldim[b]) for a,b in decomposition_greedy)))
+    try:
+        if lboolw != lboolw_greedy:
+            normal, greedy = next((decomposition[i][1], decomposition_greedy[i][1])
+                                  for i in range(len(decomposition))
+                                  if decomposition[i] != decomposition_greedy[i])
+            if booldim[greedy] - booldim[normal] >= 2:
+                print('\n'.join(('({}, {}): {}'.format(tostring(a), tostring(b), booldim[b])
+                                 for a, b in decomposition)))
+                print('\n'.join(('({}, {}): {}'.format(tostring(a), tostring(b), booldim[b])
+                                 for a, b in decomposition_greedy)))
 
-        plot(graph)
-        break
+                plot(graph)
+                break
+    except StopIteration:
+        pass

@@ -1,6 +1,6 @@
 from graph import Graph
 from bitset import BitSet
-from random import randint, choice
+from random import randint, choice, random
 from utils import DictChain
 from copy import deepcopy
 
@@ -65,31 +65,52 @@ class Bipartite(Graph):
         return graph
 
     @staticmethod
-    def generate_random(nr_vertices, nr_edges):
-        if not nr_edges <= (nr_vertices / 2) ** 2:
+    def generate_random(nr_vertices, nr_edges=0):
+        if not 0 <= nr_edges <= (nr_vertices / 2) ** 2:
             raise ValueError
 
-        # Split the number of vertices on both sides
-        # such that enough edges can be placed
-        while 1:
+        if not nr_edges:
+            nr_edges = 0.5
+
+        if nr_edges < 1:
+            # Split the number of vertices on both sides
             size1 = randint(1, nr_vertices - 1)
             size2 = nr_vertices - size1
-            if size1 * size2 >= nr_edges:
-                break
 
-        # For both groups create vertices
-        group1 = range(size1)
-        group2 = range(size1, size1 + size2)
+            # For both groups create vertices
+            group1 = range(size1)
+            group2 = range(size1, size1 + size2)
 
-        graph = Bipartite(BitSet.from_identifier(*group1), BitSet.from_identifier(*group2))
+            graph = Bipartite(BitSet.from_identifier(*group1), BitSet.from_identifier(*group2))
 
-        # Add random edges between groups
-        for _ in range(nr_edges):
+            # Add random edges between groups
+            for v in graph.group1:
+                for w in graph.group2:
+                    if random() < 0.5:
+                        graph.connect(v, w)
+            return graph
+        else:
+            # Split the number of vertices on both sides
+            # such that enough edges can be placed
             while 1:
-                v = BitSet.from_identifier(choice(group1))
-                w = BitSet.from_identifier(choice(group2))
-                if not w in graph[v]:
+                size1 = randint(1, nr_vertices - 1)
+                size2 = nr_vertices - size1
+                if size1 * size2 >= nr_edges:
                     break
-            graph.connect(v, w)
 
-        return graph
+            # For both groups create vertices
+            group1 = range(size1)
+            group2 = range(size1, size1 + size2)
+
+            graph = Bipartite(BitSet.from_identifier(*group1), BitSet.from_identifier(*group2))
+
+            # Add random edges between groups
+            for _ in range(nr_edges):
+                while 1:
+                    v = BitSet.from_identifier(choice(group1))
+                    w = BitSet.from_identifier(choice(group2))
+                    if not w in graph[v]:
+                        break
+                graph.connect(v, w)
+
+            return graph
