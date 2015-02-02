@@ -8,7 +8,12 @@ from tree import Tree
 from graph64 import to64
 from plot import plot
 
-import test_bipartite_components
+from grid import Grid
+
+graph = Grid.generate_random(5, 8)
+plot(graph)
+
+#import test_bipartite_components
 
 #from linearbooleanwidth64 import linearbooleanwidth
 

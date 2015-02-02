@@ -24,25 +24,43 @@ def is_un_component(graph, subset):
 
 # Count number of minimal components in random graphs
 while 1:
-    graph = Graph.generate_random(10)
+    n = 8
+    graph = Graph.generate_random(n)
 
+    connected_components = []
+    un_components = []
     for subset in graph.vertices.subsets(1, -2):
         cut_graph = cut(graph, subset)
-        un_components = []
-        connected_components = []
 
 
-        for subset in cut_graph.group1.subsets():
-            complement = cut_graph.group1 - subset
-            if is_un_component(cut_graph, subset) and is_un_component(cut_graph, complement):
-                un_components.append(subset)
-            if is_connected_component(cut_graph, subset):
-                connected_components.append(subset)
+        new_un_components = []
+        while 1:
+            found = False
+            for candidate in cut_graph.group1.subsets(1, -2):
+                complement = cut_graph.group1 - candidate
+                if is_un_component(cut_graph, candidate) and is_un_component(cut_graph, complement):
+                    found = True
+                    break
 
-        if len(connected_components) > len(un_components):
-            plot_bipartite(cut_graph).save('output/test.png')
-            print(un_components)
-            print(connected_components)
-            exit()
+            if found:
+                new_un_components.append(candidate)
+                cut_graph.remove(candidate)
+            else:
+                break
 
-        print(int(log(len(un_components), 2)) - int(log(len(connected_components), 2)))
+        largest_un_component = max([len(s) for s in new_un_components] or [0])
+        print(largest_un_component, 'instead of', len(subset))
+        un_components.extend(new_un_components)
+        #if len(connected_components) > len(un_components):
+            #plot_bipartite(cut_graph).save('output/test.png')
+            #print(un_components)
+            #print(connected_components)
+            #exit()
+
+    count = sum(len(s) for s in un_components) #int(log(len(un_components), 2))
+    #count = int(log(len(connected_components), 2))
+    #print(count)
+    #if count < n:
+        #plot(graph)
+        #break
+    #print(int(log(len(un_components), 2)) - int(log(len(connected_components), 2)))

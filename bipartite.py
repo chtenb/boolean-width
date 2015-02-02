@@ -35,6 +35,24 @@ class Bipartite(Graph):
         for v in vertices:
             self.neighborhoods[v] = BitSet()
 
+    def remove(self, vertices):
+        """Remove vertices from the graph."""
+        if not vertices in self.vertices:
+            raise ValueError('Graph don\'t contain some of [{}]'.format(vertices))
+
+        for v in vertices:
+            for w in self(v):
+                self.disconnect(v, w)
+
+        for v in vertices:
+            if v in self.group1:
+                self.group1 -= v
+            else:
+                self.group2 -= v
+
+        for v in vertices:
+            del self.neighborhoods[v]
+
     def connect(self, v, w):
         """Connect two vertices."""
         if not ((v in self.group1 and w in self.group2)

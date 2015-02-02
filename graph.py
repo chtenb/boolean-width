@@ -86,9 +86,9 @@ class Graph:
     def connect(self, v, w):
         """Connect two vertices."""
         if not v in self:
-            raise ValueError
+            raise ValueError('{} not in graph'.format(v))
         if not w in self:
-            raise ValueError
+            raise ValueError('{} not in graph'.format(w))
 
         if w == v:
             raise ValueError('{} and {} are the same vertex.'.format(v, w))
