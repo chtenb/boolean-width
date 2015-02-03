@@ -22,7 +22,8 @@ def booleandim(graph):
     V = graph.V
     N = graph.N
     booldim = {}
-    for subset in subsets(V, 1, -2):
+    #for subset in subsets(V, 1, -2):
+    for subset in subsets(V):
         if not subset in booldim:
             complement = V - subset
             result = mis_count(cut(V, N, subset), V)
@@ -30,7 +31,7 @@ def booleandim(graph):
             booldim[complement] = result
 
     # Verify size
-    assert len(booldim) == 2 ** size(V) - 2
+    assert len(booldim) == 2 ** size(V)
 
     # Verify symmetry
     #print('Verify booldim symmetry')
@@ -40,32 +41,7 @@ def booleandim(graph):
 
     return booldim
 
-
-def decomposition(table, booldim, long A):
-    """Reconstruct optimal tree decomposition from DP table."""
-    bound = table[A]
-    if size(A) > 1:
-        for B in subsets(A, 1, -2):
-            if (table[B] <= bound and booldim[B] <= bound
-                    and booldim[A - B] <= bound and table[A - B] <= bound):
-                yield (B, A - B)
-                yield from decomposition(table, booldim, B)
-                yield from decomposition(table, booldim, A - B)
-
-                break
-
-
-def linear_decomposition(table, booldim, long A):
-    """Reconstruct optimal linear decomposition from DP table."""
-    bound = table[A]
-    if size(A) > 1:
-        for v in iterate(A):
-            if (table[v] <= bound and booldim[v] <= bound
-                    and booldim[A - v] <= bound and table[A - v] <= bound):
-                yield (v, A - v)
-                yield from linear_decomposition(table, booldim, A - v)
-
-                break
+# TODO: this reconstruction doesn't work for cost!!
 
 
 def print_decomposition(result, booldim, decomposition):

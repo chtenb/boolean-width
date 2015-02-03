@@ -1,11 +1,10 @@
 from bitset64 import iterate, subsets, size, invert, tostring
-from dynamicprogramming import linear_decomposition, booleandim
+from dynamicprogramming import booleandim
 
 
 def linearboolcosttable(graph):
     """
-    bctable[A] contains the booleancost of the subtree of all cuts inside A.
-    The cut which produced A itself is thus not included.
+    bctable[A] contains the booleancost of the subgraph induced by A
     """
     booldim = booleandim(graph)
 
@@ -21,11 +20,21 @@ def linearboolcosttable(graph):
 
     # Solve recurrence
     for A in subsets(graph.V, 2):
-        bctable[A] = min(sum([booldim[B], booldim[A - B],
-                             bctable[B], bctable[A - B]])
-                         for B in iterate(A))
+        bctable[A] = booldim[A] + min(bctable[v] + bctable[A - v] for v in iterate(A))
 
     return bctable, booldim
+
+
+def linear_decomposition(table, booldim, long A):
+    """Reconstruct optimal linear decomposition from DP table."""
+    bound = table[A]
+    if size(A) > 1:
+        for v in iterate(A):
+            if table[v] + table[A - v] + booldim[A] == bound:
+                yield (v, A - v)
+                yield from linear_decomposition(table, booldim, A - v)
+
+                break
 
 
 def linearbooleancost(graph):

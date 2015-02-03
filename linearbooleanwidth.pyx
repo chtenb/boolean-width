@@ -1,5 +1,5 @@
 from bitset64 import iterate, subsets, size, invert, tostring
-from dynamicprogramming import linear_decomposition, booleandim
+from dynamicprogramming import booleandim
 
 
 def linearboolwidthtable(graph):
@@ -26,6 +26,19 @@ def linearboolwidthtable(graph):
                          for B in iterate(A))
 
     return bwtable, booldim
+
+
+def linear_decomposition(table, booldim, long A):
+    """Reconstruct optimal linear decomposition from DP table."""
+    bound = table[A]
+    if size(A) > 1:
+        for v in iterate(A):
+            if (table[v] <= bound and booldim[v] <= bound
+                    and booldim[A - v] <= bound and table[A - v] <= bound):
+                yield (v, A - v)
+                yield from linear_decomposition(table, booldim, A - v)
+
+                break
 
 
 def linearbooleanwidth(graph):

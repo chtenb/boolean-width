@@ -1,6 +1,6 @@
 from bitset64 import iterate, subsets, tostring, size
-from graph64 import Graph
-from dynamicprogramming import decomposition, booleandim
+from dynamicprogramming import booleandim
+
 
 def boolcosttable(graph):
     """
@@ -25,8 +25,21 @@ def boolcosttable(graph):
                              bctable[B], bctable[A - B]])
                          for B in subsets(A, 1, -2))
 
+    print(bctable)
     return bctable, booldim
 
+
+def decomposition(table, booldim, long A):
+    """Reconstruct optimal tree decomposition from DP table."""
+    bound = table[A]
+    if size(A) > 1:
+        for B in subsets(A, 1, -2):
+            if table[B] + booldim[B] + table[A - B] + booldim[A - B] <= bound:
+                yield (B, A - B)
+                yield from decomposition(table, booldim, B)
+                yield from decomposition(table, booldim, A - B)
+
+                break
 
 
 def booleancost(graph):

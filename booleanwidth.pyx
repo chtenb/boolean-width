@@ -1,6 +1,5 @@
 from bitset64 import iterate, subsets, tostring, size
-from graph64 import Graph
-from dynamicprogramming import decomposition, booleandim
+from dynamicprogramming import booleandim
 
 def boolwidthtable(graph):
     """
@@ -32,6 +31,19 @@ def boolwidthtable(graph):
 
     return bwtable, booldim
 
+
+def decomposition(table, booldim, long A):
+    """Reconstruct optimal tree decomposition from DP table."""
+    bound = table[A]
+    if size(A) > 1:
+        for B in subsets(A, 1, -2):
+            if (table[B] <= bound and booldim[B] <= bound
+                    and booldim[A - B] <= bound and table[A - B] <= bound):
+                yield (B, A - B)
+                yield from decomposition(table, booldim, B)
+                yield from decomposition(table, booldim, A - B)
+
+                break
 
 
 def booleanwidth(graph):
