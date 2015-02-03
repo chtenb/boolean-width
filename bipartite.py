@@ -82,6 +82,37 @@ class Bipartite(Graph):
 
         return graph
 
+    def gridify(self, width=None):
+        """TODO"""
+        if not width:
+            width = len(self.vertices)
+
+        size = len(self.vertices)
+        counter = size
+
+        graph = Graph(self.vertices, self.neighborhoods)
+
+        for _ in range(width):
+            for _ in self.vertices:
+                new = BitSet.from_identifier(counter)
+                original = BitSet.from_identifier(counter % size)
+                graph.add(new)
+                for original_neighbor in self.neighborhoods[original]:
+                    new_neighbor_id = (original_neighbor.identifier
+                                       + size * (counter // size))
+                    try:
+                        graph.connect(new, BitSet.from_identifier(new_neighbor_id))
+                    except ValueError:
+                        try:
+                            graph.connect(new, BitSet.from_identifier(new_neighbor_id - size))
+                        except ValueError:
+                            pass
+
+                counter += 1
+
+        # TODO: add vertical edges
+        return graph
+
     @staticmethod
     def generate_random(nr_vertices, nr_edges=0):
         if not 0 <= nr_edges <= (nr_vertices / 2) ** 2:

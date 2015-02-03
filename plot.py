@@ -6,6 +6,7 @@ from graphviz import Graph
 
 
 def plot(graph, engine='dot', filename='output/test'):
+    """Possible engines: dot, neato, fdp, sfdp, twopi, circo"""
     g = Graph(format='png', engine=engine)
     for v in graph:
         g.node(str(v))

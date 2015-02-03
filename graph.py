@@ -1,4 +1,4 @@
-from random import sample, randint, random
+from random import sample, random
 from bitset import BitSet
 from utils import powerlist
 
@@ -59,9 +59,6 @@ class Graph:
         """Add new vertices to the graph."""
         assert isinstance(vertices, BitSet)
         if not self.vertices.disjoint(vertices):
-            print(self.vertices)
-            print(repr(vertices))
-            print(vertices)
             raise ValueError('Graph already contain some of [{}]'.format(vertices))
 
         self._vertices |= vertices
@@ -133,6 +130,28 @@ class Graph:
             for w2 in neighbors:
                 if w1 < w2 and not w1 in self[w2]:
                     self.connect(w1, w2)
+
+    def split(self, v, w):
+        """Split edge between two vertices."""
+        if not v in self:
+            raise ValueError
+        if not w in self:
+            raise ValueError
+
+        if w == v:
+            raise ValueError('{} and {} are the same vertex.'.format(v, w))
+
+        if not w in self(v):
+            raise ValueError('{} and {} are not connected.'.format(v, w))
+
+        # Only support undirected edges
+        assert v in self(w)
+
+        new = BitSet.from_identifier(len(self.vertices))
+        self.add(new)
+        self.disconnect(v, w)
+        self.connect(v, new)
+        self.connect(w, new)
 
     def complement(self):
         """Construct a graph representing the complement of self."""
