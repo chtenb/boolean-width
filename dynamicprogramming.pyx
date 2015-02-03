@@ -18,6 +18,7 @@ def cut(long V, N, long vertices):
 
 
 def booleandim(graph):
+    """Compute booldim function."""
     V = graph.V
     N = graph.N
     booldim = {}
@@ -41,6 +42,7 @@ def booleandim(graph):
 
 
 def decomposition(table, booldim, long A):
+    """Reconstruct optimal tree decomposition from DP table."""
     bound = table[A]
     if size(A) > 1:
         for B in subsets(A, 1, -2):
@@ -54,14 +56,14 @@ def decomposition(table, booldim, long A):
 
 
 def linear_decomposition(table, booldim, long A):
+    """Reconstruct optimal linear decomposition from DP table."""
     bound = table[A]
     if size(A) > 1:
-        for B in iterate(A):
-            if (table[B] <= bound and booldim[B] <= bound
-                    and booldim[A - B] <= bound and table[A - B] <= bound):
-                yield (B, A - B)
-                yield from linear_decomposition(table, booldim, B) # Obsolete?
-                yield from linear_decomposition(table, booldim, A - B)
+        for v in iterate(A):
+            if (table[v] <= bound and booldim[v] <= bound
+                    and booldim[A - v] <= bound and table[A - v] <= bound):
+                yield (v, A - v)
+                yield from linear_decomposition(table, booldim, A - v)
 
                 break
 
@@ -73,8 +75,8 @@ def print_decomposition(result, booldim, decomposition):
 
 
 def bw_from_decomposition(booldim, decomposition):
-    return max(booldim[A] for _, A in decomposition)
+    return max(max(booldim[A], booldim[B]) for A, B in decomposition)
 
 
 def bc_from_decomposition(booldim, decomposition):
-    return sum(booldim[A] for _, A in decomposition)
+    return sum(booldim[A] + booldim[B] for A, B in decomposition)

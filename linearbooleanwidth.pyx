@@ -1,4 +1,3 @@
-from booleanwidth64 import booleandim
 from bitset64 import iterate, subsets, size, invert, tostring
 from dynamicprogramming import linear_decomposition, booleandim
 
