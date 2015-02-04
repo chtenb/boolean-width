@@ -21,9 +21,7 @@ def boolcosttable(graph):
 
     # Solve recurrence
     for A in subsets(graph.V, 2):
-        bctable[A] = min(sum([booldim[B], booldim[A - B],
-                             bctable[B], bctable[A - B]])
-                         for B in subsets(A, 1, -2))
+        bctable[A] = booldim[A] + min(bctable[B] + bctable[A - B] for B in subsets(A, 1, -2))
 
     print(bctable)
     return bctable, booldim
@@ -34,7 +32,7 @@ def decomposition(table, booldim, long A):
     bound = table[A]
     if size(A) > 1:
         for B in subsets(A, 1, -2):
-            if table[B] + booldim[B] + table[A - B] + booldim[A - B] <= bound:
+            if table[B] + table[A - B] + booldim[A] == bound:
                 yield (B, A - B)
                 yield from decomposition(table, booldim, B)
                 yield from decomposition(table, booldim, A - B)

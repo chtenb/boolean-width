@@ -1,5 +1,5 @@
 from bitset64 import iterate, subsets, size, invert, tostring
-from dynamicprogramming import booleandim
+from dynamicprogramming import booleandim, booldim_onthefly
 
 
 def linearboolcosttable(graph):
@@ -31,7 +31,7 @@ def linear_decomposition(table, booldim, long A):
     if size(A) > 1:
         for v in iterate(A):
             if table[v] + table[A - v] + booldim[A] == bound:
-                yield (v, A - v)
+                yield (v, A - v, booldim[A - v])
                 yield from linear_decomposition(table, booldim, A - v)
 
                 break
@@ -40,6 +40,22 @@ def linear_decomposition(table, booldim, long A):
 def linearbooleancost(graph):
     bctable, booldim = linearboolcosttable(graph)
     return (bctable[graph.V],
-            booldim,
             list(linear_decomposition(bctable, booldim, graph.V)))
+
+
+def greedy_lbc(graph):
+    """Assumption: no islets"""
+    todo = graph.V
+    def booldim(v):
+        return booldim_onthefly(graph, v)
+
+    cost = 0
+    decomposition = []
+    while size(todo) > 1:
+        bd, x = min(((booldim(todo - v), v) for v in iterate(todo)))
+        decomposition.append((x, todo - x, bd))
+        cost += bd + 2
+        todo -= x
+
+    return cost, decomposition
 
