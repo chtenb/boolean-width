@@ -16,12 +16,12 @@ from booleanwidth import booleanwidth
 from booleancost import booleancost
 from dynamicprogramming import print_decomposition
 
-graph = squares(4, 4)
+#graph = squares(5, 5)
 #graph = cliques(4, 4)
 #graph = semisquares(3, 4)
 #graph = semicliques(3, 3)
 #graph = Bipartite.generate_random(5).gridify(2)
-#graph = Graph.load('input/triangle3.dgf')
+graph = Graph.load('input/triangle4.dgf')
 #plot(graph, engine='neato') # squares
 plot(graph, engine='dot') # cliques
 #plot(graph, engine='fdp') # cliques
@@ -29,8 +29,9 @@ plot(graph, engine='dot') # cliques
 #plot(graph, engine='circo') # cliques
 #exit()
 #print_decomposition(*linearbooleanwidth(to64(graph)))
-print_decomposition(*linearbooleancost(to64(graph)))
+#print_decomposition(*linearbooleancost(to64(graph)))
 print_decomposition(*greedy_lbc(to64(graph)))
+print_decomposition(*greedy_lbc_lookahead(to64(graph), depth=1))
 print_decomposition(*greedy_lbc_lookahead(to64(graph), depth=2))
 #print_decomposition(*booleanwidth(to64(graph)))
 #print_decomposition(*booleancost(to64(graph)))
