@@ -11,7 +11,7 @@ from plot import plot
 
 from grids import squares, cliques, semicliques, semisquares
 from linearbooleanwidth import linearbooleanwidth
-from linearbooleancost import linearbooleancost, greedy_lbc
+from linearbooleancost import linearbooleancost, greedy_lbc, greedy_lbc_lookahead
 from booleanwidth import booleanwidth
 from booleancost import booleancost
 from dynamicprogramming import print_decomposition
@@ -31,6 +31,7 @@ plot(graph, engine='dot') # cliques
 #print_decomposition(*linearbooleanwidth(to64(graph)))
 print_decomposition(*linearbooleancost(to64(graph)))
 print_decomposition(*greedy_lbc(to64(graph)))
+print_decomposition(*greedy_lbc_lookahead(to64(graph), depth=2))
 #print_decomposition(*booleanwidth(to64(graph)))
 #print_decomposition(*booleancost(to64(graph)))
 

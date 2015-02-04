@@ -59,3 +59,29 @@ def greedy_lbc(graph):
 
     return cost, decomposition
 
+
+def greedy_lbc_lookahead(graph, depth=1):
+    """Assumption: no islets"""
+    todo = graph.V
+    def booldim(subset):
+        return booldim_onthefly(graph, subset)
+
+    def lookahead(todo, depth):
+        if size(todo) < 2 or depth < 1:
+            return 0
+
+        return min(booldim(todo - v) + lookahead(todo - v, depth - 1) for v in iterate(todo))
+
+    cost = 0
+    decomposition = []
+    while size(todo) > 1:
+        _, x = min((booldim(todo - v) + lookahead(todo - v, depth), v) for v in iterate(todo))
+        bd = booldim(todo - x)
+        decomposition.append((x, todo - x, bd))
+        #decomposition.append((y, todo - y, bdy))
+        cost += bd + 2
+        todo -= x
+
+    return cost, decomposition
+
+
