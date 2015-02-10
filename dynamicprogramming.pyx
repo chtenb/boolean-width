@@ -16,42 +16,40 @@ def cut(long V, N, long vertices):
 
     return newN
 
-def booldim_onthefly(graph, subset):
+
+def booldim(graph, subset):
     return mis_count(cut(graph.V, graph.N, subset), graph.V)
 
-def booleandim(graph):
+
+def booldimtable(graph):
     """Compute booldim function."""
-    V = graph.V
-    N = graph.N
     booldim = {}
     #for subset in subsets(V, 1, -2):
-    for subset in subsets(V):
+    for subset in subsets(graph.V):
         if not subset in booldim:
-            complement = V - subset
-            result = mis_count(cut(V, N, subset), V)
+            complement = graph.V - subset
+            result = booldim(graph, subset)
             booldim[subset] = result
             booldim[complement] = result
 
     # Don't count universal cuts
-    booldim[V] = 0L
+    booldim[graph.V] = 0L
 
     # Verify size
-    assert len(booldim) == 2 ** size(V)
+    assert len(booldim) == 2 ** size(graph.V)
 
     # Verify symmetry
     #print('Verify booldim symmetry')
-    #for subset in subsets(V, 1, -2):
-        #complement = V - subset
+    #for subset in subsets(graph.V, 1, -2):
+        #complement = graph.V - subset
         #assert booldim[subset] == booldim[complement]
 
     return booldim
 
-# TODO: this reconstruction doesn't work for cost!!
-
 
 def print_decomposition(result, decomposition):
     print(result)
-    for x, y, bd in decomposition:
+    for bd, (x, y) in decomposition:
         print(tostring(x), tostring(y), bd)
 
 
@@ -61,3 +59,4 @@ def bw_from_decomposition(booldim, decomposition):
 
 def bc_from_decomposition(booldim, decomposition):
     return sum(booldim[A] + booldim[B] for A, B in decomposition)
+

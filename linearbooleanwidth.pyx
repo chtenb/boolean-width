@@ -1,5 +1,5 @@
 from bitset64 import iterate, subsets, size, invert, tostring
-from dynamicprogramming import booleandim
+from dynamicprogramming import booldimtable
 
 
 def linearboolwidthtable(graph):
@@ -7,7 +7,7 @@ def linearboolwidthtable(graph):
     bwtable[A] contains the booleanwidth of the subtree of all cuts inside A.
     The cut which produced A itself is thus not included.
     """
-    booldim = booleandim(graph)
+    booldim = booldimtable(graph)
 
     cdef long v, A, B
 

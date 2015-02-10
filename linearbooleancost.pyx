@@ -1,12 +1,12 @@
 from bitset64 import iterate, subsets, size, invert, tostring
-from dynamicprogramming import booleandim, booldim_onthefly
+from dynamicprogramming import booldimtable, booldim
 
 
 def linearboolcosttable(graph):
     """
     bctable[A] contains the booleancost of the subgraph induced by A
     """
-    booldim = booleandim(graph)
+    booldim = booldimtable(graph)
 
     cdef long v, A, B
 
@@ -43,45 +43,65 @@ def linearbooleancost(graph):
             list(linear_decomposition(bctable, booldim, graph.V)))
 
 
-def greedy_lbc(graph):
+def greedy_lbc(graph, depth=1):
     """Assumption: no islets"""
     todo = graph.V
-    def booldim(v):
-        return booldim_onthefly(graph, v)
-
     cost = 0
     decomposition = []
     while size(todo) > 1:
-        bd, x = min(((booldim(todo - v), v) for v in iterate(todo)))
-        decomposition.append((x, todo - x, bd))
+        _, x = min((booldim(graph, todo - v) + greedy_lookahead(graph, todo - v, depth - 1), v) for v in iterate(todo))
+        bd = booldim(graph, todo - x)
+        decomposition.append((bd, (x, todo - x)))
         cost += bd + 2
         todo -= x
 
     return cost, decomposition
 
 
-def greedy_lbc_lookahead(graph, depth=1):
+def greedy_lookahead(graph, todo, depth):
+    if size(todo) < 2 or depth < 1:
+        return 0
+
+    return min(booldim(graph, todo - v) + greedy_lookahead(graph, todo - v, depth - 1) for v in iterate(todo))
+
+
+def relative_neighborhood(graph, depth=1):
     """Assumption: no islets"""
     todo = graph.V
-    def booldim(subset):
-        return booldim_onthefly(graph, subset)
-
-    def lookahead(todo, depth):
-        if size(todo) < 2 or depth < 1:
-            return 0
-
-        return min(booldim(todo - v) + lookahead(todo - v, depth - 1) for v in iterate(todo))
-
     cost = 0
     decomposition = []
     while size(todo) > 1:
-        _, x = min((booldim(todo - v) + lookahead(todo - v, depth), v) for v in iterate(todo))
-        bd = booldim(todo - x)
-        decomposition.append((x, todo - x, bd))
-        #decomposition.append((y, todo - y, bdy))
+        # Compute neighbor hood of Left
+        N_left = 0L
+        for v in iterate(graph.V - todo):
+            N_left |= graph.N[v]
+
+        # Pick x with best ratio
+        _, x = min((neighborhood_ratio(graph, N_left, v)
+                    + relative_neighborhood_lookahead(graph, todo - v, depth - 1), v)
+                    for v in iterate(todo))
+        bd = booldim(graph, todo - x)
+        decomposition.append((bd, (x, todo - x)))
         cost += bd + 2
         todo -= x
 
     return cost, decomposition
 
+def neighborhood_ratio(graph, N_left, v):
+    internal = graph.N[v] & N_left
+    external = graph.N[v] - internal
+    try:
+        return size(external) / size(internal)
+    except ZeroDivisionError:
+        #return float('infty')
+        return 999999999
+
+
+def relative_neighborhood_lookahead(graph, todo, depth):
+    return 0
+    # TODO
+    if size(todo) < 2 or depth < 1:
+        return 0
+
+    return min(neighborhood_ratio(graph, N_left, v) + greedy_lookahead(graph, todo - v, depth - 1) for v in iterate(todo))
 

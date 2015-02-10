@@ -1,12 +1,12 @@
 from bitset64 import iterate, subsets, tostring, size
-from dynamicprogramming import booleandim
+from dynamicprogramming import booldimtable, booldim
 
 def boolwidthtable(graph):
     """
     bwtable[A] contains the booleanwidth of the subtree of all cuts inside A.
     The cut which produced A itself is thus not included.
     """
-    booldim = booleandim(graph)
+    booldim = booldimtable(graph)
 
     # Init table
     bwtable = {}
@@ -51,4 +51,37 @@ def booleanwidth(graph):
     return (bwtable[graph.V],
             booldim,
             list(decomposition(bwtable, booldim, graph.V)))
+
+
+def bw_from_decomposition(graph, decomposition):
+    return max(max(booldim(graph, A), booldim(graph, B)) for A, B in decomposition)
+
+
+def greedy_bw(graph, depth=1):
+    decomposition = list(greedy_bw_helper(graph, graph.V, depth))
+    width = max(decomposition)[0]
+    return width, decomposition
+
+
+def greedy_bw_helper(graph, subset, depth):
+    """Assumption: no islets"""
+    if size(subset) == 1:
+        return
+    assert size(subset) > 1
+
+    # Find a sequence of candidate cuts
+    todo = subset
+    candidates = []
+    def penalty(A):
+        return max(booldim(graph, A), booldim(graph, subset - A))
+    while size(todo) > 1:
+        new_candidate = min((penalty(todo - v), todo - v) for v in iterate(todo))
+        candidates.append(new_candidate)
+        todo = new_candidate[1]
+
+    # Return best candidate
+    bestwidth, bestcut = min(candidates)
+    yield bestwidth, (bestcut, subset - bestcut)
+    yield from greedy_bw_helper(graph, bestcut, depth)
+    yield from greedy_bw_helper(graph, subset - bestcut, depth)
 

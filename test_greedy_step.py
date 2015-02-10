@@ -1,8 +1,8 @@
-from linearbooleanwidth64 import (linearbooleanwidth_decomposition,
-                                  linearbooleanwidth_decomposition_greedy,
-                                  linearbooleanwidth_from_decomposition,
-                                  linearboolwidthtable)
-from booleanwidth64 import booleandim
+from linearbooleanwidth import (linear_decomposition,
+                                linearbooleanwidth_decomposition_greedy,
+                                linearbooleanwidth_from_decomposition,
+                                linearboolwidthtable)
+from dynamicprogramming import booleandim
 from graph import Graph
 from graph64 import to64
 from bitset64 import tostring, size, invert
@@ -22,7 +22,8 @@ while 1:
     decomposition = list(linearbooleanwidth_decomposition(bwtable, booldim, G.V))
     lboolw = linearbooleanwidth_from_decomposition(booldim, decomposition)
 
-    decomposition_greedy = list(linearbooleanwidth_decomposition_greedy(bwtable, booldim, G.V, size(G.V)))
+    decomposition_greedy = list(
+        linearbooleanwidth_decomposition_greedy(bwtable, booldim, G.V, size(G.V)))
     lboolw_greedy = linearbooleanwidth_from_decomposition(booldim, decomposition_greedy)
     print('width: {}, greedy width: {}'.format(lboolw, lboolw_greedy))
 

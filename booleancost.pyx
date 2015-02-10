@@ -1,5 +1,5 @@
 from bitset64 import iterate, subsets, tostring, size
-from dynamicprogramming import booleandim
+from dynamicprogramming import booldimtable
 
 
 def boolcosttable(graph):
@@ -7,7 +7,7 @@ def boolcosttable(graph):
     bctable[A] contains the booleancost of the subtree of all cuts inside A.
     The cut which produced A itself is thus not included.
     """
-    booldim = booleandim(graph)
+    booldim = booldimtable(graph)
 
     cdef long v, A, B
 
