@@ -98,10 +98,13 @@ def neighborhood_ratio(graph, N_left, v):
 
 
 def relative_neighborhood_lookahead(graph, todo, depth):
-    return 0
-    # TODO
     if size(todo) < 2 or depth < 1:
         return 0
+
+    # Compute neighbor hood of Left
+    N_left = 0L
+    for v in iterate(graph.V - todo):
+        N_left |= graph.N[v]
 
     return min(neighborhood_ratio(graph, N_left, v) + greedy_lookahead(graph, todo - v, depth - 1) for v in iterate(todo))
 
