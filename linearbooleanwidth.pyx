@@ -1,5 +1,5 @@
 from bitset64 import iterate, subsets, size, invert, tostring
-from dynamicprogramming import booldimtable
+from dynamicprogramming import booldimtable, booldim
 
 
 def linearboolwidthtable(graph):
@@ -48,7 +48,7 @@ def linearbooleanwidth(graph):
             list(linear_decomposition(bwtable, booldim, graph.V)))
 
 
-def linearbooleanwidth_decomposition_greedy(bwtable, booldim, long A, int universe):
+def dp_greedy_lbw(bwtable, booldim, long A, int universe):
     """A is unprocessed."""
     bound = bwtable[A]
     if size(A) > 1:
@@ -65,8 +65,8 @@ def linearbooleanwidth_decomposition_greedy(bwtable, booldim, long A, int univer
             if booldim[A - B] < greedybound:
                 print('choosing {} greedy'.format(tostring(B)))
                 yield (B, A - B)
-                yield from linearbooleanwidth_decomposition_greedy(bwtable, booldim, B, universe)
-                yield from linearbooleanwidth_decomposition_greedy(bwtable, booldim, A - B, universe)
+                yield from dp_greedy_lbw(bwtable, booldim, B, universe)
+                yield from dp_greedy_lbw(bwtable, booldim, A - B, universe)
                 return
         print('No greedy step found, trying nongreedy')
         # Perform normal reconstruction
@@ -75,6 +75,74 @@ def linearbooleanwidth_decomposition_greedy(bwtable, booldim, long A, int univer
                     and booldim[A - B] <= bound and bwtable[A - B] <= bound):
                 print('choosing {} nongreedy'.format(tostring(B)))
                 yield (B, A - B)
-                yield from linearbooleanwidth_decomposition_greedy(bwtable, booldim, B, universe)
-                yield from linearbooleanwidth_decomposition_greedy(bwtable, booldim, A - B, universe)
+                yield from dp_greedy_lbw(bwtable, booldim, B, universe)
+                yield from dp_greedy_lbw(bwtable, booldim, A - B, universe)
                 return
+
+
+def greedy_lbw(graph, depth=1):
+    """Assumption: no islets"""
+    todo = graph.V
+    width = 0
+    decomposition = []
+    while size(todo) > 1:
+        _, x = min((min(booldim(graph, todo - v), greedy_lookahead(graph, todo - v, depth - 1)), v) for v in iterate(todo))
+        bd = booldim(graph, todo - x)
+        decomposition.append((bd, (x, todo - x)))
+        width = max(bd, width)
+        todo -= x
+
+    return width, decomposition
+
+
+def greedy_lookahead(graph, todo, depth):
+    if size(todo) < 2 or depth < 1:
+        return 0
+
+    return min(min(booldim(graph, todo - v), greedy_lookahead(graph, todo - v, depth - 1))
+                   for v in iterate(todo))
+
+
+def relative_neighborhood_lbw(graph, depth=1):
+    """Assumption: no islets"""
+    todo = graph.V
+    width = 0
+    decomposition = []
+    while size(todo) > 1:
+        # Compute neighbor hood of Left
+        N_left = 0L
+        for v in iterate(graph.V - todo):
+            N_left |= graph.N[v]
+
+        # Pick x with best ratio
+        _, x = min((min(neighborhood_ratio(graph, N_left, v),
+                    relative_neighborhood_lookahead(graph, todo - v, depth - 1)), v)
+                    for v in iterate(todo))
+        bd = booldim(graph, todo - x)
+        decomposition.append((bd, (x, todo - x)))
+        width = max(bd, width)
+        todo -= x
+
+    return width, decomposition
+
+
+def neighborhood_ratio(graph, N_left, v):
+    internal = graph.N[v] & N_left
+    external = graph.N[v] - internal
+    try:
+        return size(external) / size(internal)
+    except ZeroDivisionError:
+        #return float('infty')
+        return 999999999
+
+
+def relative_neighborhood_lookahead(graph, todo, depth):
+    if size(todo) < 2 or depth < 1:
+        return 0
+
+    # Compute neighbor hood of Left
+    N_left = 0L
+    for v in iterate(graph.V - todo):
+        N_left |= graph.N[v]
+
+    return min(min(neighborhood_ratio(graph, N_left, v), relative_neighborhood_lookahead(graph, todo - v, depth - 1)) for v in iterate(todo))

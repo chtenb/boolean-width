@@ -10,14 +10,14 @@ from bitset64 import tostring, iterate
 from plot import plot
 
 from grids import squares, cliques, semicliques, semisquares
-from linearbooleanwidth import linearbooleanwidth
-from linearbooleancost import linearbooleancost, greedy_lbc, relative_neighborhood
+from linearbooleancost import linearbooleancost, greedy_lbc, relative_neighborhood_lbc
+from linearbooleanwidth import linearbooleanwidth, greedy_lbw, relative_neighborhood_lbw
 from booleanwidth import booleanwidth, greedy_bw
 from booleancost import booleancost
 from dynamicprogramming import print_decomposition, booldim
 
 
-graph = squares(3, 3)
+graph = squares(4, 4)
 #graph = cliques(4, 4)
 #graph = semisquares(3, 4)
 #graph = semicliques(3, 3)
@@ -32,8 +32,8 @@ plot(graph, engine='dot') # cliques
 #print_decomposition(*linearbooleanwidth(to64(graph)))
 #print_decomposition(*linearbooleancost(to64(graph)))
 graph64 = to64(graph)
-print_decomposition(*greedy_lbc(graph64, depth=1))
-print_decomposition(*relative_neighborhood(graph64, depth=1))
+print_decomposition(*greedy_lbw(graph64, depth=1))
+print_decomposition(*relative_neighborhood_lbw(graph64, depth=1))
 #print_decomposition(*greedy_bw(graph64))
 #print_decomposition(*greedy_lbc(graph64, depth=2))
 #print_decomposition(*greedy_lbc(graph64, depth=3))

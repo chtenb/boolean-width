@@ -65,7 +65,9 @@ def greedy_lookahead(graph, todo, depth):
     return min(booldim(graph, todo - v) + greedy_lookahead(graph, todo - v, depth - 1) for v in iterate(todo))
 
 
-def relative_neighborhood(graph, depth=1):
+from linearbooleanwidth import neighborhood_ratio
+
+def relative_neighborhood_lbc(graph, depth=1):
     """Assumption: no islets"""
     todo = graph.V
     cost = 0
@@ -87,15 +89,6 @@ def relative_neighborhood(graph, depth=1):
 
     return cost, decomposition
 
-def neighborhood_ratio(graph, N_left, v):
-    internal = graph.N[v] & N_left
-    external = graph.N[v] - internal
-    try:
-        return size(external) / size(internal)
-    except ZeroDivisionError:
-        #return float('infty')
-        return 999999999
-
 
 def relative_neighborhood_lookahead(graph, todo, depth):
     if size(todo) < 2 or depth < 1:
@@ -106,5 +99,5 @@ def relative_neighborhood_lookahead(graph, todo, depth):
     for v in iterate(graph.V - todo):
         N_left |= graph.N[v]
 
-    return min(neighborhood_ratio(graph, N_left, v) + greedy_lookahead(graph, todo - v, depth - 1) for v in iterate(todo))
+    return min(neighborhood_ratio(graph, N_left, v) + relative_neighborhood_lookahead(graph, todo - v, depth - 1) for v in iterate(todo))
 
