@@ -78,7 +78,7 @@ def reduce(collection, subcollection):
 
         # Try to remove a set
         for S in candidate:
-            if join(S) == join( # TODO
+            #if join(S) == join( # TODO
             complement = candidate.difference({S})
             if contains(join(complement), S) and not complement in candidates:
                 candidates.append(complement)

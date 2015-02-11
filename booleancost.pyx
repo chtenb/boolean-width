@@ -1,4 +1,4 @@
-from bitset64 import iterate, subsets, tostring, size
+from bitset128 import iterate, subsets, tostring, size
 from dynamicprogramming import booldimtable
 
 

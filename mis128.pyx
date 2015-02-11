@@ -1,12 +1,13 @@
 """This module contains algorithms for computing the maximal independent sets."""
 
-from bitset64 import iterate, size
+from bitset128 import iterate, size
+from bitset128 cimport uint128
 
-cpdef int recursion(N, long includes, long rest, long excludes):
+cpdef int recursion(N, uint128 includes, uint128 rest, uint128 excludes):
     if not excludes and not rest:
         return 1
 
-    cdef long u, pivot = 0
+    cdef uint128 u, pivot = 0
     cdef int s, minsize = 999999
     for u in iterate(rest | excludes):
         s = size(rest & N[u])
@@ -26,7 +27,7 @@ cpdef int recursion(N, long includes, long rest, long excludes):
 
     return count
 
-cpdef mis_count(N, long vertices):
+cpdef mis_count(N, uint128 vertices):
     """Compute all maximal independent sets."""
     return recursion(N, 0L, vertices, 0L)
 

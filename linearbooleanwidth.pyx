@@ -1,4 +1,4 @@
-from bitset64 import iterate, subsets, size, invert, tostring
+from bitset128 import iterate, subsets, size, invert, tostring
 from dynamicprogramming import booldimtable, booldim
 
 
@@ -13,14 +13,14 @@ def linearboolwidthtable(graph):
 
     # Init table
     bwtable = {}
-    for v in iterate(graph.V):
-        if graph.N[v] == 0L:
+    for v in iterate(graph.vertices):
+        if graph.neighborhoods[v] == 0L:
             bwtable[v] = 1
         else:
             bwtable[v] = 2
 
     # Solve recurrence
-    for A in subsets(graph.V, 2):
+    for A in subsets(graph.vertices, 2):
         bwtable[A] = min(max(booldim[B], booldim[A - B],
                              bwtable[B], bwtable[A - B])
                          for B in iterate(A))
@@ -43,9 +43,9 @@ def linear_decomposition(table, booldim, long A):
 
 def linearbooleanwidth(graph):
     bwtable, booldim = linearboolwidthtable(graph)
-    return (bwtable[graph.V],
+    return (bwtable[graph.vertices],
             booldim,
-            list(linear_decomposition(bwtable, booldim, graph.V)))
+            list(linear_decomposition(bwtable, booldim, graph.vertices)))
 
 
 def dp_greedy_lbw(bwtable, booldim, long A, int universe):
@@ -82,11 +82,14 @@ def dp_greedy_lbw(bwtable, booldim, long A, int universe):
 
 def greedy_lbw(graph, depth=1):
     """Assumption: no islets"""
-    todo = graph.V
+    todo = graph.vertices
     width = 0
     decomposition = []
     while size(todo) > 1:
-        _, x = min((min(booldim(graph, todo - v), greedy_lookahead(graph, todo - v, depth - 1)), v) for v in iterate(todo))
+        _, x = min(
+                (max(booldim(graph, todo - v), greedy_lookahead(graph, todo - v, depth - 1)), v)
+                for v in iterate(todo)
+            )
         bd = booldim(graph, todo - x)
         decomposition.append((bd, (x, todo - x)))
         width = max(bd, width)
@@ -99,20 +102,20 @@ def greedy_lookahead(graph, todo, depth):
     if size(todo) < 2 or depth < 1:
         return 0
 
-    return min(min(booldim(graph, todo - v), greedy_lookahead(graph, todo - v, depth - 1))
+    return min(max(booldim(graph, todo - v), greedy_lookahead(graph, todo - v, depth - 1))
                    for v in iterate(todo))
 
 
 def relative_neighborhood_lbw(graph, depth=1):
     """Assumption: no islets"""
-    todo = graph.V
+    todo = graph.vertices
     width = 0
     decomposition = []
     while size(todo) > 1:
         # Compute neighbor hood of Left
         N_left = 0L
-        for v in iterate(graph.V - todo):
-            N_left |= graph.N[v]
+        for v in iterate(graph.vertices - todo):
+            N_left |= graph.neighborhoods[v]
 
         # Pick x with best ratio
         _, x = min((min(neighborhood_ratio(graph, N_left, v),
@@ -127,8 +130,8 @@ def relative_neighborhood_lbw(graph, depth=1):
 
 
 def neighborhood_ratio(graph, N_left, v):
-    internal = graph.N[v] & N_left
-    external = graph.N[v] - internal
+    internal = graph.neighborhoods[v] & N_left
+    external = graph.neighborhoods[v] - internal
     try:
         return size(external) / size(internal)
     except ZeroDivisionError:
@@ -142,7 +145,7 @@ def relative_neighborhood_lookahead(graph, todo, depth):
 
     # Compute neighbor hood of Left
     N_left = 0L
-    for v in iterate(graph.V - todo):
-        N_left |= graph.N[v]
+    for v in iterate(graph.vertices - todo):
+        N_left |= graph.neighborhoods[v]
 
     return min(min(neighborhood_ratio(graph, N_left, v), relative_neighborhood_lookahead(graph, todo - v, depth - 1)) for v in iterate(todo))

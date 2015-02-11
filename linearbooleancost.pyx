@@ -1,4 +1,4 @@
-from bitset64 import iterate, subsets, size, invert, tostring
+from bitset128 import iterate, subsets, size, invert, tostring
 from dynamicprogramming import booldimtable, booldim
 
 
@@ -12,14 +12,14 @@ def linearboolcosttable(graph):
 
     # Init table
     bctable = {}
-    for v in iterate(graph.V):
-        if graph.N[v] == 0L:
+    for v in iterate(graph.vertices):
+        if graph.neighborhoods[v] == 0L:
             bctable[v] = 1
         else:
             bctable[v] = 2
 
     # Solve recurrence
-    for A in subsets(graph.V, 2):
+    for A in subsets(graph.vertices, 2):
         bctable[A] = booldim[A] + min(bctable[v] + bctable[A - v] for v in iterate(A))
 
     return bctable, booldim
@@ -39,13 +39,13 @@ def linear_decomposition(table, booldim, long A):
 
 def linearbooleancost(graph):
     bctable, booldim = linearboolcosttable(graph)
-    return (bctable[graph.V],
-            list(linear_decomposition(bctable, booldim, graph.V)))
+    return (bctable[graph.vertices],
+            list(linear_decomposition(bctable, booldim, graph.vertices)))
 
 
 def greedy_lbc(graph, depth=1):
     """Assumption: no islets"""
-    todo = graph.V
+    todo = graph.vertices
     cost = 0
     decomposition = []
     while size(todo) > 1:
@@ -69,14 +69,14 @@ from linearbooleanwidth import neighborhood_ratio
 
 def relative_neighborhood_lbc(graph, depth=1):
     """Assumption: no islets"""
-    todo = graph.V
+    todo = graph.vertices
     cost = 0
     decomposition = []
     while size(todo) > 1:
         # Compute neighbor hood of Left
         N_left = 0L
-        for v in iterate(graph.V - todo):
-            N_left |= graph.N[v]
+        for v in iterate(graph.vertices - todo):
+            N_left |= graph.neighborhoods[v]
 
         # Pick x with best ratio
         _, x = min((neighborhood_ratio(graph, N_left, v)
@@ -96,8 +96,8 @@ def relative_neighborhood_lookahead(graph, todo, depth):
 
     # Compute neighbor hood of Left
     N_left = 0L
-    for v in iterate(graph.V - todo):
-        N_left |= graph.N[v]
+    for v in iterate(graph.vertices - todo):
+        N_left |= graph.neighborhoods[v]
 
     return min(neighborhood_ratio(graph, N_left, v) + relative_neighborhood_lookahead(graph, todo - v, depth - 1) for v in iterate(todo))
 

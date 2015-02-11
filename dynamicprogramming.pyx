@@ -1,8 +1,9 @@
-from bitset64 import iterate, subsets, tostring, size
-from mis64 import mis_count
+from bitset128 import iterate, subsets, tostring, size
+from bitset128 cimport uint128
+from mis128 import mis_count
 
 
-def cut(long V, N, long vertices):
+def cut(uint128 V, N, uint128 vertices):
     """Return the neighborhoods of the cut induced by given vertex subset."""
     complement = V - vertices
 
@@ -18,30 +19,30 @@ def cut(long V, N, long vertices):
 
 
 def booldim(graph, subset):
-    return mis_count(cut(graph.V, graph.N, subset), graph.V)
+    return mis_count(cut(graph.vertices, graph.neighborhoods, subset), graph.vertices)
 
 
 def booldimtable(graph):
     """Compute booldim function."""
     booldim = {}
     #for subset in subsets(V, 1, -2):
-    for subset in subsets(graph.V):
+    for subset in subsets(graph.vertices):
         if not subset in booldim:
-            complement = graph.V - subset
+            complement = graph.vertices - subset
             result = booldim(graph, subset)
             booldim[subset] = result
             booldim[complement] = result
 
     # Don't count universal cuts
-    booldim[graph.V] = 0L
+    booldim[graph.vertices] = 0L
 
     # Verify size
-    assert len(booldim) == 2 ** size(graph.V)
+    assert len(booldim) == 2 ** size(graph.vertices)
 
     # Verify symmetry
     #print('Verify booldim symmetry')
-    #for subset in subsets(graph.V, 1, -2):
-        #complement = graph.V - subset
+    #for subset in subsets(graph.vertices, 1, -2):
+        #complement = graph.vertices - subset
         #assert booldim[subset] == booldim[complement]
 
     return booldim
@@ -51,6 +52,12 @@ def print_decomposition(result, decomposition):
     print(result)
     for bd, (x, y) in decomposition:
         print(tostring(x), tostring(y), bd)
+
+
+def print_linear_decomposition(result, decomposition):
+    print(result)
+    for bd, (x, y) in decomposition:
+        print(tostring(x), bd)
 
 
 def bw_from_decomposition(booldim, decomposition):

@@ -90,11 +90,11 @@ class Graph:
         if w == v:
             raise ValueError('{} and {} are the same vertex.'.format(v, w))
 
-        if w in self(v):
-            raise ValueError('{} and {} already connected.'.format(v, w))
+        #if w in self(v):
+            #raise ValueError('{} and {} already connected.'.format(v, w))
 
         # Only support undirected edges
-        assert not v in self(w)
+        #assert not v in self(w)
 
         self.neighborhoods[v] |= w
         self.neighborhoods[w] |= v
@@ -196,7 +196,7 @@ class Graph:
         with open(filename, 'r') as f:
             while 1:
                 line = f.readline()
-                print('Parsing `{}`'.format(line[:-1]))
+                #print('Parsing `{}`'.format(line[:-1]))
                 if line == '':
                     break
                 if line == '\n':
@@ -213,6 +213,7 @@ class Graph:
                     if w not in graph:
                         graph.add(w)
                     graph.connect(v, w)
+        print('Graph loaded')
         return graph
 
     @staticmethod

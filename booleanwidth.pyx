@@ -1,4 +1,4 @@
-from bitset64 import iterate, subsets, tostring, size
+from bitset128 import iterate, subsets, tostring, size
 from dynamicprogramming import booldimtable, booldim
 
 def boolwidthtable(graph):
@@ -10,14 +10,14 @@ def boolwidthtable(graph):
 
     # Init table
     bwtable = {}
-    for v in iterate(graph.V):
-        if graph.N[v] == 0L:
+    for v in iterate(graph.vertices):
+        if graph.neighborhoods[v] == 0L:
             bwtable[v] = 1
         else:
             bwtable[v] = 2
 
     # Solve recurrence
-    for A in subsets(graph.V, 2):
+    for A in subsets(graph.vertices, 2):
         try:
             bwtable[A] = min(max(booldim[B],
                 booldim[A - B],
@@ -48,9 +48,9 @@ def decomposition(table, booldim, long A):
 
 def booleanwidth(graph):
     bwtable, booldim = boolwidthtable(graph)
-    return (bwtable[graph.V],
+    return (bwtable[graph.vertices],
             booldim,
-            list(decomposition(bwtable, booldim, graph.V)))
+            list(decomposition(bwtable, booldim, graph.vertices)))
 
 
 def bw_from_decomposition(graph, decomposition):
@@ -58,7 +58,7 @@ def bw_from_decomposition(graph, decomposition):
 
 
 def greedy_bw(graph, depth=1):
-    decomposition = list(greedy_bw_helper(graph, graph.V, depth))
+    decomposition = list(greedy_bw_helper(graph, graph.vertices, depth))
     width = max(decomposition)[0]
     return width, decomposition
 
@@ -75,6 +75,7 @@ def greedy_bw_helper(graph, subset, depth):
     def penalty(A):
         return max(booldim(graph, A), booldim(graph, subset - A))
     while size(todo) > 1:
+    #while size(todo) > size(subset) / 2:
         new_candidate = min((penalty(todo - v), todo - v) for v in iterate(todo))
         candidates.append(new_candidate)
         todo = new_candidate[1]
