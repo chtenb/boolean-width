@@ -20,13 +20,13 @@ import time
 
 def run():
     start_time = time.time()
-    #graph = squares(9, 10)
+    graph = squares(5, 5)
     #graph = cliques(4, 4)
-    #graph = semisquares(4, 4)
+    #graph = semisquares(5, 5)
     #graph = semicliques(3, 3)
     #graph = Bipartite.generate_random(5).gridify(2)
-    graph = Graph.load('input/jean.dgf')
-    #plot(graph, engine='neato') # squares
+    #graph = Graph.load('input/jean.dgf')
+    plot(graph, engine='neato') # squares
     #plot(graph, engine='dot') # cliques
     print('Graph drawn')
     #plot(graph, engine='fdp') # cliques

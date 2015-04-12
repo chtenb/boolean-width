@@ -67,6 +67,7 @@ def greedy_bw_helper(graph, subset, depth):
     """Assumption: no islets"""
     if size(subset) == 1:
         return
+    #print(size(subset))
     assert size(subset) > 1
 
     # Find a sequence of candidate cuts
@@ -75,7 +76,7 @@ def greedy_bw_helper(graph, subset, depth):
     def penalty(A):
         return max(booldim(graph, A), booldim(graph, subset - A))
     while size(todo) > 1:
-    #while size(todo) > size(subset) / 2:
+    #while size(todo) >= int(size(subset) / 3):
         new_candidate = min((penalty(todo - v), todo - v) for v in iterate(todo))
         candidates.append(new_candidate)
         todo = new_candidate[1]

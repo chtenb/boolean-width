@@ -47,6 +47,7 @@ def semisquares(width, height):
             v = BitSet.from_identifier(i)
             w = BitSet.from_identifier(i + width)
             graph.connect(v, w)
+            graph.split(v, w)
 
     return graph
 

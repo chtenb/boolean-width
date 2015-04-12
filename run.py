@@ -3,3 +3,4 @@ import pyximport
 pyximport.install()
 
 import main
+main.run()
