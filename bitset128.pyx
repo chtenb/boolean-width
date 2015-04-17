@@ -81,7 +81,7 @@ def subsets(uint128 self, int minsize=0, int maxsize=-1):
     return [s for s in sets if size(s) >= minsize and size(s) <= maxsize]
 
 def tostring(self):
-    return 'BitSet{{{}}}'.format(', '.join(str(index(v)) for v in iterate(self)))
+    return '{{{}}}'.format(', '.join(str(index(v)) for v in iterate(self)))
 
 #cdef extern int __builtin_ctzl(unsigned long x)
 #cdef extern int __builtin_clzl(unsigned long x)

@@ -1,5 +1,5 @@
 from bitset128 import iterate, subsets, size, invert, tostring
-from dynamicprogramming import booldimtable, booldim
+from dynamicprogramming import booldimtable, compute_booldim
 
 
 def linearboolcosttable(graph):
@@ -49,8 +49,8 @@ def greedy_lbc(graph, depth=1):
     cost = 0
     decomposition = []
     while size(todo) > 1:
-        _, x = min((booldim(graph, todo - v) + greedy_lookahead(graph, todo - v, depth - 1), v) for v in iterate(todo))
-        bd = booldim(graph, todo - x)
+        _, x = min((compute_booldim(graph, todo - v) + greedy_lookahead(graph, todo - v, depth - 1), v) for v in iterate(todo))
+        bd = compute_booldim(graph, todo - x)
         decomposition.append((bd, (x, todo - x)))
         cost += bd + 2
         todo -= x
@@ -62,7 +62,7 @@ def greedy_lookahead(graph, todo, depth):
     if size(todo) < 2 or depth < 1:
         return 0
 
-    return min(booldim(graph, todo - v) + greedy_lookahead(graph, todo - v, depth - 1) for v in iterate(todo))
+    return min(compute_booldim(graph, todo - v) + greedy_lookahead(graph, todo - v, depth - 1) for v in iterate(todo))
 
 
 from linearbooleanwidth import neighborhood_ratio
@@ -82,7 +82,7 @@ def relative_neighborhood_lbc(graph, depth=1):
         _, x = min((neighborhood_ratio(graph, N_left, v)
                     + relative_neighborhood_lookahead(graph, todo - v, depth - 1), v)
                     for v in iterate(todo))
-        bd = booldim(graph, todo - x)
+        bd = compute_booldim(graph, todo - x)
         decomposition.append((bd, (x, todo - x)))
         cost += bd + 2
         todo -= x

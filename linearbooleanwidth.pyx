@@ -1,6 +1,80 @@
-from bitset128 import iterate, subsets, size, invert, tostring
-from dynamicprogramming import booldimtable, booldim
+from bitset128 import iterate, subsets, size, invert, tostring, subtract, index
+from dynamicprogramming import booldimtable, compute_booldim
 
+
+# New fast exact algos
+
+# NOTE: lbw(X) also takes booldim(X) into account
+
+def compute_lbw_with_upperbound(G, k):
+    print('Upperbound: {}'.format(k))
+    V = G.vertices
+
+    lbw = {}
+    lbw[0L] = 0
+    booldim = {}
+    booldim[0L] = 1
+    un = {}
+    un[0L] = {0L,}
+
+    for i in range(1, size(V) + 1):
+        for X in subsets(V, i, i): # Improve filtering
+            for v in iterate(X):
+                X_v = subtract(X, v)
+                if X_v in lbw and lbw[X_v] <= k:
+                    if X not in booldim:
+                        un[X] = compute_next_un(G, un, X, v)
+                        booldim[X] = len(un[X])
+
+                    if X not in lbw:
+                        lbw[X] = max(booldim[X], lbw[X_v])
+                    else:
+                        lbw[X] = min(lbw[X], max(booldim[X], lbw[X_v]))
+
+
+    if V in lbw:
+        return lbw, booldim
+    else:
+        return False
+
+
+def compute_next_un(G, un, X, v):
+    U = set()
+    for S in un[subtract(X, v)]:
+        U.add(subtract(S, v))
+        U.add(subtract(S, v) | (G.neighborhoods[v] & invert(subtract(X, v), size(G.vertices))))
+    #if len(un[subtract(X, v)]) >= len(U):
+    #print('------------')
+    #print(index(v))
+    #print_un(un[subtract(X, v)])
+    #print_un(U)
+    return U
+
+def compute_lbw(G):
+    k = 1
+    while 1:
+        result = compute_lbw_with_upperbound(G, k)
+        if result == False:
+            k *= 2
+        else:
+            return result
+
+def construct_decomposition(lbw, booldim, subset, bound=None):
+    if bound == None:
+        bound = lbw[subset]
+
+    if size(subset) > 1:
+        for v in iterate(subset):
+            if (v in lbw and lbw[v] <= bound and (subtract(subset, v)) in lbw and
+                    lbw[subtract(subset, v)] <= bound):
+                yield booldim[subset - v], (v, subset - v)
+                yield from construct_decomposition(lbw, booldim, subset - v, bound)
+                break
+
+def print_un(un):
+    print('{{{}}}'.format(', '.join(tostring(s) for s in un)))
+
+# Old algos
 
 def linearboolwidthtable(graph):
     """
@@ -35,7 +109,7 @@ def linear_decomposition(table, booldim, long A):
         for v in iterate(A):
             if (table[v] <= bound and booldim[v] <= bound
                     and booldim[A - v] <= bound and table[A - v] <= bound):
-                yield (v, A - v)
+                yield booldim[A - v], (v, A - v)
                 yield from linear_decomposition(table, booldim, A - v)
 
                 break
@@ -44,7 +118,7 @@ def linear_decomposition(table, booldim, long A):
 def linearbooleanwidth(graph):
     bwtable, booldim = linearboolwidthtable(graph)
     return (bwtable[graph.vertices],
-            booldim,
+            #booldim,
             list(linear_decomposition(bwtable, booldim, graph.vertices)))
 
 
@@ -87,10 +161,10 @@ def greedy_lbw(graph, depth=1):
     decomposition = []
     while size(todo) > 1:
         _, x = min(
-                (max(booldim(graph, todo - v), greedy_lookahead(graph, todo - v, depth - 1)), v)
+                (max(compute_booldim(graph, todo - v), greedy_lookahead(graph, todo - v, depth - 1)), v)
                 for v in iterate(todo)
             )
-        bd = booldim(graph, todo - x)
+        bd = compute_booldim(graph, todo - x)
         decomposition.append((bd, (x, todo - x)))
         width = max(bd, width)
         todo -= x
@@ -102,7 +176,7 @@ def greedy_lookahead(graph, todo, depth):
     if size(todo) < 2 or depth < 1:
         return 0
 
-    return min(max(booldim(graph, todo - v), greedy_lookahead(graph, todo - v, depth - 1))
+    return min(max(compute_booldim(graph, todo - v), greedy_lookahead(graph, todo - v, depth - 1))
                    for v in iterate(todo))
 
 
@@ -121,7 +195,7 @@ def relative_neighborhood_lbw(graph, depth=1):
         _, x = min((min(neighborhood_ratio(graph, N_left, v),
                     relative_neighborhood_lookahead(graph, todo - v, depth - 1)), v)
                     for v in iterate(todo))
-        bd = booldim(graph, todo - x)
+        bd = compute_booldim(graph, todo - x)
         decomposition.append((bd, (x, todo - x)))
         width = max(bd, width)
         todo -= x

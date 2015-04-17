@@ -1,5 +1,5 @@
 from bitset128 import iterate, subsets, tostring, size
-from dynamicprogramming import booldimtable, booldim
+from dynamicprogramming import booldimtable, compute_booldim
 
 def boolwidthtable(graph):
     """
@@ -54,7 +54,7 @@ def booleanwidth(graph):
 
 
 def bw_from_decomposition(graph, decomposition):
-    return max(max(booldim(graph, A), booldim(graph, B)) for A, B in decomposition)
+    return max(max(compute_booldim(graph, A), compute_booldim(graph, B)) for A, B in decomposition)
 
 
 def greedy_bw(graph, depth=1):
@@ -74,7 +74,7 @@ def greedy_bw_helper(graph, subset, depth):
     todo = subset
     candidates = []
     def penalty(A):
-        return max(booldim(graph, A), booldim(graph, subset - A))
+        return max(compute_booldim(graph, A), compute_booldim(graph, subset - A))
     while size(todo) > 1:
     #while size(todo) >= int(size(subset) / 3):
         new_candidate = min((penalty(todo - v), todo - v) for v in iterate(todo))

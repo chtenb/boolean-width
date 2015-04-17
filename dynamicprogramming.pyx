@@ -18,7 +18,7 @@ def cut(uint128 V, N, uint128 vertices):
     return newN
 
 
-def booldim(graph, subset):
+def compute_booldim(graph, subset):
     return mis_count(cut(graph.vertices, graph.neighborhoods, subset), graph.vertices)
 
 
@@ -29,7 +29,7 @@ def booldimtable(graph):
     for subset in subsets(graph.vertices):
         if not subset in booldim:
             complement = graph.vertices - subset
-            result = booldim(graph, subset)
+            result = compute_booldim(graph, subset)
             booldim[subset] = result
             booldim[complement] = result
 
