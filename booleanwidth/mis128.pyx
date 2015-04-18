@@ -1,7 +1,7 @@
 """This module contains algorithms for computing the maximal independent sets."""
 
-from bitset128 import iterate, size
-from bitset128 cimport uint128
+from .bitset128 import iterate, size
+from .bitset128 cimport uint128
 
 cpdef int recursion(N, uint128 includes, uint128 rest, uint128 excludes):
     if not excludes and not rest:

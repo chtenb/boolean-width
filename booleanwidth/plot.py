@@ -1,6 +1,6 @@
 from PIL import Image, ImageDraw, ImageFont
 import math
-from bitset import BitSet
+from .bitset import BitSet
 
 from graphviz import Graph
 

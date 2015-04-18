@@ -2,8 +2,8 @@
 from random import randint
 from numpy import diff
 
-from bipartite import Bipartite
-from graph import Vertex
+from .bipartite import Bipartite
+from .graph import Vertex
 
 
 class BiconvexBipartite(Bipartite):

@@ -1,5 +1,5 @@
-from bitset128 import iterate, subsets, tostring, size
-from dynamicprogramming import booldimtable
+from .bitset128 import iterate, subsets, tostring, size
+from .dynamicprogramming import booldimtable
 
 
 def boolcosttable(graph):

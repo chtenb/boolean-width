@@ -1,8 +1,8 @@
 from random import randint, randrange
 from numpy import diff
 
-from bipartite import Bipartite
-from bitset import BitSet
+from .bipartite import Bipartite
+from .bitset import BitSet
 
 
 def random_partition(n, k, limit):

@@ -1,15 +1,15 @@
-from graph import Graph
-from bipartite import Bipartite
-from tree import Tree
-from convexbipartite import ConvexBipartite
+from .graph import Graph
+from .bipartite import Bipartite
+from .tree import Tree
+from .convexbipartite import ConvexBipartite
 
-from linearbooleanwidth import linearbooleanwidth, compare_linear_balanced, preprocess
-from plot import plot_bipartite, plot_circle, plot
+from .linearbooleanwidth import linearbooleanwidth, compare_linear_balanced, preprocess
+from .plot import plot_bipartite, plot_circle, plot
 
-from linearbooleanwidth64 import (linearbooleanwidth as linearbooleanwidth64,
+from .linearbooleanwidth64 import (linearbooleanwidth as linearbooleanwidth64,
         linearbooleanwidth_from_decomposition)
-from graph64 import to64
-from booleanwidth64 import booleandim
+from .graph64 import to64
+from .booleanwidth64 import booleandim
 
 import cProfile
 

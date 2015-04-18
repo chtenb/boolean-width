@@ -1,5 +1,5 @@
-from bitset128 import iterate, subsets, size, invert, tostring
-from dynamicprogramming import booldimtable, compute_booldim
+from .bitset128 import iterate, subsets, size, invert, tostring
+from .dynamicprogramming import booldimtable, compute_booldim
 
 
 def linearboolcosttable(graph):

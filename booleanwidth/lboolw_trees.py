@@ -1,7 +1,7 @@
-from bitset import BitSet
-from bipartite import Bipartite
-from tree import Tree
-from plot import plot
+from .bitset import BitSet
+from .bipartite import Bipartite
+from .tree import Tree
+from .plot import plot
 
 
 

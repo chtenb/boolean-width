@@ -1,5 +1,5 @@
-from bitset64 import iterate
-from bitset import BitSet as BitSet
+from .bitset64 import iterate
+from .bitset import BitSet as BitSet
 
 def run():
     x = BitSet()

@@ -1,6 +1,6 @@
-from bitset128 import iterate, subsets, tostring, size
-from bitset128 cimport uint128
-from mis128 import mis_count
+from .bitset128 import iterate, subsets, tostring, size
+from .bitset128 cimport uint128
+from .mis128 import mis_count
 
 
 def cut(uint128 V, N, uint128 vertices):

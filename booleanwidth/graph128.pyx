@@ -1,6 +1,6 @@
 from random import sample
-from bitset128 import iterate, domain, index
-from bitset128 cimport uint128
+from .bitset128 import iterate, domain, index
+from .bitset128 cimport uint128
 #from libcpp.unordered_map cimport unordered_map
 from cpython cimport array
 from array import array

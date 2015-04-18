@@ -1,5 +1,5 @@
-from bitset128 import iterate, subsets, tostring, size
-from dynamicprogramming import booldimtable, compute_booldim
+from .bitset128 import iterate, subsets, tostring, size
+from .dynamicprogramming import booldimtable, compute_booldim
 
 def boolwidthtable(graph):
     """

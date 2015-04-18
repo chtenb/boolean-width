@@ -1,19 +1,15 @@
-# Enable importing Cython modules
-import pyximport
-pyximport.install()
-
 from sage.all import *
 
 import cProfile
 
-from tree import Tree
+from .tree import Tree
 #from graph import Graph
 
-from graph64 import to64
-from bitset64 import subsets, tostring
+from .graph128 import to128
+from .bitset128 import subsets, tostring
 
-from linearbooleanwidth64 import linearbooleanwidth as linearbooleanwidth64
-from pathwidth import pathwidth
+from .linearbooleanwidth128 import linearbooleanwidth as linearbooleanwidth128
+from .pathwidth import pathwidth
 
 def preprocess(graph):
     # Remove pendants with parent of degree > 2

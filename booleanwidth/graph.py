@@ -1,6 +1,6 @@
 from random import sample, random
-from bitset import BitSet
-from utils import powerlist
+from .bitset import BitSet
+from .utils import powerlist
 
 
 class Graph:

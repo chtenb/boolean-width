@@ -1,1 +1,1 @@
-python3 -O -c 'import main;main.run()'
+python3 -O -c 'import run'

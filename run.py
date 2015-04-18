@@ -2,5 +2,5 @@
 import pyximport
 pyximport.install()
 
-import main
-main.run()
+import booleanwidth
+booleanwidth.run()

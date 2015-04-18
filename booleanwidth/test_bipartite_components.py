@@ -1,9 +1,9 @@
-from bipartite import Bipartite
-from plot import plot, plot_bipartite
-from math import log
-from graph import Graph
-from booleanwidth import cut
+from .bipartite import Bipartite
+from .plot import plot, plot_bipartite
+from .graph import Graph
+from .booleanwidth import cut
 
+from math import log
 
 def is_connected_component(graph, subset):
     complement = graph.group1 - subset

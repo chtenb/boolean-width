@@ -1,12 +1,12 @@
-from linearbooleanwidth import (linear_decomposition,
+from .linearbooleanwidth import (linear_decomposition,
                                 linearbooleanwidth_decomposition_greedy,
                                 linearbooleanwidth_from_decomposition,
                                 linearboolwidthtable)
-from dynamicprogramming import booleandim
-from graph import Graph
-from graph64 import to64
-from bitset64 import tostring, size, invert
-from plot import plot
+from .dynamicprogramming import booleandim
+from .graph import Graph
+from .graph64 import to64
+from .bitset64 import tostring, size, invert
+from .plot import plot
 
 s = 8
 n = 2 ** (s * (s - 1) / 2)

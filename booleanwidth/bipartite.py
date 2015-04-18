@@ -1,7 +1,8 @@
-from graph import Graph
-from bitset import BitSet
+from .graph import Graph
+from .bitset import BitSet
+from .utils import DictChain
+
 from random import randint, choice, random
-from utils import DictChain
 from copy import deepcopy
 
 

@@ -1,6 +1,6 @@
 from random import choice
-from graph64 import to64
-from graph import Graph
+from .graph64 import to64
+from .graph import Graph
 
 #import test_greedy_step
 

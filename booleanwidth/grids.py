@@ -1,5 +1,5 @@
-from graph import Graph
-from bitset import BitSet
+from .graph import Graph
+from .bitset import BitSet
 
 
 def squares(width, height):

@@ -1,25 +1,21 @@
-# encoding: utf-8
-# cython: profile=True
-# filename: main.pyx
+from .graph import Graph
+from .bipartite import Bipartite
+from .tree import Tree
+from .graph128 import to128
+from .bitset128 import tostring, iterate
+from .plot import plot
 
-from graph import Graph
-from bipartite import Bipartite
-from tree import Tree
-from graph128 import to128
-from bitset128 import tostring, iterate
-from plot import plot
-
-from grids import squares, cliques, semicliques, semisquares
-from lboolc import linearbooleancost, greedy_lbc, relative_neighborhood_lbc
-from lboolw import (linearbooleanwidth, greedy_lbw, relative_neighborhood_lbw,
+from .grids import squares, cliques, semicliques, semisquares
+from .lboolc import linearbooleancost, greedy_lbc, relative_neighborhood_lbc
+from .lboolw import (linearbooleanwidth, greedy_lbw, relative_neighborhood_lbw,
         compute_lbw, construct_decomposition)
-from boolw import booleanwidth, greedy_bw
-from boolc import booleancost
-from dynamicprogramming import print_decomposition, print_linear_decomposition, compute_booldim
+from .boolw import booleanwidth, greedy_bw
+from .boolc import booleancost
+from .dynamicprogramming import print_decomposition, print_linear_decomposition, compute_booldim
 
 import time
 
-from experiments import lboolw_exact_vs_heuristic
+from .experiments import lboolw_exact_vs_heuristic
 
 def run():
     start_time = time.time()

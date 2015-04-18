@@ -1,6 +1,6 @@
 """This module contains algorithms for computing the maximal independent sets."""
 
-from bitset import BitSet
+from .bitset import BitSet
 
 def mis_count_recursion(graph, include, rest, exclude):
     assert include or exclude or rest

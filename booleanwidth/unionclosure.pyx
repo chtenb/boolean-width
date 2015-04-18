@@ -1,5 +1,5 @@
 from itertools import chain, combinations
-from bitset64 import join, tostring, contains
+from .bitset64 import join, tostring, contains
 
 
 def powerset(iterable, minsize=0, maxsize=-1):
