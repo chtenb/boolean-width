@@ -43,11 +43,6 @@ def compute_next_un(G, un, X, v):
     for S in un[subtract(X, v)]:
         U.add(subtract(S, v))
         U.add(subtract(S, v) | (G.neighborhoods[v] & invert(subtract(X, v), size(G.vertices))))
-    #if len(un[subtract(X, v)]) >= len(U):
-    #print('------------')
-    #print(index(v))
-    #print_un(un[subtract(X, v)])
-    #print_un(U)
     return U
 
 def compute_lbw(G):

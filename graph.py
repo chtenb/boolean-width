@@ -231,7 +231,7 @@ class Graph:
             # Add random edges between groups
             for v in graph:
                 for w in graph:
-                    if v < w and random() < 0.5:
+                    if v < w and random() < nr_edges:
                         graph.connect(v, w)
             return graph
         else:

@@ -65,7 +65,7 @@ def greedy_lookahead(graph, todo, depth):
     return min(compute_booldim(graph, todo - v) + greedy_lookahead(graph, todo - v, depth - 1) for v in iterate(todo))
 
 
-from linearbooleanwidth import neighborhood_ratio
+from lboolw import neighborhood_ratio
 
 def relative_neighborhood_lbc(graph, depth=1):
     """Assumption: no islets"""

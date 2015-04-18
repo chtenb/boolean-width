@@ -39,7 +39,7 @@ def decomposition(table, booldim, long A):
         for B in subsets(A, 1, -2):
             if (table[B] <= bound and booldim[B] <= bound
                     and booldim[A - B] <= bound and table[A - B] <= bound):
-                yield (B, A - B)
+                yield (booldim[B], booldim[A-B]), (B, A - B)
                 yield from decomposition(table, booldim, B)
                 yield from decomposition(table, booldim, A - B)
 
@@ -49,7 +49,7 @@ def decomposition(table, booldim, long A):
 def booleanwidth(graph):
     bwtable, booldim = boolwidthtable(graph)
     return (bwtable[graph.vertices],
-            booldim,
+            #booldim,
             list(decomposition(bwtable, booldim, graph.vertices)))
 
 
