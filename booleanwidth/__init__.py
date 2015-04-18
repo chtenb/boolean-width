@@ -8,7 +8,7 @@ from .plot import plot
 from .grids import squares, cliques, semicliques, semisquares
 from .lboolc import linearbooleancost, greedy_lbc, relative_neighborhood_lbc
 from .lboolw import (linearbooleanwidth, greedy_lbw, relative_neighborhood_lbw,
-        compute_lbw, construct_decomposition)
+        compute_lboolw, construct_decomposition)
 from .boolw import booleanwidth, greedy_bw
 from .boolc import booleancost
 from .dynamicprogramming import print_decomposition, print_linear_decomposition, compute_booldim
@@ -43,9 +43,9 @@ def run():
     #exit()
 
     # COMPUTE
-    lbw, booldim = compute_lbw(graph128)
-    result = lbw[graph128.vertices]
-    print_decomposition(result, construct_decomposition(lbw, booldim, graph128.vertices))
+    lboolw, booldim = compute_lboolw(graph128)
+    result = lboolw[graph128.vertices]
+    print_decomposition(result, construct_decomposition(lboolw, booldim, graph128.vertices))
 
     #print('--- {} seconds ---'.format(time.time() - start_time))
 

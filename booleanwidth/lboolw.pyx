@@ -6,12 +6,12 @@ from .dynamicprogramming import booldimtable, compute_booldim
 
 # NOTE: lbw(X) also takes booldim(X) into account
 
-def compute_lbw_with_upperbound(G, k):
+def compute_lboolw_with_upperbound(G, k):
     print('Upperbound: {}'.format(k))
     V = G.vertices
 
-    lbw = {}
-    lbw[0L] = 0
+    lboolw = {}
+    lboolw[0L] = 0
     booldim = {}
     booldim[0L] = 1
     un = {}
@@ -21,19 +21,19 @@ def compute_lbw_with_upperbound(G, k):
         for X in subsets(V, i, i): # Improve filtering
             for v in iterate(X):
                 X_v = subtract(X, v)
-                if X_v in lbw and lbw[X_v] <= k:
+                if X_v in lboolw and lboolw[X_v] <= k:
                     if X not in booldim:
                         un[X] = compute_next_un(G, un, X, v)
                         booldim[X] = len(un[X])
 
-                    if X not in lbw:
-                        lbw[X] = max(booldim[X], lbw[X_v])
+                    if X not in lboolw:
+                        lboolw[X] = max(booldim[X], lboolw[X_v])
                     else:
-                        lbw[X] = min(lbw[X], max(booldim[X], lbw[X_v]))
+                        lboolw[X] = min(lboolw[X], max(booldim[X], lboolw[X_v]))
 
 
-    if V in lbw:
-        return lbw, booldim
+    if V in lboolw:
+        return lboolw, booldim
     else:
         return False
 
@@ -45,25 +45,25 @@ def compute_next_un(G, un, X, v):
         U.add(subtract(S, v) | (G.neighborhoods[v] & invert(subtract(X, v), size(G.vertices))))
     return U
 
-def compute_lbw(G):
+def compute_lboolw(G):
     k = 1
     while 1:
-        result = compute_lbw_with_upperbound(G, k)
+        result = compute_lboolw_with_upperbound(G, k)
         if result == False:
             k *= 2
         else:
             return result
 
-def construct_decomposition(lbw, booldim, subset, bound=None):
+def construct_decomposition(lboolw, booldim, subset, bound=None):
     if bound == None:
-        bound = lbw[subset]
+        bound = lboolw[subset]
 
     if size(subset) > 1:
         for v in iterate(subset):
-            if (v in lbw and lbw[v] <= bound and (subtract(subset, v)) in lbw and
-                    lbw[subtract(subset, v)] <= bound):
+            if (v in lboolw and lboolw[v] <= bound and (subtract(subset, v)) in lboolw and
+                    lboolw[subtract(subset, v)] <= bound):
                 yield booldim[subset - v], (v, subset - v)
-                yield from construct_decomposition(lbw, booldim, subset - v, bound)
+                yield from construct_decomposition(lboolw, booldim, subset - v, bound)
                 break
 
 def print_un(un):
