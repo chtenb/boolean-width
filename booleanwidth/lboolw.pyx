@@ -1,5 +1,6 @@
-from .bitset128 import iterate, subsets, size, invert, tostring, subtract, index
+from .bitset128 import iterate, subsets, subsets_of_size, size, invert, tostring, subtract, index
 from .dynamicprogramming import booldimtable, compute_booldim
+
 
 
 # New fast exact algos
@@ -18,7 +19,8 @@ def compute_lboolw_with_upperbound(G, k):
     un[0L] = {0L,}
 
     for i in range(1, size(V) + 1):
-        for X in subsets(V, i, i): # Improve filtering
+        #for X in subsets(V, i, i): # Improve filtering
+        for X in subsets_of_size(V, i):
             for v in iterate(X):
                 X_v = subtract(X, v)
                 if X_v in lboolw and lboolw[X_v] <= k:
@@ -54,7 +56,7 @@ def compute_lboolw(G):
         else:
             return result
 
-def construct_decomposition(lboolw, booldim, subset, bound=None):
+def construct_lboolw_decomposition(lboolw, booldim, subset, bound=None):
     if bound == None:
         bound = lboolw[subset]
 
@@ -63,11 +65,16 @@ def construct_decomposition(lboolw, booldim, subset, bound=None):
             if (v in lboolw and lboolw[v] <= bound and (subtract(subset, v)) in lboolw and
                     lboolw[subtract(subset, v)] <= bound):
                 yield booldim[subset - v], (v, subset - v)
-                yield from construct_decomposition(lboolw, booldim, subset - v, bound)
+                yield from construct_lboolw_decomposition(lboolw, booldim, subset - v, bound)
                 break
 
 def print_un(un):
     print('{{{}}}'.format(', '.join(tostring(s) for s in un)))
+
+
+
+
+
 
 # Old algos
 

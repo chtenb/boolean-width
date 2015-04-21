@@ -35,7 +35,11 @@ cpdef uint128 bit(int position):
     return (<uint128>1 << position)
 
 
-cpdef uint128 universe = ((<uint128>1 << 127) - 1) + (<uint128>1 << 127)
+cpdef uint128 universe128 = ((<uint128>1 << 127) - 1) + (<uint128>1 << 127)
+cpdef uint128 universe(int length):
+    if length == 128:
+        return universe128
+    return (<uint128>1 << length) - 1
 
 
 cpdef uint128 subtract(uint128 self, uint128 other):
@@ -43,13 +47,12 @@ cpdef uint128 subtract(uint128 self, uint128 other):
 
 
 cpdef contains(uint128 self, uint128 other):
-    return self & other == self
+    return self | other == self
 
 
 cpdef uint128 invert(uint128 x, unsigned int l):
     """Return inverse where universe has length l"""
-    l = 128 - l
-    return subtract(((universe << l) >> l), x)
+    return subtract(universe(l), x)
 
 
 cpdef uint128 join(args):
@@ -79,6 +82,27 @@ def subsets(uint128 self, int minsize=0, int maxsize=-1):
         sets.extend([s | v for s in sets])
 
     return [s for s in sets if size(s) >= minsize and size(s) <= maxsize]
+
+
+import math
+
+
+def nCr(n,r):
+    f = math.factorial
+    return f(n) / f(r) / f(n-r)
+
+
+def subsets_of_size(uint128 bitset, int subsetsize):
+    """Universe length is l"""
+    table = [[] for k in range(subsetsize + 1)]
+    table[0] = [0L]
+    for b in iterate(bitset):
+        for k in range(1, subsetsize + 1):
+            table[k].extend([subset | b for subset in table[k - 1] if not contains(subset, b)])
+
+    #assert len(table[subsetsize]) == nCr(size(bitset), subsetsize)
+    return table[subsetsize]
+
 
 def tostring(self):
     return '{{{}}}'.format(', '.join(str(index(v)) for v in iterate(self)))
