@@ -1,11 +1,12 @@
-from .bitset128 import iterate, subsets, size, invert, tostring, subtract, subsets_of_size
+from .bitset128 import (iterate, subsets, size, invert, tostring, subtract, subsets_of_size,
+                        subsets_by_size)
 from .dynamicprogramming import booldimtable, compute_booldim
 from .lboolw import compute_next_un
 
 
 # New fast exact algos
 
-# NOTE: lbc(X) also takes booldim(X) into account
+# NOTE: lbc(X) does not take booldim(X) into account
 
 def compute_lboolc_with_upperbound(G, k):
     print('Upperbound: {}'.format(k))
@@ -16,23 +17,24 @@ def compute_lboolc_with_upperbound(G, k):
 
     booldim = {}
     un = {}
-    for v in iterate(G.vertices):
-        if G.neighborhoods[v]:
-            un[v] = {G.neighborhoods[v], 0L}
-            booldim[v] = 2
-        else:
-            print('asdfadfasdf')
-            un[v] = {0L}
-            booldim[v] = 1
-    #booldim[0L] = 0
-    #un[0L] = {0L}
+    #for v in iterate(G.vertices):
+        #if G.neighborhoods[v]:
+            #un[v] = {G.neighborhoods[v], 0L}
+            #booldim[v] = 2
+        #else:
+            #un[v] = {0L}
+            #booldim[v] = 1
+    booldim[0L] = 1 # NOTE THIS!!!!
+    un[0L] = {0L}
     booldim[G.vertices] = 0
     un[G.vertices] = {0L}
 
 
+    ss = subsets_by_size(V)
     for i in range(1, size(V) + 1):
         #for X in subsets(V, i, i): # Improve filtering
-        for X in subsets_of_size(V, i):
+        #for X in subsets_of_size(V, i):
+        for X in ss[i]:
             for v in iterate(X):
                 X_v = subtract(X, v)
                 if X_v in lboolc and lboolc[X_v] <= k:
@@ -40,11 +42,14 @@ def compute_lboolc_with_upperbound(G, k):
                         un[X] = compute_next_un(G, un, X, v)
                         booldim[X] = len(un[X])
 
+                    # What if X == v?
+                    #new_lboolc = booldim[X] + booldim[v] + lboolc[X_v]
+                    #new_lboolc = booldim[v] + booldim[X_v] + lboolc[X_v]
+                    new_lboolc = booldim[X_v] + lboolc[X_v]
                     if X not in lboolc:
-                        lboolc[X] = booldim[X] + booldim[v] + lboolc[X_v]
+                        lboolc[X] = new_lboolc
                     else:
-                        lboolc[X] = min(lboolc[X], booldim[X] + booldim[v] + lboolc[X_v])
-
+                        lboolc[X] = min(lboolc[X], new_lboolc)
 
     if V in lboolc:
         return lboolc, booldim
@@ -61,25 +66,39 @@ def compute_lboolc(G):
         else:
             return result
 
+
 def construct_lboolc_decomposition(lboolc, booldim, subset, bound=None):
     if bound == None:
         bound = lboolc[subset]
 
-    if size(subset) > 1:
-        for v in iterate(subset):
-            if (v in lboolc and subtract(subset, v) in lboolc and lboolc[v] +
-                    lboolc[subtract(subset, v)] <= bound):
-                yield booldim[subset - v], (v, subset - v)
-                yield from construct_lboolc_decomposition(lboolc, booldim, subset - v, bound -
-                        lboolc[v] + lboolc[subtract(subset, v)])
-                break
+    #print('bound: {}'.format(bound))
+    #print(booldim[subset])
+    for v in iterate(subset):
+        #print(lboolc[v])
+        #print(lboolc[subtract(subset, v)])
+        #if booldim[v] + lboolc[subtract(subset, v)] + booldim[subset] <= bound:
+        if lboolc[subtract(subset, v)] + booldim[subtract(subset, v)] <= bound:
+            #yield booldim[subset - v], (v, subset - v)
+            yield v
+            yield from construct_lboolc_decomposition(lboolc, booldim, subset - v,
+                    bound - booldim[subtract(subset, v)])
+            break
+
 
 def print_un(un):
     print('{{{}}}'.format(', '.join(tostring(s) for s in un)))
 
 
 
+
+
+
+
+
+
+#
 # Old algos
+#
 
 def linearboolcosttable(graph):
     """

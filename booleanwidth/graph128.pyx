@@ -8,7 +8,7 @@ from array import array
 cpdef to128(graph):
     vertices = <uint128>graph.vertices
     neighborhoods = {}
-    for key in graph.vertices:
+    for key in graph:
         neighborhoods[<uint128>key] = <uint128>graph.neighborhoods[key]
 
     return Graph(vertices, neighborhoods)

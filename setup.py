@@ -62,7 +62,8 @@ def makeExtension(extName):
         #extra_link_args = ['-g'],
         extra_link_args=[],
         #libraries = ["dv",],
-        libraries=[]
+        libraries=[],
+        language='c++'
     )
 
 # get the list of extensions
@@ -76,6 +77,5 @@ setup(
     name="booleanwidth",
     packages=["booleanwidth", "booleanwidth.experiments"],
     ext_modules=extensions,
-    cmdclass={'build_ext': build_ext},
-    compiler_directives={'profile': True}
+    cmdclass={'build_ext': build_ext}
 )

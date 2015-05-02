@@ -8,7 +8,13 @@ cdef extern from "uint128.h":
 cdef extern int __builtin_popcountll(unsigned long long x)
 cdef extern int __builtin_popcount(unsigned int x)
 cdef extern int __builtin_ctzll(unsigned long long x)
+cdef extern int __builtin_clzll(unsigned long long x)
 
+# ctz returns the number of trailing 0-bits in x, starting at the least significant bit position.
+# If x is 0, the result is undefined.
+
+# clz returns the number of leading 0-bits in x, starting at the most significant bit position.
+# If x is 0, the result is undefined.
 
 cpdef int index(uint128 x):
     """
@@ -21,9 +27,13 @@ cpdef int index(uint128 x):
 
 
 cpdef int domain(uint128 x):
-    """Return position of last vertex in given bitset."""
-    raise NotImplementedError
-    return 64 - __builtin_clzl(x)
+    """
+    Return position of last vertex in given bitset.
+    Return 0 if bitset is empty.
+    """
+    cdef int part2 = __builtin_clzll(<unsigned long long>(x >> 64))
+    cdef int part1 = __builtin_clzll(<unsigned long long>x)
+    return part2 if x >> 64 else 64 + part1
 
 
 cpdef int size(uint128 x):
@@ -61,6 +71,8 @@ cpdef uint128 join(args):
         result |= v
     return result
 
+cpdef uint128 first(uint128 n):
+    return n & (~n + 1)
 
 def iterate(uint128 n):
     cdef uint128 b
@@ -93,7 +105,7 @@ def nCr(n,r):
 
 
 def subsets_of_size(uint128 bitset, int subsetsize):
-    """Universe length is l"""
+    # TODO: make output sensitive
     table = [[] for k in range(subsetsize + 1)]
     table[0] = [0L]
     for b in iterate(bitset):
@@ -102,6 +114,19 @@ def subsets_of_size(uint128 bitset, int subsetsize):
 
     #assert len(table[subsetsize]) == nCr(size(bitset), subsetsize)
     return table[subsetsize]
+
+def subsets_by_size(uint128 bitset):
+    s = size(bitset)
+    table = [[] for k in range(s + 1)]
+    table[0] = [0L]
+    for b in iterate(bitset):
+        for k in range(1, s + 1):
+            table[k].extend([subset | b for subset in table[k - 1] if not contains(subset, b)])
+
+    #print(table)
+    #for k in range(1, s + 1):
+        #assert len(table[k]) == nCr(s, k)
+    return table
 
 
 def tostring(self):

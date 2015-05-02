@@ -1,7 +1,6 @@
-from .bitset128 import iterate, subsets, subsets_of_size, size, invert, tostring, subtract, index
+from .bitset128 import (iterate, subsets, subsets_of_size, size, invert, tostring, subtract,
+                        index, domain, contains)
 from .dynamicprogramming import booldimtable, compute_booldim
-
-
 
 # New fast exact algos
 
@@ -16,7 +15,7 @@ def compute_lboolw_with_upperbound(G, k):
     booldim = {}
     booldim[0L] = 1
     un = {}
-    un[0L] = {0L,}
+    un[0L] = {0L}
 
     for i in range(1, size(V) + 1):
         #for X in subsets(V, i, i): # Improve filtering
@@ -41,10 +40,11 @@ def compute_lboolw_with_upperbound(G, k):
 
 
 def compute_next_un(G, un, X, v):
+    """Compute UN of X, based on the UN of X-v"""
     U = set()
     for S in un[subtract(X, v)]:
         U.add(subtract(S, v))
-        U.add(subtract(S, v) | (G.neighborhoods[v] & invert(subtract(X, v), size(G.vertices))))
+        U.add(subtract(S, v) | (G.neighborhoods[v] & invert(subtract(X, v), domain(G.vertices))))
     return U
 
 def compute_lboolw(G):
@@ -62,6 +62,7 @@ def construct_lboolw_decomposition(lboolw, booldim, subset, bound=None):
 
     if size(subset) > 1:
         for v in iterate(subset):
+            # TODO: fix if statement
             if (v in lboolw and lboolw[v] <= bound and (subtract(subset, v)) in lboolw and
                     lboolw[subtract(subset, v)] <= bound):
                 yield booldim[subset - v], (v, subset - v)
@@ -70,10 +71,6 @@ def construct_lboolw_decomposition(lboolw, booldim, subset, bound=None):
 
 def print_un(un):
     print('{{{}}}'.format(', '.join(tostring(s) for s in un)))
-
-
-
-
 
 
 # Old algos
