@@ -6,6 +6,7 @@ from .bitset import (iterate, subsets, subsets_of_size, size, invert, tostring, 
 from .bitset128 cimport uint128
 import math
 from .components import components
+from .utils import shuffled
 
 Infinity = float('inf')
 
@@ -30,6 +31,30 @@ def get_neighborhood_2(N, subset):
 # UN
 #
 
+def min_cover_size(N, left, right, v):
+    """
+    Return an approximation of the number of neighborhoods from left across right needed
+    to cover the the neighborhood of v across right.
+    """
+    universe = N[v] & right
+    sets = {N[u] & universe for u in iterate(left)}
+    cover = 0
+    sets_needed = 0
+
+
+    while not contains(cover, universe):
+        if not sets:
+            return sets_needed + 1
+
+        # Choose set covering the most uncovered elements
+        uncovered = universe - cover
+        bestset = max(sets, key=lambda s: size(uncovered & s))
+        sets.remove(bestset)
+        cover |= bestset
+        sets_needed += 1
+
+    return sets_needed
+
 
 def next_un(N, un_left, left, right, v):
     U = set()
@@ -52,53 +77,13 @@ def next_und(N, und_left, left, right, v):
 
     return new_und
 
-#def next_un_n(N, un_left, left, right, v):
-    #"""Compute UN of X|v, based on the UN of X, where v is in right"""
-    #U = set()
-    #for S in un_left:
-        #U.add(subtract(S, v))
-        #U.add(subtract(S, v) | (N[v] & subtract(right, v)))
-    #return U
 
-#def next_un_1(N, un_left, left, right, v):
-    #U = set()
-    #U.add((N[v] & subtract(right, v)))
-    #for S in un_left:
-        #U.add(subtract(S, v))
-    #return U
+#
+# RANDOM
+#
 
-#def next_un_2(N, un_left, left, right, v):
-    #U = set()
-
-    ## Add existing singles and pairs
-    #for S in un_left:
-        #U.add(subtract(S, v))
-
-    ## Add new pairs?
-    #for u in iterate(left):
-        #U.add((N[u] | N[v]) & subtract(right, v))
-
-    #return U
-
-#def next_un_3(N, un_left, left, right, v):
-    #U = set()
-
-    ## Add existing subtriples
-    #for S in un_left:
-        #U.add(subtract(S, v))
-
-    ## Add new pairs?
-    #for u in iterate(left):
-        #U.add((N[u] | N[v]) & subtract(right, v))
-
-    ## Add new triples?
-    #Z = set()
-    #for W in U:
-        #Z.add((W | N[v]) & subtract(right, v))
-
-    #U.update(Z)
-    #return U
-
+def random_decomposition(graph):
+    return shuffled([v for v in iterate(graph.vertices)])
 
 #
 # WIDTH
@@ -129,7 +114,6 @@ def greedy(G, depth=0):
         best_lboolw = Infinity
         best_decomposition = None
         for i, start in enumerate(iterate(component)):
-        #for i, start in enumerate(iterate(2)):
             print('{}th try'.format(i))
             right = subtract(component, start)
             left = start
@@ -229,7 +213,7 @@ def greedy_step(G, left, right, un_left, booldim_left, depth, un_table, bound):
         best_booldim = len(best_un)
         best_vertex = v
 
-    print('Ties: {}'.format(ties))
+    #print('Ties: {}'.format(ties))
 
     assert best_vertex != None
     return best_vertex, best_un, best_booldim
@@ -298,9 +282,18 @@ def greedy_lun_step(G, left, right, depth):
 
     #candidates = get_neighborhood_2(G.neighborhoods, left) & right
     #print('Candidates: {}'.format(size(candidates)))
+
+    # Trivial cases are slow
+    #for v in iterate(candidates):
+        #if trivial_case(G.neighborhoods, left, right, v):
+            #new_un = next_un(G.neighborhoods, un_left, left, right, v)
+            #new_booldim = len(new_un)
+            #return v, new_un, new_booldim
+
     #for v in iterate(candidates):
     for v in iterate(right):
-        new_score = lun(G.neighborhoods, left, right, v)
+        #new_score = lun(G.neighborhoods, left, right, v)
+        new_score = min_cover_size(G.neighborhoods, left, right, v)
 
         if depth > 0:
             _, recursive_score = greedy_lun_step(G, left | v, subtract(right, v), depth - 1)

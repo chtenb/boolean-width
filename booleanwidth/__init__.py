@@ -26,8 +26,8 @@ from .profiling import profile
 def run():
     start_time = time.time()
 
-    #lboolw_exact_vs_heuristic.run()
-    heuristics.run()
+    lboolw_exact_vs_heuristic.run()
+    #heuristics.run()
     return
 
     #print(0, domain(0))
@@ -53,10 +53,11 @@ def run():
     #graph = Graph.load('input/queen6_6.dgf')
     #graph = Graph.load('input/queen7_7.dgf')
     #graph = Graph.load('input/david.dgf')
-    graph = Graph.load('input/alarm.dgf')
+    #graph = Graph.load('input/alarm.dgf')
     #graph = Graph.load('input/pr152.dgf')
     #graph = Graph.load('input/BN_100.dgf')
-    #graph = Graph.generate_random(35, 0.5)
+    graph = Graph.load('input/rand.dgf')
+    #graph = Graph.generate_random(30, 0.5)
     #graph.save('input/rand.dgf')
     #return
     #graph = squares(5, 3)
@@ -96,9 +97,10 @@ def run():
     #print('depth = ' + str(i))
     print('greedy')
     def f():
-        lboolw, decomposition = greedy_cost_ties(graph, 100)
+        #lboolw, decomposition = greedy_lun(graph, 0)
+        #lboolw, decomposition = greedy_cost_ties(graph, 100)
         #lboolw, decomposition = greedy_cost(graph, 0)
-        #lboolw, decomposition = greedy(graph, 3)
+        lboolw, decomposition = greedy(graph, 0)
         print(lboolw)
         print(math.log(lboolw, 2))
         real_lboolw = check_decomposition(graph, decomposition)

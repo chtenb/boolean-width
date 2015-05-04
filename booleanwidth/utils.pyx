@@ -1,3 +1,40 @@
+from libc.stdlib cimport rand, srand
+from libc.time cimport time
+
+
+# Seed the random number generator
+srand(time(NULL))
+
+
+cdef extern from "stdlib.h":
+    int RAND_MAX
+
+
+cdef int randomint(int upperbound):
+    """Upperbound is exclusive."""
+    return <int> ((rand() / <float>RAND_MAX) * upperbound)
+
+
+def shuffle(list l):
+    """Shuffle list using fisher-yates shuffle."""
+    cdef int j
+
+    for i in range(len(l) - 1, -1 ,-1):
+        j = randomint(i + 1)
+        try:
+            l[i], l[j] = l[j], l[i]
+        except IndexError:
+            print(l, i, j)
+
+
+def shuffled(l):
+    """Shuffle list using fisher-yates shuffle."""
+    result = l[:]
+    shuffle(result)
+    return result
+
+
+
 import itertools
 
 
