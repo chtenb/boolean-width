@@ -30,6 +30,7 @@ def get_neighborhood_2(N, subset):
 # UN
 #
 
+
 def next_un(N, un_left, left, right, v):
     U = set()
     for S in un_left:
@@ -37,52 +38,66 @@ def next_un(N, un_left, left, right, v):
         U.add(S - (v & S) | (N[v] & (right - (v & right))))
     return U
 
-def next_un_n(N, un_left, left, right, v):
-    """Compute UN of X|v, based on the UN of X, where v is in right"""
-    U = set()
-    for S in un_left:
-        U.add(subtract(S, v))
-        U.add(subtract(S, v) | (N[v] & subtract(right, v)))
-    return U
 
-def next_un_1(N, un_left, left, right, v):
-    U = set()
-    U.add((N[v] & subtract(right, v)))
-    for S in un_left:
-        U.add(subtract(S, v))
-    return U
+# Lets introduce UND: unions of neighborhoods by degree
+def next_und(N, und_left, left, right, v):
+    new_und = [set(0)] # There is only 1 union of degree 0
 
-def next_un_2(N, un_left, left, right, v):
-    U = set()
+    for i in range(1, len(und_left)):
+        new_und.append(set())
+        for S in und_left[i]:
+            new_und[i].add(S - (v & S)) # Update existing unions
+        for S in und_left[i-1]:
+            new_und.add(S - (v & S) | (N[v] & (right - (v & right))))
 
-    # Add existing singles and pairs
-    for S in un_left:
-        U.add(subtract(S, v))
+    return new_und
 
-    # Add new pairs?
-    for u in iterate(left):
-        U.add((N[u] | N[v]) & subtract(right, v))
+#def next_un_n(N, un_left, left, right, v):
+    #"""Compute UN of X|v, based on the UN of X, where v is in right"""
+    #U = set()
+    #for S in un_left:
+        #U.add(subtract(S, v))
+        #U.add(subtract(S, v) | (N[v] & subtract(right, v)))
+    #return U
 
-    return U
+#def next_un_1(N, un_left, left, right, v):
+    #U = set()
+    #U.add((N[v] & subtract(right, v)))
+    #for S in un_left:
+        #U.add(subtract(S, v))
+    #return U
 
-def next_un_3(N, un_left, left, right, v):
-    U = set()
+#def next_un_2(N, un_left, left, right, v):
+    #U = set()
 
-    # Add existing subtriples
-    for S in un_left:
-        U.add(subtract(S, v))
+    ## Add existing singles and pairs
+    #for S in un_left:
+        #U.add(subtract(S, v))
 
-    # Add new pairs?
-    for u in iterate(left):
-        U.add((N[u] | N[v]) & subtract(right, v))
+    ## Add new pairs?
+    #for u in iterate(left):
+        #U.add((N[u] | N[v]) & subtract(right, v))
 
-    # Add new triples?
-    Z = set()
-    for W in U:
-        Z.add((W | N[v]) & subtract(right, v))
+    #return U
 
-    U.update(Z)
-    return U
+#def next_un_3(N, un_left, left, right, v):
+    #U = set()
+
+    ## Add existing subtriples
+    #for S in un_left:
+        #U.add(subtract(S, v))
+
+    ## Add new pairs?
+    #for u in iterate(left):
+        #U.add((N[u] | N[v]) & subtract(right, v))
+
+    ## Add new triples?
+    #Z = set()
+    #for W in U:
+        #Z.add((W | N[v]) & subtract(right, v))
+
+    #U.update(Z)
+    #return U
 
 
 #

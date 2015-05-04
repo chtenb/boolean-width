@@ -3,6 +3,7 @@ from ..graph128 import to128
 from ..lboolw import compute_lboolw
 from ..lboolc import compute_lboolc
 from ..heuristic import greedy, greedy_cost
+from .common import generate_random_graphs
 
 from numpy import arange, mean
 import matplotlib.pyplot as plt
@@ -13,32 +14,18 @@ import os
 import glob
 import time
 
-graphsize = 50
+graphsize = 100
 p_values = [round(p, 5) for p in arange(0.05, 1, 0.05)]
 samples = 20
-directory = 'output/heuristics/' # Must end with slash
+inputdir = 'input/random100/'
+outputdir = 'output/heuristics/' # Must end with slash
 total_nr = samples * len(p_values)
 
 def run():
-    generate_random_graphs(graphsize, p_values, samples, directory)
-    compute_data(directory)
+    generate_random_graphs(graphsize, p_values, samples, inputdir)
+    #compute_data(directory)
     #compute_avg_data(directory)
     #plot_data(directory)
-
-
-def generate_random_graphs(graphsize, p_values, samples, outputdir):
-    shutil.rmtree(outputdir)
-    if not os.path.exists(outputdir):
-        os.makedirs(outputdir)
-
-    i = 0
-    for p in p_values:
-        for _ in range(samples):
-            graph = Graph.generate_random(graphsize, p)
-            graph.save('{}{}-{}.dgf'.format(outputdir, p, i))
-            i += 1
-
-    print('{} graphs generated in directory {}'.format(i, outputdir))
 
 
 def compute_data(input_dir):

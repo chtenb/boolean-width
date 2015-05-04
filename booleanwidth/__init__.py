@@ -27,8 +27,8 @@ def run():
     start_time = time.time()
 
     #lboolw_exact_vs_heuristic.run()
-    #heuristics.run()
-    #return
+    heuristics.run()
+    return
 
     #print(0, domain(0))
     #print(1, domain(1))

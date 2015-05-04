@@ -1,6 +1,6 @@
 from random import sample, random
 from .utils import powerlist
-from .bitset import iterate, size, contains, bit, bits, disjoint
+from .bitset import iterate, size, contains, bit, bits, disjoint, index
 
 
 class Graph:
@@ -34,7 +34,7 @@ class Graph:
     def __call__(self, vertices):
         """Return the union of neighborhoods of vertices."""
         result = 0
-        for v in vertices:
+        for v in iterate(vertices):
             result = result | self.neighborhoods[v]
             #result |= self.neighborhoods[v]
         return result
@@ -49,7 +49,7 @@ class Graph:
         for v in self:
             for w in iterate(self(v)):
                 if w < v:
-                    yield v | w
+                    yield v, w
 
     def add(self, vertices):
         """Add new vertices to the graph."""
@@ -178,12 +178,12 @@ class Graph:
 
     def save(self, filename):
         with open(filename, 'w') as f:
-            f.write('p edges {} {}\n'.format(len(self.vertices), len(list(self.edges))))
+            f.write('p edges {} {}\n'.format(size(self.vertices), len(list(self.edges))))
             f.writelines(
-                'n {}\n'.format(v.identifier) for v in self
+                'n {}\n'.format(index(v)) for v in self
             )
             f.writelines(
-                'e {} {}\n'.format(v.identifier, w. identifier) for v, w in self.edges
+                'e {} {}\n'.format(index(v), index(w)) for v, w in self.edges
             )
 
     @staticmethod
