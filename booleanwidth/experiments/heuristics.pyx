@@ -2,7 +2,7 @@ from ..lboolw import compute_lboolw
 from ..lboolc import compute_lboolc
 from ..heuristic import (greedy, greedy_cost, check_decomposition, random_decomposition,
                          greedy_light, lun, min_cover_size, new_lun, relative_neighborhood,
-                         minfront)
+                         minfront, new_lun)
 from .common import generate_random_graphs, compute_data, compute_avg_data
 
 from numpy import arange, mean
@@ -18,9 +18,9 @@ def run():
     inputdir = 'input/random50/' # Must end with slash
     outputdir = 'experiment-data/heuristics/' # Must end with slash
 
-    experiment_name = 'relative_neighborhood'
+    experiment_name = 'new_lun'
     def compute(graph):
-        _, decomposition = greedy_light(graph, relative_neighborhood)
+        _, decomposition = greedy_light(graph, new_lun)
         decomposition = random_decomposition(graph)
         value = check_decomposition(graph, decomposition)
         #value = greedy(graph)[0]
@@ -36,9 +36,10 @@ def run():
 
 
 def plot_data(outputdir):
-    filenames = ['random', 'lun', 'min_cover_size', 'greedy_lboolw', 'relative_neighborhood']
+    filenames = ['random', 'lun', 'min_cover_size', 'greedy_lboolw', 'relative_neighborhood',
+            'minfront', 'new_lun']
     labels = ['random decomposition', 'least uncommon neighbor', 'min cover size',
-            'greedy lboolw', 'relative neighborhood']
+            'greedy lboolw', 'relative neighborhood', 'minfront', 'new lun']
 
     data = []
     for i, filename in enumerate(filenames):
@@ -49,8 +50,7 @@ def plot_data(outputdir):
                 data[i].append((p, value))
 
     plt.subplot(121)
-    #styles = ['ro', 'g^', 'bs', 'cD', 'mh', 'k+']
-    styles = ['ro', 'g^', 'bs', 'cD', 'mh', 'k+']
+    styles = ['ro', 'g^', 'bs', 'cD', 'mh', 'k+', 'kx']
     for i in range(len(data)):
         plt.plot([p[0] for p in data[i]], [p[1] for p in data[i]], styles[i], label=labels[i])
 

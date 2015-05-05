@@ -26,8 +26,8 @@ from .profiling import profile
 def run():
     start_time = time.time()
 
-    lboolw_exact_vs_heuristic.run()
-    #heuristics.run()
+    #lboolw_exact_vs_heuristic.run()
+    heuristics.run()
     return
 
     #print(0, domain(0))
