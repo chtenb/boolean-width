@@ -29,11 +29,11 @@ def compute_data(inputdir, outputdir, name, compute, total_nr):
     # Read which graphs are already done
     done = []
     try:
-        open(inputdir + outputfile, 'x')
+        open(outputdir + outputfile, 'x')
     except FileExistsError:
         pass
 
-    with open(inputdir + outputfile, 'r') as f:
+    with open(outputdir + outputfile, 'r') as f:
         for line in f:
             graphname = line.split(':')[0]
             done.append(graphname)

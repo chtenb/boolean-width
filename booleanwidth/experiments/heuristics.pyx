@@ -16,24 +16,26 @@ def run():
     inputdir = 'input/random50/' # Must end with slash
     outputdir = 'experiment-data/heuristics/' # Must end with slash
 
-    experiment_name = 'greedy_lboolw'
+    experiment_name = 'random'
     def compute(graph):
-        value = greedy(graph)[0]
-        #decomposition = random_decomposition(graph)
-        #value = check_decomposition(graph, decomposition)
+        #value = greedy(graph)[0]
+        decomposition = random_decomposition(graph)
+        value = check_decomposition(graph, decomposition)
         return value
     def avg(values):
         #return math.log(mean(values)/graphsize, 2)
         return math.log(mean(values), 2)
 
     #generate_random_graphs(graphsize, p_values, samples, inputdir)
-    #compute_data(inputdir, outputdir, experiment_name, compute, total_nr)
+    compute_data(inputdir, outputdir, experiment_name, compute, total_nr)
     compute_avg_data(outputdir, experiment_name, avg)
     plot_data(outputdir)
 
 
 def plot_data(outputdir):
-    filenames = ['random_results', 'greedy_lboolw_results']
+    filenames = ['random_results']
+    labels = ['random decomposition']
+
     data = []
     for i, filename in enumerate(filenames):
         data.append([])
@@ -45,7 +47,6 @@ def plot_data(outputdir):
     plt.subplot(121)
     #styles = ['ro', 'g^', 'bs', 'cD', 'mh', 'k+']
     styles = ['ro', 'g^', 'bs', 'cD', 'mh', 'k+']
-    labels = ['random decomposition', 'greedy lboolw']
     for i in range(len(data)):
         plt.plot([p[0] for p in data[i]], [p[1] for p in data[i]], styles[i], label=labels[i])
 
