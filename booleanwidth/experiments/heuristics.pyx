@@ -1,6 +1,8 @@
 from ..lboolw import compute_lboolw
 from ..lboolc import compute_lboolc
-from ..heuristic import greedy, greedy_cost, check_decomposition, random_decomposition
+from ..heuristic import (greedy, greedy_cost, check_decomposition, random_decomposition,
+                         greedy_light, lun, min_cover_size, new_lun, relative_neighborhood,
+                         minfront)
 from .common import generate_random_graphs, compute_data, compute_avg_data
 
 from numpy import arange, mean
@@ -16,30 +18,32 @@ def run():
     inputdir = 'input/random50/' # Must end with slash
     outputdir = 'experiment-data/heuristics/' # Must end with slash
 
-    experiment_name = 'random'
+    experiment_name = 'relative_neighborhood'
     def compute(graph):
-        #value = greedy(graph)[0]
+        _, decomposition = greedy_light(graph, relative_neighborhood)
         decomposition = random_decomposition(graph)
         value = check_decomposition(graph, decomposition)
+        #value = greedy(graph)[0]
         return value
     def avg(values):
         #return math.log(mean(values)/graphsize, 2)
         return math.log(mean(values), 2)
 
     #generate_random_graphs(graphsize, p_values, samples, inputdir)
-    compute_data(inputdir, outputdir, experiment_name, compute, total_nr)
-    compute_avg_data(outputdir, experiment_name, avg)
+    #compute_data(inputdir, outputdir, experiment_name, compute, total_nr)
+    #compute_avg_data(outputdir, experiment_name, avg)
     plot_data(outputdir)
 
 
 def plot_data(outputdir):
-    filenames = ['random_results']
-    labels = ['random decomposition']
+    filenames = ['random', 'lun', 'min_cover_size', 'greedy_lboolw', 'relative_neighborhood']
+    labels = ['random decomposition', 'least uncommon neighbor', 'min cover size',
+            'greedy lboolw', 'relative neighborhood']
 
     data = []
     for i, filename in enumerate(filenames):
         data.append([])
-        with open(outputdir + filename, 'r') as f:
+        with open(outputdir + filename + '_results', 'r') as f:
             for line in f:
                 p, value = [float(s) for s in line.split(':')]
                 data[i].append((p, value))
@@ -50,7 +54,7 @@ def plot_data(outputdir):
     for i in range(len(data)):
         plt.plot([p[0] for p in data[i]], [p[1] for p in data[i]], styles[i], label=labels[i])
 
-    plt.axis([-.05, 1, -1, 50])
+    plt.axis([-.05, 1, -1, 20])
     plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., numpoints=1)
     plt.title('Parameters on random graphs of size n = ' + str(graphsize))
     plt.xlabel('Edge probability')

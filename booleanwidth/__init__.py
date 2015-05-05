@@ -10,7 +10,7 @@ from .grids import squares, cliques, semicliques, semisquares
 from .lboolw import (linearbooleanwidth, greedy_lbw, relative_neighborhood_lbw,
                      compute_lboolw, construct_lboolw_decomposition)
 from .heuristic import (greedy, check_decomposition, first_improvement, greedy_cost,
-        greedy_cost_step, check_decomposition, check_decomposition_cost, greedy_lun,
+        greedy_cost_step, check_decomposition, check_decomposition_cost,
         greedy_cost_ties)
 from .lboolc import compute_lboolc, construct_lboolc_decomposition, linearbooleancost
 from .boolw import booleanwidth, greedy_bw
@@ -26,8 +26,8 @@ from .profiling import profile
 def run():
     start_time = time.time()
 
-    #lboolw_exact_vs_heuristic.run()
-    heuristics.run()
+    lboolw_exact_vs_heuristic.run()
+    #heuristics.run()
     return
 
     #print(0, domain(0))

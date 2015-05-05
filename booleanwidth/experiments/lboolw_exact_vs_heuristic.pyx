@@ -27,18 +27,18 @@ def run():
         return math.log(mean(values), 2)
 
     #generate_random_graphs(graphsize, p_values, samples, inputdir)
-    #compute_data(inputdir, outputdir, experiment_name, compute, total_nr)
-    #compute_avg_data(outputdir, experiment_name, avg)
+    compute_data(inputdir, outputdir, experiment_name, compute, total_nr)
+    compute_avg_data(outputdir, experiment_name, avg)
     plot_data(outputdir)
 
 
-def plot_data(input_dir):
-    filenames = ['heuristicvalues', 'lboolwvalues', 'lboolc_divn_log_values',
-            'heuristic_lboolc_values', 'random_results']
+def plot_data(outputdir):
+    filenames = ['lboolw', 'lboolc', 'greedy_lboolw', 'greedy_lboolc', 'random']
+    labels = ['exact lboolw', 'exact lboolc', 'greedy lboolw', 'greedy lboolc', 'random']
     data = []
     for i, filename in enumerate(filenames):
         data.append([])
-        with open(input_dir + filename, 'r') as f:
+        with open(outputdir + filename + '_results', 'r') as f:
             for line in f:
                 p, value = [float(s) for s in line.split(':')]
                 data[i].append((p, value))
@@ -46,8 +46,6 @@ def plot_data(input_dir):
     plt.subplot(121)
     #styles = ['ro', 'g^', 'bs', 'cD', 'mh', 'k+']
     styles = ['ro', 'g^', 'bs', 'cD', 'mh', 'k+']
-    labels = ['greedy lboolw', 'exact lboolw', 'exact log(lboolc / n)', 'greedy lboolc',
-              'random']
     for i in range(len(data)):
         plt.plot([p[0] for p in data[i]], [p[1] for p in data[i]], styles[i], label=labels[i])
 

@@ -28,13 +28,40 @@ def get_neighborhood_2(N, subset):
 
 
 #
-# UN
+# SCORE FUNCTIONS
 #
+
+def lun(N, left, right, v):
+    n_left = get_neighborhood(N, left)
+    return size(subtract(N[v], n_left) & right)
+
+
+def new_lun(N, left, right, v):
+    n_left = get_neighborhood(N, left) & right
+    return size(N[v] - (n_left & N[v]))
+
+
+def relative_neighborhood(N, left, right, v):
+    n_left = get_neighborhood(N, left) & right
+    return (size(N[v] - (n_left & N[v])) + 1) / (size(N[v] & n_left) + 1)
+
+
+def minfront(N, left, right, v):
+    #n_left = get_neighborhood(N, left) & right
+    #n_right = get_neighborhood(N, right) & left
+    #front_size = min(size(n_left), size(n_right))
+
+    new_n_left = get_neighborhood(N, left | v) & (right - v)
+    new_n_right = get_neighborhood(N, right - v) & (left | v)
+    new_front_size = min(size(new_n_left), size(new_n_right))
+
+    return new_front_size
+
 
 def min_cover_size(N, left, right, v):
     """
-    Return an approximation of the number of neighborhoods from left across right needed
-    to cover the the neighborhood of v across right.
+    Return an approximation of the number of neighborhoods from left in right needed
+    to cover the the neighborhood of v in right.
     """
     universe = N[v] & right
     sets = {N[u] & universe for u in iterate(left)}
@@ -114,7 +141,7 @@ def greedy(G, depth=0):
         best_lboolw = Infinity
         best_decomposition = None
         for i, start in enumerate(iterate(component)):
-            print('{}th try'.format(i))
+            print('{}th starting vertex'.format(i))
             right = subtract(component, start)
             left = start
             un_left = next_un(G.neighborhoods, {0L}, 0L, component, start)
@@ -235,11 +262,7 @@ def trivial_case(N, left, right, v):
 # LIGHT HEURISTICS
 #
 
-def lun(N, left, right, v):
-    n_left = get_neighborhood(N, left)
-    return size(subtract(N[v], n_left) & right)
-
-def greedy_lun(G, depth=0):
+def greedy_light(G, score_function, depth=0):
     component_scores = []
     component_decompositions = []
 
@@ -247,17 +270,17 @@ def greedy_lun(G, depth=0):
         best_score = Infinity
         best_decomposition = None
         for i, start in enumerate(iterate(component)):
-            print('{}th try'.format(i))
+            #print('{}th starting vertex'.format(i))
             right = subtract(component, start)
             left = start
             decomposition = [start]
             score = 0
             for _ in range(size(component) - 1):
-                best_vertex, best_lun = greedy_lun_step(G, left, right, depth)
+                best_vertex, best_value = greedy_light_step(G, score_function, left, right, depth)
                 decomposition.append(best_vertex)
                 right = subtract(right, best_vertex)
                 left = left | best_vertex
-                score += best_lun
+                score += best_value
 
             if score < best_score:
                 best_score = score
@@ -271,7 +294,7 @@ def greedy_lun(G, depth=0):
     return total_score, total_decomposition
 
 
-def greedy_lun_step(G, left, right, depth):
+def greedy_light_step(G, score_function, left, right, depth):
     best_vertex = None
     best_score = Infinity
 
@@ -280,7 +303,7 @@ def greedy_lun_step(G, left, right, depth):
 
     assert size(right) > 1
 
-    #candidates = get_neighborhood_2(G.neighborhoods, left) & right
+    candidates = get_neighborhood_2(G.neighborhoods, left) & right
     #print('Candidates: {}'.format(size(candidates)))
 
     # Trivial cases are slow
@@ -290,13 +313,13 @@ def greedy_lun_step(G, left, right, depth):
             #new_booldim = len(new_un)
             #return v, new_un, new_booldim
 
-    #for v in iterate(candidates):
-    for v in iterate(right):
-        #new_score = lun(G.neighborhoods, left, right, v)
-        new_score = min_cover_size(G.neighborhoods, left, right, v)
+    for v in iterate(candidates):
+    #for v in iterate(right):
+        new_score = score_function(G.neighborhoods, left, right, v)
 
         if depth > 0:
-            _, recursive_score = greedy_lun_step(G, left | v, subtract(right, v), depth - 1)
+            _, recursive_score = greedy_light_step(G, score_function, left | v,
+                    subtract(right, v), depth - 1)
             new_score += recursive_score
 
         if new_score < best_score:
@@ -530,7 +553,7 @@ def first_improvement(G, depth=0):
 
     for i, start in enumerate(iterate(V)):
     #for i, start in enumerate(iterate(2)):
-        print('{}th try'.format(i))
+        print('{}th starting vertex'.format(i))
         right = subtract(V, start)
         left = start
         un_left = next_un(G.neighborhoods, {0L}, 0L, V, start)
