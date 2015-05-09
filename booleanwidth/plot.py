@@ -1,6 +1,6 @@
 from PIL import Image, ImageDraw, ImageFont
 import math
-from .bitset import BitSet
+from .bitset import BitSet, index
 
 from graphviz import Graph
 
@@ -9,10 +9,10 @@ def plot(graph, engine='dot', filename='output/test'):
     """Possible engines: dot, neato, fdp, sfdp, twopi, circo"""
     g = Graph(format='png', engine=engine)
     for v in graph:
-        g.node(str(v))
+        g.node(str(index(v)))
 
     for v, w in graph.edges:
-        g.edge(str(v), str(w))
+        g.edge(str(index(v)), str(index(w)))
 
     g.render(filename)
 

@@ -206,7 +206,7 @@ def neighborhood_ratio(graph, N_left, v):
     internal = graph.neighborhoods[v] & N_left
     external = graph.neighborhoods[v] - internal
     try:
-        return size(external) / size(internal)
+        return float(size(external)) / float(size(internal))
     except ZeroDivisionError:
         #return float('infty')
         return 999999999

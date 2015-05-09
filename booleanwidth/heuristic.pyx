@@ -1,11 +1,11 @@
-# cython: profile=True
+# cython: profile=False
 from .bitset import (iterate, subsets, subsets_of_size, size, invert, tostring, subtract,
-                     index, domain, contains)
+                     index, domain, contains, first)
 #from .bitset128 import (iterate, subsets, subsets_of_size, size, invert, tostring, subtract,
                         #index, domain, contains)
 from .bitset128 cimport uint128
 import math
-from .components import components
+from .components import components, bfs
 from .utils import shuffled
 
 Infinity = float('inf')
@@ -27,6 +27,11 @@ def get_neighborhood_2(N, subset):
     return result
 
 
+def find_startvertex(graph, start):
+    v = list(bfs(graph, start))[-1]
+    return list(bfs(graph, v))[-1]
+
+
 #
 # SCORE FUNCTIONS
 #
@@ -35,27 +40,103 @@ def lun(N, left, right, v):
     n_left = get_neighborhood(N, left)
     return size(subtract(N[v], n_left) & right)
 
-
 def new_lun(N, left, right, v):
     n_left = get_neighborhood(N, left) & right
     return size(N[v] - (n_left & N[v]))
 
-
 def relative_neighborhood(N, left, right, v):
     n_left = get_neighborhood(N, left) & right
-    return (size(N[v] - (n_left & N[v])) + 1) / (size(N[v] & n_left) + 1)
+    return float(size(N[v] - (n_left & N[v])) + 1) / float(size(N[v] & n_left) + 1)
+
+def relative_neighborhood2(N, left, right, v):
+    n_left = get_neighborhood(N, left) & right
+    numerator = size(N[v] & right - (n_left & N[v]))
+    denominator = size(N[v] & n_left)
+    if denominator == 0:
+        return numerator
+    return float(numerator) / float(denominator)
+
+def relative_neighborhood3(N, left, right, v):
+    n_left = get_neighborhood(N, left)
+    numerator = size(N[v] & right - (n_left & N[v]))
+    denominator = size(N[v] & (n_left | left))
+    if denominator == 0:
+        return numerator
+    return float(numerator) / float(denominator)
+
+def relative_neighborhood4(N, left, right, v):
+    n_left = get_neighborhood(N, left)
+    numerator = size(N[v] - (n_left & N[v]))
+    denominator = size(N[v] & (n_left | left))
+    if denominator == 0:
+        return numerator
+    return float(numerator) / float(denominator)
+
+def relative_neighborhood5(N, left, right, v):
+    n_left = get_neighborhood(N, left) & right
+    numerator1 = size(N[v] - (n_left & N[v]))
+    numerator2 = size(N[v] & right - (n_left & N[v]))
+    denominator = size(N[v] & n_left)
+    p = N[0]
+    #numerator = p * numerator1 + (1 - p) * numerator2
+    #numerator = numerator1 ** p + numerator2 ** (1 - p)
+    numerator = numerator1 if p > 0.2 else numerator2
+    if denominator == 0:
+        return numerator
+    return float(numerator) / float(denominator)
+
+def relative_neighborhood6(N, left, right, v):
+    return size(N[v] & right & get_neighborhood(N, left))
+    n_left = get_neighborhood(N, left) & right
+    numerator = size(N[v] - (n_left & N[v]))
+    denominator = size(N[v])
+    if denominator == 0:
+        return 0
+    return float(numerator) / float(denominator)
+
+def relative_neighborhood7(N, left, right, v):
+    numerator = size(N[v] & right & get_neighborhood(N, left))
+    denominator = size(N[v])
+    if denominator == 0:
+        return 0
+    result = 1 - float(numerator) / float(denominator)
+    return result
+
+def relative_neighborhood1(N, left, right, v):
+    n_left = get_neighborhood(N, left) & right
+    numerator = size(N[v] - (n_left & N[v]))
+    denominator = size(N[v])
+
+    if denominator == 0:
+        return numerator
+    return float(numerator) / float(denominator)
+
+
+def neighborhood_size(N, left, right, v):
+    return size(N[v])
 
 
 def minfront(N, left, right, v):
-    #n_left = get_neighborhood(N, left) & right
-    #n_right = get_neighborhood(N, right) & left
-    #front_size = min(size(n_left), size(n_right))
-
     new_n_left = get_neighborhood(N, left | v) & (right - v)
     new_n_right = get_neighborhood(N, right - v) & (left | v)
     new_front_size = min(size(new_n_left), size(new_n_right))
 
     return new_front_size
+
+def minfront2(N, left, right, v):
+    new_n_left = get_neighborhood(N, left | v) & (right - v)
+    new_n_right = get_neighborhood(N, right - v) & (left | v)
+    new_front_size = max(size(new_n_left), size(new_n_right))
+
+    return new_front_size
+
+def minfront3(N, left, right, v):
+    new_n_left = get_neighborhood(N, left | v) & (right - v)
+    return size(new_n_left)
+
+def minfront4(N, left, right, v):
+    new_n_right = get_neighborhood(N, right - v) & (left | v)
+    return size(new_n_right)
 
 
 def min_cover_size(N, left, right, v):
@@ -81,6 +162,19 @@ def min_cover_size(N, left, right, v):
         sets_needed += 1
 
     return sets_needed
+
+
+def min_cover_front(N, left, right, v):
+    return min_cover_size(N, left, right, v) + minfront(N, left, right, v)
+
+
+def rn_mincover(N, left, right, v):
+    return (min_cover_size(N, left, right, v)
+            + (size(left) + size(right)) * relative_neighborhood(N, left, right, v))
+
+
+def lun_mincover(N, left, right, v):
+    return (min_cover_size(N, left, right, v) + lun(N, left, right, v))
 
 
 def next_un(N, un_left, left, right, v):
@@ -110,7 +204,10 @@ def next_und(N, und_left, left, right, v):
 #
 
 def random_decomposition(graph):
-    return shuffled([v for v in iterate(graph.vertices)])
+    decomposition = []
+    for component in components(graph):
+        decomposition.extend(shuffled([v for v in iterate(component)]))
+    return decomposition
 
 #
 # WIDTH
@@ -189,11 +286,11 @@ def greedy_step(G, left, right, un_left, booldim_left, depth, un_table, bound):
     candidates = get_neighborhood_2(G.neighborhoods, left) & right
 
     # Trivial cases are slow
-    #for v in iterate(candidates):
-        #if trivial_case(G.neighborhoods, left, right, v):
-            #new_un = next_un(G.neighborhoods, un_left, left, right, v)
-            #new_booldim = len(new_un)
-            #return v, new_un, new_booldim
+    for v in iterate(candidates):
+        if trivial_case(G.neighborhoods, left, right, v):
+            new_un = next_un(G.neighborhoods, un_left, left, right, v)
+            new_booldim = len(new_un)
+            return v, new_un, new_booldim
 
     ties = 0 # TEST
 
@@ -228,9 +325,9 @@ def greedy_step(G, left, right, un_left, booldim_left, depth, un_table, bound):
             best_un = new_un
 
         # Better is not possible
-        #if booldim_left / new_booldim > 1.5:
+        #if float(booldim_left) / float(new_booldim) > 1.5:
             #print(booldim_left / new_booldim)
-        #if booldim_left / new_booldim > 1.5:
+        #if float(booldim_left) / float(new_booldim) > 1.5:
             #print('Better is not possible')
             #break
 
@@ -280,6 +377,7 @@ def greedy_light(G, score_function, depth=0):
                 decomposition.append(best_vertex)
                 right = subtract(right, best_vertex)
                 left = left | best_vertex
+                #score = max(score, best_value)
                 score += best_value
 
             if score < best_score:
@@ -293,6 +391,35 @@ def greedy_light(G, score_function, depth=0):
 
     return total_score, total_decomposition
 
+def greedy_light_single_start(G, score_function, depth=0):
+    component_decompositions = []
+
+    # HACK
+    #print(len(list(G.edges)))
+    #print((len(G) ** 2))
+    p = G.density
+    #print(p)
+    G.neighborhoods[0] = p
+
+    for component in components(G):
+        start = find_startvertex(G, first(component))
+        #start = 2
+        #print(tostring(G.vertices))
+        #print(contains(G.vertices, 1))
+        #print('WARNING: STARTING POINT IS FIXED')
+        right = subtract(component, start)
+        left = start
+        decomposition = [start]
+        for _ in range(size(component) - 1):
+            best_vertex, score = greedy_light_step(G, score_function, left, right, depth)
+            #print('Choosing {} with a score of {}'.format(index(best_vertex), score))
+            decomposition.append(best_vertex)
+            right = subtract(right, best_vertex)
+            left = left | best_vertex
+
+        component_decompositions.append(decomposition)
+    total_decomposition = [v for part in component_decompositions for v in part]
+    return total_decomposition
 
 def greedy_light_step(G, score_function, left, right, depth):
     best_vertex = None
@@ -302,22 +429,27 @@ def greedy_light_step(G, score_function, left, right, depth):
         return right, 0
 
     assert size(right) > 1
+    assert size(left) > 0
 
     candidates = get_neighborhood_2(G.neighborhoods, left) & right
+    #candidates = get_neighborhood(G.neighborhoods, left) & right
+    assert size(candidates) > 0
     #print('Candidates: {}'.format(size(candidates)))
 
     # Trivial cases are slow
-    #for v in iterate(candidates):
-        #if trivial_case(G.neighborhoods, left, right, v):
-            #new_un = next_un(G.neighborhoods, un_left, left, right, v)
-            #new_booldim = len(new_un)
-            #return v, new_un, new_booldim
-
     for v in iterate(candidates):
-    #for v in iterate(right):
+        if trivial_case(G.neighborhoods, left, right, v):
+            return v, 100
+
+    #for v in iterate(candidates):
+    #print(tostring(right))
+    for v in iterate(right):
         new_score = score_function(G.neighborhoods, left, right, v)
+        #if size(left) == 2:
+            #print('asd ' + str(new_score))
 
         if depth > 0:
+            assert 0
             _, recursive_score = greedy_light_step(G, score_function, left | v,
                     subtract(right, v), depth - 1)
             new_score += recursive_score

@@ -27,8 +27,8 @@ def run():
         return math.log(mean(values), 2)
 
     #generate_random_graphs(graphsize, p_values, samples, inputdir)
-    compute_data(inputdir, outputdir, experiment_name, compute, total_nr)
-    compute_avg_data(outputdir, experiment_name, avg)
+    #compute_data(inputdir, outputdir, experiment_name, compute, total_nr)
+    #compute_avg_data(outputdir, experiment_name, avg, total_nr)
     plot_data(outputdir)
 
 

@@ -176,6 +176,12 @@ class Graph:
                 result.append(tuple([0] * length))
         return result
 
+    @property
+    def density(self):
+        n = size(self.vertices)
+        m = len(list(self.edges))
+        return float(2 * m) / float(n * (n - 1))
+
     def save(self, filename):
         with open(filename, 'w') as f:
             f.write('p edges {} {}\n'.format(size(self.vertices), len(list(self.edges))))
@@ -231,7 +237,7 @@ class Graph:
                         graph.connect(v, w)
             return graph
         else:
-            vertex_list = list(graph.vertices)
+            vertex_list = list(iterate(graph.vertices))
             for _ in range(nr_edges):
                 while 1:
                     v, w = sample(vertex_list, 2)

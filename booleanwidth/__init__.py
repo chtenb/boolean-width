@@ -2,7 +2,7 @@ from .graph import Graph
 from .bipartite import Bipartite
 from .tree import Tree
 from .graph128 import to128
-from .bitset128 import (tostring, iterate, subsets_of_size, subsets_by_size, index, domain)
+from .bitset import (tostring, iterate, index, domain, bit, bits)
 from .plot import plot
 from .components import components, bfs
 
@@ -11,7 +11,9 @@ from .lboolw import (linearbooleanwidth, greedy_lbw, relative_neighborhood_lbw,
                      compute_lboolw, construct_lboolw_decomposition)
 from .heuristic import (greedy, check_decomposition, first_improvement, greedy_cost,
         greedy_cost_step, check_decomposition, check_decomposition_cost,
-        greedy_cost_ties)
+        greedy_cost_ties, random_decomposition, greedy_light, lun, min_cover_size, new_lun,
+        relative_neighborhood, minfront, new_lun, neighborhood_size, greedy_light_single_start,
+        relative_neighborhood2)
 from .lboolc import compute_lboolc, construct_lboolc_decomposition, linearbooleancost
 from .boolw import booleanwidth, greedy_bw
 from .boolc import booleancost
@@ -25,6 +27,11 @@ from .profiling import profile
 
 def run():
     start_time = time.time()
+
+    #for _ in range(50):
+        #graph = Graph.generate_random(50, 0.5)
+        #print(graph.density)
+    #return
 
     #lboolw_exact_vs_heuristic.run()
     heuristics.run()
@@ -45,7 +52,7 @@ def run():
 
 
     # GENERATE
-    #graph = Graph.load('input/mainuk.dgf')
+    #graph = Graph.load('input/barley.dgf')
     #graph = Graph.load('input/david-pp.dgf')
     #graph = Graph.load('input/1aba.dgf')
     #graph = Graph.load('input/1ail.dgf')
@@ -57,7 +64,7 @@ def run():
     #graph = Graph.load('input/pr152.dgf')
     #graph = Graph.load('input/BN_100.dgf')
     graph = Graph.load('input/rand.dgf')
-    #graph = Graph.generate_random(30, 0.5)
+    #graph = Graph.generate_random(10, 0.25)
     #graph.save('input/rand.dgf')
     #return
     #graph = squares(5, 3)
@@ -70,17 +77,43 @@ def run():
 
     # PLOT
     # plot(graph, engine='neato') # squares
-    #plot(graph, engine='dot')  # cliques
+    plot(graph, engine='dot')  # cliques
     #print('Graph drawn')
     # plot(graph, engine='fdp') # cliques
     # plot(graph, engine='twopi') # cliques
     # plot(graph, engine='circo') # cliques
 
+    left = bits(8,4)
+    right = bits(1,2,3,5,6,7,9,0)
+    print(minfront(graph.neighborhoods, left, right, bit(0)))
+    return
+
+    decomposition = greedy_light_single_start(graph, lun)
+    print('[{}]'.format(', '.join(str(index(v)) for v in decomposition)))
+    lboolw = check_decomposition(graph, decomposition)
+    print(lboolw)
+    print('==========')
+    decomposition = greedy_light_single_start(graph, minfront)
+    print('[{}]'.format(', '.join(str(index(v)) for v in decomposition)))
+    lboolw = check_decomposition(graph, decomposition)
+    print(lboolw)
+
     #print(list(components(graph128)))
     #print(list(bfs(graph128, 1)))
     #return
-
+    return
     # COMPUTE
+
+    #for f in [lun, relative_neighborhood, new_lun, minfront, min_cover_size]:
+    for f in [relative_neighborhood, relative_neighborhood2]:
+        #_, decomposition = greedy_light_single_start(graph, f)
+        decomposition = greedy_light_single_start(graph, f)
+        lboolw = check_decomposition(graph, decomposition)
+        print('[{}]'.format(', '.join(str(index(v)) for v in decomposition)))
+        print(math.log(lboolw, 2))
+    return
+
+
     # WIDTH
     #lboolw, booldim = compute_lboolw(graph128)
     #result = lboolw[graph128.vertices]
