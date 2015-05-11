@@ -44,14 +44,10 @@ def new_lun(N, left, right, v):
     n_left = get_neighborhood(N, left) & right
     return size(N[v] - (n_left & N[v]))
 
-def relative_neighborhood(N, left, right, v):
-    n_left = get_neighborhood(N, left) & right
-    return float(size(N[v] - (n_left & N[v])) + 1) / float(size(N[v] & n_left) + 1)
-
 def relative_neighborhood2(N, left, right, v):
     n_left = get_neighborhood(N, left) & right
     numerator = size(N[v] & right - (n_left & N[v]))
-    denominator = size(N[v] & n_left)
+    denominator = size(N[v] & n_left) # ~ size(N[v] & right)
     if denominator == 0:
         return numerator
     return float(numerator) / float(denominator)
@@ -86,29 +82,40 @@ def relative_neighborhood5(N, left, right, v):
     return float(numerator) / float(denominator)
 
 def relative_neighborhood6(N, left, right, v):
-    return size(N[v] & right & get_neighborhood(N, left))
     n_left = get_neighborhood(N, left) & right
-    numerator = size(N[v] - (n_left & N[v]))
+    numerator = size(N[v] & right - (n_left & N[v]))
+    #denominator = size(N[v] & n_left) # ~ size(N[v] & right)
     denominator = size(N[v])
     if denominator == 0:
-        return 0
+        return numerator
     return float(numerator) / float(denominator)
 
 def relative_neighborhood7(N, left, right, v):
-    numerator = size(N[v] & right & get_neighborhood(N, left))
-    denominator = size(N[v])
-    if denominator == 0:
-        return 0
-    result = 1 - float(numerator) / float(denominator)
-    return result
-
-def relative_neighborhood1(N, left, right, v):
     n_left = get_neighborhood(N, left) & right
     numerator = size(N[v] - (n_left & N[v]))
-    denominator = size(N[v])
+    denominator = size(N[v] & right)
 
     if denominator == 0:
         return numerator
+    return float(numerator) / float(denominator)
+
+
+def relative_neighborhood(N, left, right, v):
+    n_left = get_neighborhood(N, left) & right
+    numerator = size(N[v] & right - (n_left & N[v]))
+    denominator = size(N[v] & right)
+    return float(numerator) / float(denominator)
+
+def relative_neighborhood_dense(N, left, right, v):
+    n_left = get_neighborhood(N, left) & right
+    numerator = size(N[v] - (n_left & N[v]))
+    denominator = size(N[v])
+    return float(numerator) / float(denominator)
+
+def relative_neighborhood_sparse(N, left, right, v):
+    n_left = get_neighborhood(N, left) & right
+    numerator = size(N[v] & right - (n_left & N[v]))
+    denominator = size(N[v])
     return float(numerator) / float(denominator)
 
 
@@ -138,6 +145,12 @@ def minfront4(N, left, right, v):
     new_n_right = get_neighborhood(N, right - v) & (left | v)
     return size(new_n_right)
 
+def minfront5(N, left, right, v):
+    new_n_left = get_neighborhood(N, left | v) & (right - v)
+    a = size(new_n_left)
+    b = min_cover_size(N, left, right, v)
+    return a + (1 - 1.0 / b)
+
 
 def min_cover_size(N, left, right, v):
     """
@@ -166,11 +179,6 @@ def min_cover_size(N, left, right, v):
 
 def min_cover_front(N, left, right, v):
     return min_cover_size(N, left, right, v) + minfront(N, left, right, v)
-
-
-def rn_mincover(N, left, right, v):
-    return (min_cover_size(N, left, right, v)
-            + (size(left) + size(right)) * relative_neighborhood(N, left, right, v))
 
 
 def lun_mincover(N, left, right, v):
@@ -441,9 +449,9 @@ def greedy_light_step(G, score_function, left, right, depth):
         if trivial_case(G.neighborhoods, left, right, v):
             return v, 100
 
-    #for v in iterate(candidates):
+    for v in iterate(candidates):
     #print(tostring(right))
-    for v in iterate(right):
+    #for v in iterate(right):
         new_score = score_function(G.neighborhoods, left, right, v)
         #if size(left) == 2:
             #print('asd ' + str(new_score))

@@ -91,7 +91,7 @@ def compute_avg_data(outputdir, experiment_name, avg, total_nr):
             f.write('{}:{}\n'.format(p, value))
 
 
-def plot_data(outputdir, filenames, labels, graphsize):
+def plot_data(outputdir, filenames, labels, graphsize, codomain):
     data = []
     for i, filename in enumerate(filenames):
         data.append([])
@@ -116,7 +116,7 @@ def plot_data(outputdir, filenames, labels, graphsize):
         plt.plot(xx, interp(xx), color=colors[i])
         plt.plot(x, y, styles[i], label=labels[i])
 
-    plt.axis([0, 1, 1, 18])
+    plt.axis([0, 1, 1, codomain])
     plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., numpoints=1)
     plt.title('Parameter behaviour on random graphs of size n = ' + str(graphsize))
     plt.xlabel('Edge probability')

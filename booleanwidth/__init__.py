@@ -12,7 +12,7 @@ from .lboolw import (linearbooleanwidth, greedy_lbw, relative_neighborhood_lbw,
 from .heuristic import (greedy, check_decomposition, first_improvement, greedy_cost,
         greedy_cost_step, check_decomposition, check_decomposition_cost,
         greedy_cost_ties, random_decomposition, greedy_light, lun, min_cover_size, new_lun,
-        relative_neighborhood, minfront, new_lun, neighborhood_size, greedy_light_single_start,
+        minfront, new_lun, neighborhood_size, greedy_light_single_start,
         relative_neighborhood2)
 from .lboolc import compute_lboolc, construct_lboolc_decomposition, linearbooleancost
 from .boolw import booleanwidth, greedy_bw
