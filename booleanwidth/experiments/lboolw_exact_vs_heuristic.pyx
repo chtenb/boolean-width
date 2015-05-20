@@ -44,13 +44,22 @@ def run():
         compute_avg_data(outputdir, experiment_name, avg, total_nr)
 
     filenames = [
-            'lboolw',
             'random',
             'relative_neighborhood',
             'relative_neighborhood_dense',
             'relative_neighborhood_sparse',
-            'greedy_lboolw',
             'lun',
+            'greedy_lboolw',
+            'lboolw',
             ]
-    plot_data(outputdir, filenames, filenames, graphsize, codomain)
+    labels = [
+            'random',
+            'relative neighborhood',
+            'relative neighborhood dense',
+            'relative neighborhood sparse',
+            'least uncommon neighbor',
+            'greedy lboolw',
+            'exact lboolw',
+            ]
+    plot_data(outputdir, filenames, labels, graphsize, codomain)
 

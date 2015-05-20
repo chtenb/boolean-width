@@ -1,3 +1,11 @@
+import time
+import math
+
+#start_time = time.time()
+#from . import treewidth
+#print('--- {} seconds ---'.format(time.time() - start_time))
+#exit()
+
 from .graph import Graph
 from .bipartite import Bipartite
 from .tree import Tree
@@ -8,7 +16,7 @@ from .components import components, bfs
 
 from .grids import squares, cliques, semicliques, semisquares
 from .lboolw import (linearbooleanwidth, greedy_lbw, relative_neighborhood_lbw,
-                     compute_lboolw, construct_lboolw_decomposition)
+                     compute_lboolw, construct_lboolw_decomposition, compute_lboolw_space)
 from .heuristic import (greedy, check_decomposition, first_improvement, greedy_cost,
         greedy_cost_step, check_decomposition, check_decomposition_cost,
         greedy_cost_ties, random_decomposition, greedy_light, lun, min_cover_size, new_lun,
@@ -19,11 +27,9 @@ from .boolw import booleanwidth, greedy_bw
 from .boolc import booleancost
 from .dynamicprogramming import print_decomposition, print_linear_decomposition, compute_booldim
 
-import time
-import math
-
-from .experiments import lboolw_exact_vs_heuristic, heuristics
+from .experiments import lboolw_exact_vs_heuristic, heuristics, heuristics_large
 from .profiling import profile
+
 
 def run():
     start_time = time.time()
@@ -34,8 +40,9 @@ def run():
     #return
 
     #lboolw_exact_vs_heuristic.run()
-    heuristics.run()
-    return
+    #heuristics.run()
+    #heuristics_large.run()
+    #return
 
     #print(0, domain(0))
     #print(1, domain(1))
@@ -63,8 +70,7 @@ def run():
     #graph = Graph.load('input/alarm.dgf')
     #graph = Graph.load('input/pr152.dgf')
     #graph = Graph.load('input/BN_100.dgf')
-    graph = Graph.load('input/rand.dgf')
-    #graph = Graph.generate_random(10, 0.25)
+    #graph = Graph.load('input/rand.dgf')
     #graph.save('input/rand.dgf')
     #return
     #graph = squares(5, 3)
@@ -72,6 +78,7 @@ def run():
     #graph = semisquares(5, 5)
     #graph = semicliques(3, 3)
     #graph = Bipartite.generate_random(5).gridify(2)
+    graph = Graph.generate_random(10, 0.5)
 
     #graph = to128(graph)
 
@@ -83,41 +90,45 @@ def run():
     # plot(graph, engine='twopi') # cliques
     # plot(graph, engine='circo') # cliques
 
-    left = bits(8,4)
-    right = bits(1,2,3,5,6,7,9,0)
-    print(minfront(graph.neighborhoods, left, right, bit(0)))
-    return
+    #left = bits(8,4)
+    #right = bits(1,2,3,5,6,7,9,0)
+    #print(minfront(graph.neighborhoods, left, right, bit(0)))
+    #return
 
-    decomposition = greedy_light_single_start(graph, lun)
-    print('[{}]'.format(', '.join(str(index(v)) for v in decomposition)))
-    lboolw = check_decomposition(graph, decomposition)
-    print(lboolw)
-    print('==========')
-    decomposition = greedy_light_single_start(graph, minfront)
-    print('[{}]'.format(', '.join(str(index(v)) for v in decomposition)))
-    lboolw = check_decomposition(graph, decomposition)
-    print(lboolw)
+    #decomposition = greedy_light_single_start(graph, lun)
+    #print('[{}]'.format(', '.join(str(index(v)) for v in decomposition)))
+    #lboolw = check_decomposition(graph, decomposition)
+    #print(lboolw)
+    #print('==========')
+    #decomposition = greedy_light_single_start(graph, minfront)
+    #print('[{}]'.format(', '.join(str(index(v)) for v in decomposition)))
+    #lboolw = check_decomposition(graph, decomposition)
+    #print(lboolw)
 
     #print(list(components(graph128)))
     #print(list(bfs(graph128, 1)))
     #return
-    return
     # COMPUTE
 
     #for f in [lun, relative_neighborhood, new_lun, minfront, min_cover_size]:
-    for f in [relative_neighborhood, relative_neighborhood2]:
-        #_, decomposition = greedy_light_single_start(graph, f)
-        decomposition = greedy_light_single_start(graph, f)
-        lboolw = check_decomposition(graph, decomposition)
-        print('[{}]'.format(', '.join(str(index(v)) for v in decomposition)))
-        print(math.log(lboolw, 2))
-    return
+    #for f in [relative_neighborhood, relative_neighborhood2]:
+        ##_, decomposition = greedy_light_single_start(graph, f)
+        #decomposition = greedy_light_single_start(graph, f)
+        #lboolw = check_decomposition(graph, decomposition)
+        #print('[{}]'.format(', '.join(str(index(v)) for v in decomposition)))
+        #print(math.log(lboolw, 2))
+    #return
 
 
     # WIDTH
-    #lboolw, booldim = compute_lboolw(graph128)
-    #result = lboolw[graph128.vertices]
-    #print(math.log(result, 2))
+    for _ in range(100):
+        graph = Graph.generate_random(10, 0.5)
+        lboolw, booldim = compute_lboolw(graph)
+        result = lboolw[graph.vertices]
+        lboolw, booldim = compute_lboolw_space(graph)
+        result2 = lboolw[graph.vertices]
+        print(result, result2)
+        assert result == result2
     #print_decomposition(result, construct_lboolw_decomposition(lboolw, booldim, graph128.vertices))
 
     #with open('output/ZOMG', 'r') as f:
@@ -128,19 +139,19 @@ def run():
     #return
 
     #print('depth = ' + str(i))
-    print('greedy')
-    def f():
-        #lboolw, decomposition = greedy_lun(graph, 0)
-        #lboolw, decomposition = greedy_cost_ties(graph, 100)
-        #lboolw, decomposition = greedy_cost(graph, 0)
-        lboolw, decomposition = greedy(graph, 0)
-        print(lboolw)
-        print(math.log(lboolw, 2))
-        real_lboolw = check_decomposition(graph, decomposition)
-        #real_lboolw = check_decomposition_cost(graph, decomposition)
-        print(real_lboolw)
-        print(math.log(real_lboolw, 2))
-    profile(f)
+    #print('greedy')
+    #def f():
+        ##lboolw, decomposition = greedy_lun(graph, 0)
+        ##lboolw, decomposition = greedy_cost_ties(graph, 100)
+        ##lboolw, decomposition = greedy_cost(graph, 0)
+        #lboolw, decomposition = greedy(graph, 0)
+        #print(lboolw)
+        #print(math.log(lboolw, 2))
+        #real_lboolw = check_decomposition(graph, decomposition)
+        ##real_lboolw = check_decomposition_cost(graph, decomposition)
+        #print(real_lboolw)
+        #print(math.log(real_lboolw, 2))
+    #profile(f)
 
     #print('greedy cost')
     #def f():

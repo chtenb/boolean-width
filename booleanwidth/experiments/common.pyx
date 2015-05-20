@@ -116,11 +116,11 @@ def plot_data(outputdir, filenames, labels, graphsize, codomain):
         plt.plot(xx, interp(xx), color=colors[i])
         plt.plot(x, y, styles[i], label=labels[i])
 
-    plt.axis([0, 1, 1, codomain])
+    plt.axis([0, 1, 0, codomain])
     plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., numpoints=1)
-    plt.title('Parameter behaviour on random graphs of size n = ' + str(graphsize))
+    plt.title('Boolean-width behaviour on random graphs of size n = ' + str(graphsize))
     plt.xlabel('Edge probability')
-    plt.ylabel('Average parameter value')
+    plt.ylabel('Average boolean-width')
     plt.grid(True)
     plt.show()
 

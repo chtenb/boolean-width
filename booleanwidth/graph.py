@@ -1,6 +1,6 @@
 from random import sample, random
 from .utils import powerlist
-from .bitset import iterate, size, contains, bit, bits, disjoint, index
+from .bitset import iterate, size, contains, bit, bits, disjoint, index, domain, tolist
 
 
 class Graph:
@@ -166,12 +166,12 @@ class Graph:
                 assert v in self(w)
 
     def adjacency_matrix(self):
-        length = self.vertices.fls() + 1
+        length = domain(self.vertices) + 1
         result = []
         for i in range(length):
             v = bit(i)
             if v in self:
-                result.append(tuple(self(v).tolist(length)))
+                result.append(tuple(tolist(self(v), length)))
             else:
                 result.append(tuple([0] * length))
         return result

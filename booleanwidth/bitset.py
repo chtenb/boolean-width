@@ -139,6 +139,16 @@ def tostring(self):
     return '{{{}}}'.format(', '.join(str(index(v)) for v in iterate(self)))
 
 
+def tolist(bitset, length):
+    result = []
+    while length:
+        result.append(bitset % 2)
+        bitset >>= 1
+        length -= 1
+    return result
+
+
+
 #
 # OO implementation
 #

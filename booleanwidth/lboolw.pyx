@@ -1,8 +1,71 @@
-from .bitset128 import (iterate, subsets, subsets_of_size, size, invert, tostring, subtract,
+from .bitset import (iterate, subsets, subsets_of_size, size, invert, tostring, subtract,
                         index, domain, contains)
 from .dynamicprogramming import booldimtable, compute_booldim
 
 # New fast exact algos
+
+def compute_lboolw_space(G):
+    k = 1
+    while 1:
+        result = compute_lboolw_with_upperbound_space(G, k)
+        if result == False:
+            k *= 2
+        else:
+            return result
+
+def compute_lboolw(G):
+    k = 1
+    while 1:
+        result = compute_lboolw_with_upperbound(G, k)
+        if result == False:
+            k *= 2
+        else:
+            return result
+
+def compute_lboolw_with_upperbound_space(G, k):
+    print('Upperbound: {}'.format(k))
+    V = G.vertices
+
+    booldim = {}
+    booldim[0L] = 1
+    compute_booldim_space(G, k, booldim, 0, set([0]))
+
+    lboolw = {}
+    lboolw[0L] = 0
+
+    for i in range(1, size(V) + 1):
+        for X in subsets_of_size(V, i):
+            for v in iterate(X):
+                X_v = subtract(X, v)
+                if X_v in lboolw and X in booldim and lboolw[X_v] <= k:
+                    if X not in lboolw:
+                        lboolw[X] = max(booldim[X], lboolw[X_v])
+                    else:
+                        lboolw[X] = min(lboolw[X], max(booldim[X], lboolw[X_v]))
+
+    if V in lboolw:
+        return lboolw, booldim
+    else:
+        return False
+
+def compute_booldim_space(G, k, booldim, X, UN_X):
+    for v in iterate(G.vertices - X):
+        Y = X | v
+        if Y not in booldim:
+            UN_Y = compute_next_un(G, Y, v, UN_X)
+            booldim[Y] = len(UN_Y)
+            if booldim[Y] <= k:
+                compute_booldim_space(G, k, booldim, Y, UN_Y)
+
+def compute_next_un(G, X, v, UN_X_v):
+    """Compute UN of X, based on the UN of X-v"""
+    U = set()
+    for S in UN_X_v:
+        U.add(subtract(S, v))
+        #U.add(subtract(S, v) | (G.neighborhoods[v] & invert(subtract(X, v), domain(G.vertices))))
+        U.add(subtract(S, v) | (G.neighborhoods[v] & (G.vertices - subtract(X, v))))
+    return U
+
 
 # NOTE: lbw(X) also takes booldim(X) into account
 
@@ -24,7 +87,7 @@ def compute_lboolw_with_upperbound(G, k):
                 X_v = subtract(X, v)
                 if X_v in lboolw and lboolw[X_v] <= k:
                     if X not in booldim:
-                        un[X] = compute_next_un(G, un, X, v)
+                        un[X] = compute_next_un(G, X, v, un[X_v])
                         booldim[X] = len(un[X])
 
                     if X not in lboolw:
@@ -38,23 +101,6 @@ def compute_lboolw_with_upperbound(G, k):
     else:
         return False
 
-
-def compute_next_un(G, un, X, v):
-    """Compute UN of X, based on the UN of X-v"""
-    U = set()
-    for S in un[subtract(X, v)]:
-        U.add(subtract(S, v))
-        U.add(subtract(S, v) | (G.neighborhoods[v] & invert(subtract(X, v), domain(G.vertices))))
-    return U
-
-def compute_lboolw(G):
-    k = 1
-    while 1:
-        result = compute_lboolw_with_upperbound(G, k)
-        if result == False:
-            k *= 2
-        else:
-            return result
 
 def construct_lboolw_decomposition(lboolw, booldim, subset, bound=None):
     if bound == None:
