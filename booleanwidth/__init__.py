@@ -10,7 +10,7 @@ from .graph import Graph
 from .bipartite import Bipartite
 from .tree import Tree
 from .graph128 import to128
-from .bitset import (tostring, iterate, index, domain, bit, bits)
+from .bitset import (tostring, iterate, index, domain, bit, bits, size)
 from .plot import plot
 from .components import components, bfs
 
@@ -40,9 +40,9 @@ def run():
     #return
 
     #lboolw_exact_vs_heuristic.run()
-    #heuristics.run()
+    heuristics.run()
     #heuristics_large.run()
-    #return
+    return
 
     #print(0, domain(0))
     #print(1, domain(1))
@@ -71,24 +71,25 @@ def run():
     #graph = Graph.load('input/pr152.dgf')
     #graph = Graph.load('input/BN_100.dgf')
     #graph = Graph.load('input/rand.dgf')
-    #graph.save('input/rand.dgf')
-    #return
     #graph = squares(5, 3)
     #graph = cliques(4, 4)
     #graph = semisquares(5, 5)
     #graph = semicliques(3, 3)
     #graph = Bipartite.generate_random(5).gridify(2)
-    graph = Graph.generate_random(10, 0.5)
+    #graph = Graph.generate_random(20, 0.4)
+    #graph.save('input/rand.dgf')
+    #return
 
     #graph = to128(graph)
 
     # PLOT
     # plot(graph, engine='neato') # squares
-    plot(graph, engine='dot')  # cliques
+    #plot(graph, engine='dot')  # cliques
     #print('Graph drawn')
     # plot(graph, engine='fdp') # cliques
     # plot(graph, engine='twopi') # cliques
     # plot(graph, engine='circo') # cliques
+    return
 
     #left = bits(8,4)
     #right = bits(1,2,3,5,6,7,9,0)
@@ -121,14 +122,17 @@ def run():
 
 
     # WIDTH
-    for _ in range(100):
-        graph = Graph.generate_random(10, 0.5)
-        lboolw, booldim = compute_lboolw(graph)
-        result = lboolw[graph.vertices]
-        lboolw, booldim = compute_lboolw_space(graph)
-        result2 = lboolw[graph.vertices]
-        print(result, result2)
-        assert result == result2
+
+    lboolw, booldim = compute_lboolw(graph)
+    result = lboolw[graph.vertices]
+    print(result)
+
+    #lboolw, booldim = compute_lboolw_space(graph)
+    #result2 = lboolw[graph.vertices]
+    #print(result2)
+
+    #assert result == result2
+
     #print_decomposition(result, construct_lboolw_decomposition(lboolw, booldim, graph128.vertices))
 
     #with open('output/ZOMG', 'r') as f:

@@ -24,10 +24,10 @@ def run():
     outputdir = 'experiment-data/lboolw-exact-vs-heuristic/' # Must end with slash
 
     experiments = [
-            ('relative_neighborhood_sparse', relative_neighborhood_sparse),
-            ('relative_neighborhood_dense', relative_neighborhood_dense),
-            ('relative_neighborhood', relative_neighborhood),
-            ('lun', lun),
+            #('relative_neighborhood_sparse', relative_neighborhood_sparse),
+            #('relative_neighborhood_dense', relative_neighborhood_dense),
+            #('relative_neighborhood', relative_neighborhood),
+            #('lun', lun),
             ]
     for experiment_name, score_function in experiments:
         def compute(graph):
@@ -46,20 +46,18 @@ def run():
     filenames = [
             'random',
             'relative_neighborhood',
-            'relative_neighborhood_dense',
             'relative_neighborhood_sparse',
-            'lun',
+            'relative_neighborhood_dense',
             'greedy_lboolw',
             'lboolw',
             ]
     labels = [
-            'random',
-            'relative neighborhood',
-            'relative neighborhood dense',
-            'relative neighborhood sparse',
-            'least uncommon neighbor',
-            'greedy lboolw',
-            'exact lboolw',
+            'Random decomposition',
+            'RelativeNeighborhood',
+            'RelativeNeighborhood$_2$',
+            'RelativeNeighborhood$_3$',
+            'Incremental UN heuristic',
+            'Incremental UN exact',
             ]
     plot_data(outputdir, filenames, labels, graphsize, codomain)
 

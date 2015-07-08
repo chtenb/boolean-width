@@ -1,4 +1,7 @@
-"""This module contains algorithms for computing the maximal independent sets."""
+"""
+This module contains algorithms for computing the maximal independent sets.
+Note that this code still uses the slow OO Bitset implementation.
+"""
 
 from .bitset import BitSet
 

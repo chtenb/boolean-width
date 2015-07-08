@@ -118,7 +118,7 @@ def plot_data(outputdir, filenames, labels, graphsize, codomain):
 
     plt.axis([0, 1, 0, codomain])
     plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., numpoints=1)
-    plt.title('Boolean-width behaviour on random graphs of size n = ' + str(graphsize))
+    plt.title('Boolean-width behaviour on random graphs of size ' + str(graphsize))
     plt.xlabel('Edge probability')
     plt.ylabel('Average boolean-width')
     plt.grid(True)

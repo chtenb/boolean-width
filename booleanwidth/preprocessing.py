@@ -1,7 +1,6 @@
-
-#
-# Trees
-#
+"""
+Contains some experimental preprocessing rules for trees.
+"""
 
 
 def preprocess(graph):

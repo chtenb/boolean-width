@@ -25,9 +25,9 @@ def run():
     outputdir = 'experiment-data/heuristics/' # Must end with slash
 
     experiments = [
-            ('relative_neighborhood_sparse', relative_neighborhood_sparse),
-            ('relative_neighborhood_dense', relative_neighborhood_dense),
-            ('relative_neighborhood', relative_neighborhood),
+            #('relative_neighborhood_sparse', relative_neighborhood_sparse),
+            #('relative_neighborhood_dense', relative_neighborhood_dense),
+            #('relative_neighborhood', relative_neighborhood),
             ]
     for experiment_name, score_function in experiments:
         def compute(graph):
@@ -46,9 +46,8 @@ def run():
     filenames = [
             'random',
             'relative_neighborhood',
-            'relative_neighborhood_dense',
             'relative_neighborhood_sparse',
-            'lun_single',
+            'relative_neighborhood_dense',
             'greedy_lboolw',
             #'lun',
             #'rn', 'mf',
@@ -64,4 +63,11 @@ def run():
             #'lun_mincover', 'rn_mincover',
             #'min_cover_front_single', 'minfront_single', 'mincover_single'
             ]
-    plot_data(outputdir, filenames, filenames, graphsize, codomain)
+    labels = [
+            'Random decomposition',
+            'RelativeNeighborhood',
+            'RelativeNeighborhood$_2$',
+            'RelativeNeighborhood$_3$',
+            'Incremental UN heuristic',
+            ]
+    plot_data(outputdir, filenames, labels, graphsize, codomain)

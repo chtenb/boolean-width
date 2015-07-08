@@ -1,4 +1,4 @@
-from .bitset64 import iterate
+from .bitset128 import iterate, uint128
 from .bitset import BitSet as BitSet
 
 def run():
@@ -13,7 +13,7 @@ def run():
     print(x)
 
 def runcint():
-    cdef unsigned long v = 0, x = 0
+    cdef uint128 v = 0, x = 0
     cdef int counter = 10000
 
     while counter:
