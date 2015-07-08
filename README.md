@@ -4,7 +4,7 @@ This repository contains academic (read: hardly documented and messy) code for c
 boolean-width related things on undirected graphs.
 Developed for `Python 3.4+` in combination with Cython.
 Warning: since developing this code has been an ongoing process throughout my thesis time,
-the code may be inconsistent or broken.
+some parts of the code may be inconsistent or broken.
 However, the code is free to explore and use as a starting base for developing your own code.
 
 Related publications:
@@ -15,8 +15,8 @@ Dependencies
 ------------
 - `PIL` (Python Imaging Library)
 - `graphviz` https://pypi.python.org/pypi/graphviz
-- `sage`
-- `cython`
+- `sage` (google sagemath)
+- `cython` (google cython)
 
 We use the sage library to compute the treewidth or pathwidth of small graphs.
 
