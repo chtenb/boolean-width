@@ -1,5 +1,6 @@
-from .bitset128 import iterate, uint128
+from .bitset128 import iterate
 from .bitset import BitSet as BitSet
+from .bitset128 cimport uint128
 
 def run():
     x = BitSet()

@@ -4,6 +4,11 @@ from .dynamicprogramming import booldimtable, compute_booldim
 
 # New fast exact algos
 
+def compute_lboolw_decomposition(G):
+    lboolw, booldim = compute_lboolw_space(G)
+    decomposition = construct_lboolw_decomposition(lboolw, booldim, G.vertices)
+    return lboolw[G.vertices], decomposition, booldim
+
 def compute_lboolw_space(G):
     k = 1
     while 1:
@@ -23,7 +28,7 @@ def compute_lboolw(G):
             return result
 
 def compute_lboolw_with_upperbound_space(G, k):
-    print('Upperbound: {}'.format(k))
+    #print('Upperbound: {}'.format(k))
     V = G.vertices
 
     booldim = {}

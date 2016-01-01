@@ -1,6 +1,6 @@
 from random import sample, random
 from .utils import powerlist
-from .bitset import iterate, size, contains, bit, bits, disjoint, index, domain, tolist
+from .bitset import iterate, size, contains, bit, bits, disjoint, index, domain, tolist, invert
 
 
 class Graph:
@@ -152,7 +152,7 @@ class Graph:
     def complement(self):
         """Construct a graph representing the complement of self."""
         setlength = len(self)
-        neighborhoods = {v: self[v].invert(setlength) for v in self}
+        neighborhoods = {v: invert(self[v], setlength) for v in self}
         return Graph(self.vertices, neighborhoods)
 
     def subgraph(self, vertices):

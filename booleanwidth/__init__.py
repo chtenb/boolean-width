@@ -30,9 +30,11 @@ from .dynamicprogramming import print_decomposition, print_linear_decomposition,
 from .experiments import lboolw_exact_vs_heuristic, heuristics, heuristics_large
 from .profiling import profile
 
+from .test_complement import run as testrun
 
 def run():
     start_time = time.time()
+    testrun()
 
     #for _ in range(50):
         #graph = Graph.generate_random(50, 0.5)
@@ -40,7 +42,7 @@ def run():
     #return
 
     #lboolw_exact_vs_heuristic.run()
-    heuristics.run()
+    #heuristics.run()
     #heuristics_large.run()
     return
 
