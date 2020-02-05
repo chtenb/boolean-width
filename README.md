@@ -37,7 +37,7 @@ We use the latter representation throughout the code, because it has several adv
 
 Check out the definitions of `bitset.py` and `graph.py` for more details.
 
-###Bitset class
+### Bitset class
 At first I implemented an object oriented bitset class, which can be found in `bitset.py`
 under "OO implementation".
 This class supports some nice syntactic constructs by overriding several special methods.
@@ -47,7 +47,7 @@ call overhead, probably has several smart optimizations and allows arbitrary siz
 For convenience I implemented utility functions for common bitset operations, which can be
 found in `bitset.py` under "Procedural implementation".
 
-###Fixed bitset size optimization
+### Fixed bitset size optimization
 A performance boost can be gained by using static `uint128` ints as bitsets, instead of our
 own bitset type.
 We can implement this using Cython.
